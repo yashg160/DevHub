@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+import reactora.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('user/signin/callback', views.authorize_user),
 ]
