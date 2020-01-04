@@ -2,11 +2,10 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import requests
-from json import dumps
+from json import dumps, loads
 
 @api_view(['GET'])
-def authorize_user(request):
-    code = request.get_full_path().split('?code=')[1]
+def authorize_user(request, code):
     params = {
         "client_id" : "e97710fdd921e6d456bd",
         "client_secret" : "47bb9addd9b01fc4b35aa4cad29b0d7406c2ac35",
@@ -21,7 +20,7 @@ def authorize_user(request):
             'Authorization' : 'token ' + access_token.split('&')[0].split('=')[1]
         }
     )
-    
+    print(loads(user_data.text))
     return Response({
-        "data" : user_data
+        "data" : loads(user_data.text)
     })

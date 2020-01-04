@@ -19,5 +19,5 @@ import reactora.views as views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/signin/callback', views.authorize_user),
+    path('user/data/<code>', views.authorize_user),
 ]
