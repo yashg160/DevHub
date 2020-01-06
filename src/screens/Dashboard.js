@@ -4,6 +4,8 @@ import Backdrop from '@material-ui/core/Backdrop';
 
 import serverUrl from '../config';
 
+import Cookies from 'js-cookie';
+
 
 export default class Dashboard extends React.Component {
 
@@ -26,7 +28,7 @@ export default class Dashboard extends React.Component {
 
     componentDidMount() {
 
-        var code = this.props.location.data.code;
+        var code = Cookies.get('CODE');
         console.log(code);
 
         this.getUserData(code)
@@ -34,7 +36,6 @@ export default class Dashboard extends React.Component {
             .catch((error) => console.error(error));
     }
     render() {
-        console.log(this.props);
         if (this.state.loading)
             return (
                 <Backdrop color='#fff' open={this.state.loading}/>

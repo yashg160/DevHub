@@ -4,10 +4,10 @@ import homeBackground from '../resources/home-background.png';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-
 import GitHubIcon from '@material-ui/icons/GitHub';
-import { Backdrop } from '@material-ui/core';
+import Backdrop from '@material-ui/core/Backdrop';
 
+import Cookies from 'js-cookie';
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -15,8 +15,7 @@ export default class Home extends React.Component {
 
         this.state = {
             loading: true,
-            redirect: false,
-            code: null
+            redirect: false
         }
     }
 
@@ -25,8 +24,15 @@ export default class Home extends React.Component {
             var code = window.location.href.split('?code=')[1];
             console.log(code);
 
-            this.setState({ redirect: true, code: code, loading: false});
+            Cookies.set('CODE', code);
+
+            this.setState({ redirect: true, loading: false});
         }
+        else if (Cookies.get('CODE') != null) {
+
+            this.setState({ redirect: true, loading: false });
+        }
+
         else {
             this.setState({ loading: false });
         }
@@ -42,8 +48,7 @@ export default class Home extends React.Component {
         if (this.state.redirect) {
             return (
                 <Redirect to={{
-                    pathname: '/dashboard',
-                    data: {code: this.state.code}
+                    pathname: '/dashboard'
                 }}
                 />
             )
@@ -99,7 +104,8 @@ export default class Home extends React.Component {
                             textTransform: 'none',
                             borderRadius: '24px'
                         }}
-                        startIcon={<GitHubIcon fontSize='large'/>}
+                        startIcon={<GitHubIcon fontSize='large' />}
+                        onClick={() => this.setState({ loading: true})}
                     >
                         <a
                             href='https://github.com/login/oauth/authorize?client_id=e97710fdd921e6d456bd'
