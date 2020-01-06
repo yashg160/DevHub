@@ -4,8 +4,8 @@
 
 2. Create a theme, including colors and typographies
 
-3. Migrate to cookie-redirect logic for home and dashboard(ongoing)
+3. Create a page for downloading app
 
-4. Create a page for downloading app
+4. Create other pages (about, help etc.)
 
-5. Create other pages (about, help etc.)
+5. Create a 'Remember Me' checkbox
