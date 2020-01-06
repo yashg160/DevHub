@@ -1,11 +1,12 @@
 import React from 'react';
-import { Redirect, withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import homeBackground from '../resources/home-background.png';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import Backdrop from '@material-ui/core/Backdrop';
+import Link from '@material-ui/core/Link';
 
 import Cookies from 'js-cookie';
 
@@ -107,12 +108,77 @@ export default class Home extends React.Component {
                         startIcon={<GitHubIcon fontSize='large' />}
                         onClick={() => this.setState({ loading: true})}
                     >
-                        <a
+                        <Link
                             href='https://github.com/login/oauth/authorize?client_id=e97710fdd921e6d456bd'
+                            variant='body1'
+                            onClick={(event) => event.preventDefault()}
+                            style={{
+                                color: '#000',
+                            }}
                         >
                             Login with Github
-                        </a>
+                        </Link>
+            
                     </Button>
+
+                    <div style={{
+                        marginTop: '40px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                        alignItems:'center'
+                    }}>
+
+                        <Link
+                            href='#'
+                            variant='body1'
+                            onClick={(event) => event.preventDefault()}
+                            style={{
+                                color: '#fff',
+                                margin: '20px'
+                            }}
+                        >
+                            About
+                        </Link>
+
+                        <Link
+                            href='#'
+                            variant='body1'
+                            onClick={(event) => event.preventDefault()}
+                            style={{
+                                color: '#fff',
+                                margin: '20px'
+                            }}
+                        >
+                            Help
+                        </Link>
+
+                        <Link
+                            href='#'
+                            variant='body1'
+                            onClick={(event) => event.preventDefault()}
+                            style={{
+                                color: '#fff',
+                                margin: '20px'
+                            }}
+                        >
+                            Careers
+                        </Link>
+
+                        <Link
+                            href='#'
+                            variant='body1'
+                            onClick={(event) => event.preventDefault()}
+                            style={{
+                                color: '#fff',
+                                margin: '20px'
+                            }}
+                        >
+                            Privacy
+                        </Link>
+
+                    </div>
 
                 </div>
 
