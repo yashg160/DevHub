@@ -25,7 +25,7 @@ export default class Home extends React.Component {
             var code = window.location.href.split('?code=')[1];
             console.log(code);
 
-            //Cookies.set('CODE', code);
+            Cookies.set('CODE', code);
 
             this.setState({ redirect: true, loading: false});
         }
