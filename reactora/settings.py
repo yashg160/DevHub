@@ -131,9 +131,7 @@ USE_TZ = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-CORS_ORIGIN_WHITELIST = (
-    '*',
-)
+CORS_ORIGIN_WHITELIST = ['http://*', 'https://*']
 
 CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['*']
