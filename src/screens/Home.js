@@ -25,7 +25,7 @@ export default class Home extends React.Component {
             var code = window.location.href.split('?code=')[1];
             console.log(code);
 
-            Cookies.set('CODE', code);
+            //Cookies.set('CODE', code);
 
             this.setState({ redirect: true, loading: false});
         }
@@ -111,7 +111,6 @@ export default class Home extends React.Component {
                         <Link
                             href='https://github.com/login/oauth/authorize?client_id=e97710fdd921e6d456bd'
                             variant='body1'
-                            onClick={(event) => event.preventDefault()}
                             style={{
                                 color: '#000',
                             }}
