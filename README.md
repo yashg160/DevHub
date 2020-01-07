@@ -22,7 +22,7 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 
 2. ✔ Handle data storage for Authenticated users (Automatic Basic Profile Creation)
 
-3. Create basic models(Question, Answer, Comments)
+3. Create basic models(Question, Answer, Comments, Topics)
 
 4. To be decided..
 

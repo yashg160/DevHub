@@ -13,7 +13,7 @@ def authorize_user(request, code):
         "client_secret" : "47bb9addd9b01fc4b35aa4cad29b0d7406c2ac35",
         "code" : code
     }
-    
+      
     access_token = requests.post('https://github.com/login/oauth/access_token', params = params).text
     
     user_data = requests.get(
