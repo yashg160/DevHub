@@ -1,6 +1,8 @@
 from rest_framework import permissions
+from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from django.contrib.auth import get_user_model
 import requests
 from json import dumps, loads
 
@@ -20,7 +22,15 @@ def authorize_user(request, code):
             'Authorization' : 'token ' + access_token.split('&')[0].split('=')[1]
         }
     )
-    print(loads(user_data.text))
+    data = loads(user_data.text)
+    User = get_user_model()
+    user, created_user = User.objects.get_or_create(username = user_data.login)
+
+    token, created = Token.objects.get_or_create(user = user)
+    print(created_user, token)
+    
     return Response({
-        "data" : loads(user_data.text)
+        "data" : data,
+        "first_login" : created_user,
+        "token" : token
     })
