@@ -25,7 +25,7 @@ SECRET_KEY = 'fyq@#s^*)n96%e@8ip=qk-h5#vh0l##pxu2zq1-n33pt)g5b51'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -132,7 +132,7 @@ USE_TZ = True
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
+    '*',
 )
 
 CORS_ALLOW_CREDENTIALS = True
