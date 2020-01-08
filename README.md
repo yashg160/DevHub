@@ -15,3 +15,24 @@ The Dashboard screen takes the value of Code from the cookie 'CODE' and makes an
 This has the advantage that the user does not need to log in over and over again. On logging in once, when the user opens the homepage in the future again, they are automatically redirected to the Dashboard.
 
 To change this behaviour, a simple 'Remember Me' checkbox can be added to control the saving of the 'CODE' cookie.
+
+
+# Ongoing / Planned Tasks (Backend) : 
+1. ✔ Provide basic OAuth facility using 3rd party authenticator (Github)
+
+2. ✔ Handle data storage for Authenticated users (Automatic Basic Profile Creation)
+
+3. Create basic models(Question, Answer, Comments)
+
+4. To be decided..
+
+# Ongoing / Planned Tasks (Frontend) : 
+1. Include other authentication options
+
+2. Create a theme, including colors and typographies
+
+3. Create a page for downloading app
+
+4. Create other pages (about, help etc.)
+
+5. Create a 'Remember Me' checkbox
