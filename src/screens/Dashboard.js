@@ -33,7 +33,10 @@ export default class Dashboard extends React.Component {
 
         this.getUserData(code)
             .then((user) => this.setState({ user, loading: false}))
-            .catch((error) => console.error(error));
+            .catch((error) => {
+                console.error(error);
+                this.setState({ loading: false });
+            });
     }
     render() {
         if (this.state.loading)
