@@ -13,28 +13,14 @@ export default class Dashboard extends React.Component {
         super(props);
         
         this.state = {
-            user: null,
-            loading: true
+            loading: false
         }
-    }
-
-    async getUserData(code) {
-        let rawResponse = await fetch(`${serverUrl}/user/data/${code}`);
-        let content = await rawResponse.json();
-
-        console.log(content);
-        return content;
     }
 
     componentDidMount() {
 
-        var code = Cookies.get('CODE');
-        console.log(code);
-
-        this.getUserData(code)
-            .then((user) => this.setState({ user, loading: false}))
-            .catch((error) => console.error(error));
     }
+
     render() {
         if (this.state.loading)
             return (
@@ -42,7 +28,7 @@ export default class Dashboard extends React.Component {
             )
         
         return (
-            <h1>YO! CHECK THIS OUT YA ALL!</h1>
+            <h1>This is the dashboard</h1>
         )
     }
 }
