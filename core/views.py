@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class Genres(APIView):
+class GenresView(APIView):
     permission_classes = [isSuperuserOrReadOnly]
     # Fetch all the genres but mark those subscribed.
     def get(self, request):
@@ -24,7 +24,7 @@ class Genres(APIView):
                 'data' : 'No Genres present'
             })
 
-        subscribed_genres = [i.name for i in request.user.subscribed_genres]
+        subscribed_genres = [i.name for i in request.user.subscribed_genres.all()]
         for genre in subscribed_genres:
             all_genres[genre] = True
         return Response({
@@ -50,14 +50,17 @@ class Genres(APIView):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 def subscribe_genres(request):
+
     genres = request.data.get('genres').split(',')
-    try:
-        genre_objects = [Genre.objects.get(name) for name in genres]
-    except:
-        return Response({
-            'status' : 'error',
-            'message' : 'Invalid Genre sent'
-        })
+    genre_objects = []
+    for genre_name in genres:
+        try:
+            genre_objects.append(Genre.objects.get(name = genre_name))
+        except:
+            return Response({
+                'status' : 'error',
+                'message' : 'Invalid Genre : ' + genre_name
+            })
 
     for genre_object in genre_objects:
         genre_object.subscribers.add(request.user)
