@@ -29,7 +29,7 @@ class GenresView(APIView):
             all_genres[genre] = True
         return Response({
             'status' : 'success',
-            'data' : dumps(all_genres)
+            'data' : all_genres
         })
     
     def post(self, request) :
