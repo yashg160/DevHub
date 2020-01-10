@@ -12,6 +12,7 @@ requests = "==2.22.0"
 urllib3 = "==1.25.7"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"
