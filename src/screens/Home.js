@@ -51,8 +51,9 @@ export default class Home extends React.Component {
                 });
 
         }
-
-        this.setState({ loading: false });
+        else {
+            this.setState({ loading: false });
+        }      
     }
 
     render() {
