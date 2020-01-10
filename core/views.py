@@ -52,6 +52,7 @@ class GenresView(APIView):
 def subscribe_genres(request):
 
     genres = request.data.get('genres').split(',')
+    print(genres)
     genre_objects = []
     for genre_name in genres:
         try:
