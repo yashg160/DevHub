@@ -24,6 +24,7 @@ export default class Dashboard extends React.Component {
 
         var token = Cookies.get('TOKEN');
         console.log(token);
+        this.setState({ loading: false });
         
     }
     render() {
