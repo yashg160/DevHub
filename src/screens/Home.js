@@ -1,6 +1,9 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import homeBackground from '../resources/home-background.png';
+import serverUrl from '../config';
+import Cookies from 'js-cookie';
+
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -8,7 +11,7 @@ import GitHubIcon from '@material-ui/icons/GitHub';
 import Backdrop from '@material-ui/core/Backdrop';
 import Link from '@material-ui/core/Link';
 
-import Cookies from 'js-cookie';
+
 
 export default class Home extends React.Component {
     constructor(props) {
@@ -17,35 +20,36 @@ export default class Home extends React.Component {
         this.state = {
             loading: true,
             redirect: false,
-            code: ''
+            firstLogin: false,
+            code: '',
+            user: null
         }
     }
 
+    async getUserData(code) {
+        let rawResponse = await fetch(`${serverUrl}/user/data/${code}`);
+        let content = await rawResponse.json();
+
+        console.log(content);
+        return content;
+    }
+
     componentDidMount() {
-        /* if (window.location.href.includes('code')) {
-            var code = window.location.href.split('?code=')[1];
-            console.log(code);
-
-            Cookies.set('CODE', code);
-
-            this.setState({ redirect: true, loading: false});
-        }
-        else if (Cookies.get('CODE') != null) {
-
-            this.setState({ redirect: true, loading: false });
-        }
-
-        else {
-            this.setState({ loading: false });
-        } */
 
         if (window.location.href.includes('code')) {
             var code = window.location.href.split('?code=')[1];
             console.log(code);
 
-            this.setState({ code });
+            this.getUserData(code)
+                .then((content) => {
+                    Cookies.set('TOKEN', content.token);
+                    this.setState({ user: content.data, loading: false, redirect: true, firstLogin: content.first_login });
+                })
+                .catch((error) => {
+                    console.error(error);
+                    this.setState({ loading: false });
+                });
 
-            this.setState({ redirect: true, loading: false });
         }
 
         this.setState({ loading: false });
@@ -59,13 +63,21 @@ export default class Home extends React.Component {
             )
         
         if (this.state.redirect) {
-            return (
-                <Redirect to={{
-                    pathname: '/dashboard',
-                    state: {code: this.state.code}
-                }}
-                />
-            )
+
+            if(!this.state.firstLogin)
+                return (
+                    <Redirect to={{
+                        pathname: '/dashboard'
+                    }}
+                    />
+                )
+            else
+                return (
+                    <Redirect to={{
+                        pathname: '/genres'
+                    }}
+                    />
+                )
         }
 
         return (
