@@ -16,12 +16,13 @@ export default class Home extends React.Component {
 
         this.state = {
             loading: true,
-            redirect: false
+            redirect: false,
+            code: ''
         }
     }
 
     componentDidMount() {
-        if (window.location.href.includes('code')) {
+        /* if (window.location.href.includes('code')) {
             var code = window.location.href.split('?code=')[1];
             console.log(code);
 
@@ -36,7 +37,18 @@ export default class Home extends React.Component {
 
         else {
             this.setState({ loading: false });
+        } */
+
+        if (window.location.href.includes('code')) {
+            var code = window.location.href.split('?code=')[1];
+            console.log(code);
+
+            this.setState({ code });
+
+            this.setState({ redirect: true, loading: false });
         }
+
+        this.setState({ loading: false });
     }
 
     render() {
@@ -49,7 +61,8 @@ export default class Home extends React.Component {
         if (this.state.redirect) {
             return (
                 <Redirect to={{
-                    pathname: '/dashboard'
+                    pathname: '/dashboard',
+                    state: {code: this.state.code}
                 }}
                 />
             )

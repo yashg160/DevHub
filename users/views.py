@@ -14,7 +14,7 @@ def authorize_user(request, code):
         "client_secret" : "47bb9addd9b01fc4b35aa4cad29b0d7406c2ac35",
         "code" : code
     }
-    
+
     access_token = requests.post('https://github.com/login/oauth/access_token', params = params).text
     
     user_data = requests.get(
@@ -23,6 +23,7 @@ def authorize_user(request, code):
             'Authorization' : 'token ' + access_token.split('&')[0].split('=')[1]
         }
     )
+    print(user_data)
     data = loads(user_data.text)
     User = get_user_model()
     user, created_user = User.objects.get_or_create(
