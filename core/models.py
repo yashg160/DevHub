@@ -10,7 +10,6 @@ class Genre(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=84)
-    category = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name="topics")
     followers = models.ManyToManyField(CustomUser, related_name="followed_topics")
 
     def __str__(self):
