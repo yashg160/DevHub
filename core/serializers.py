@@ -1,13 +1,13 @@
-from core.models import Genre, Topic
 from rest_framework import serializers
+from core.models import Genre, Topic
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ('name', )
-    
-    def create(self, validated_data) :
-        genre = Genre.objects.create(name = validated_data.get('name'))
+
+    def create(self, validated_data):
+        genre = Genre.objects.create(name=validated_data.get('name'))
         genre.save()
         return genre
 
