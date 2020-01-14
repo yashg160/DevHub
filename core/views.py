@@ -1,22 +1,24 @@
-from rest_framework import permissions, authentication
+# pylint: disable=W0702,C0103
+from django.db.models import Count, Subquery, OuterRef
+
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from core.custom_permissions import isSuperuserOrReadOnly
-from core.serializers import GenreSerializer, TopicSerializer
-from core.models import Genre
-from json import dumps
-from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, authentication_classes
 
-User = get_user_model()
+from core.utils.pagination import SmallResultSetPagination
+from core.utils.permissions import isSuperuserOrReadOnly
+from core.serializers import GenreSerializer
+from core.models import Genre, Question, Answer
+# from django.contrib.auth import get_user_model
+
+# User = get_user_model()
 
 class GenresView(APIView):
     permission_classes = [isSuperuserOrReadOnly]
     # Fetch all the genres but mark those subscribed.
     def get(self, request):
-        try :
+        try:
             all_genres = {i.name : False for i in Genre.objects.all()}
         except:
             return Response({
@@ -31,8 +33,8 @@ class GenresView(APIView):
             'status' : 'success',
             'data' : all_genres
         })
-    
-    def post(self, request) :
+
+    def post(self, request):
         try:
             genre = request.data.get('genre')
         except:
@@ -40,7 +42,7 @@ class GenresView(APIView):
         serializer = GenreSerializer(genre)
         if serializer.is_valid():
             serializer.save()
-        else :
+        else:
             return Response({'status' : 'error', 'message' : serializer.errors})
         return Response({
             'status' : 'success', 
@@ -66,8 +68,26 @@ def subscribe_genres(request):
     for genre_object in genre_objects:
         genre_object.subscribers.add(request.user)
         genre_object.save()
-    
+
     return Response({
         'status' : 'success',
         'message' : 'Subscribed {} to {}'.format(request.user, ','.join(genres))
     })
+
+@api_view(['GET'])
+def HomePageView(request):
+    paginator = SmallResultSetPagination()
+    subscribed_genres = request.user.subscribed_genres
+
+    answer_subquery = Answer.objects.filter(
+        question=OuterRef('pk')
+    ).annonate(
+        upvotes=Count('upvoters')
+    ).order_by('-upvotes')
+
+    questions = Question.objects.annonate(
+        answer=Subquery(answer_subquery.values('answer')[-1])
+    ).filter(genre__in = subscribed_genres)
+
+    result_page = paginator.paginate_queryset(questions, request)
+    return paginator.get_paginated_response(result_page)
