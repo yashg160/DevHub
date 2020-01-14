@@ -22,9 +22,11 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 
 2. ✔ Handle data storage for Authenticated users (Automatic Basic Profile Creation)
 
-3. Create basic models(Question, Answer, Comments, Topics)
+3. ✔ Create basic models(Question, Answer, Comments, Topics)
 
-4. To be decided..
+4. ✔ Create basic homepage for auth_users
+
+5. CRUD operations on all the created models.
 
 # Ongoing / Planned Tasks (Frontend) : 
 1. Include other authentication options
