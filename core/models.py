@@ -16,7 +16,7 @@ class Topic(models.Model):
         return "#" + self.name
 
 class Question(models.Model):
-    question = models.CharField(max_length = 128)
+    question = models.CharField(max_length = 128, blank = False)
     asker = models.ForeignKey(CustomUser, on_delete = models.CASCADE, related_name="asked_questions")
     requested = models.ManyToManyField(CustomUser, related_name="answer_requests")
     genres = models.ManyToManyField(Genre, related_name = "questions")
@@ -24,6 +24,10 @@ class Question(models.Model):
     topics = models.ManyToManyField(Topic, related_name="questions")
     url = models.CharField(max_length = 150)
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
+
+    class Meta:
+        ordering = ('-created_at', )
 
     def __str__(self):
         return self.question
@@ -34,6 +38,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE, related_name="answers")
     upvoters = models.ManyToManyField(CustomUser, related_name="upvoted_answers")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
 
 
 class Comment(models.Model):
@@ -44,3 +49,4 @@ class Comment(models.Model):
     parent_comment = models.OneToOneField("self", on_delete = models.CASCADE, related_name="next_in_thread")
     child_comment = models.OneToOneField("self", on_delete = models.CASCADE, related_name="previous_in_thread")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
