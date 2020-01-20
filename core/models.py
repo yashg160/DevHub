@@ -1,3 +1,5 @@
+from django.utils import timezone
+import pytz
 from django.db import models
 from users.models import CustomUser
 
@@ -25,7 +27,7 @@ class Question(models.Model):
     topics = models.ManyToManyField(Topic, related_name="questions")
     url = models.CharField(max_length = 150)
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(blank = True)
 
     class Meta:
         ordering = ('-created_at', )
@@ -40,7 +42,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE, related_name="answers")
     upvoters = models.ManyToManyField(CustomUser, related_name="upvoted_answers")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(blank = True)
 
     def __str__(self):
         return self.id
@@ -56,4 +58,4 @@ class Comment(models.Model):
     child_comment = models.OneToOneField("self", on_delete = models.CASCADE,
                                          related_name="previous_in_thread")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(auto_now_add = True, blank = True)
+    updated_at = models.DateTimeField(blank = True)

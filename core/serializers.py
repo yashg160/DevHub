@@ -33,6 +33,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             asker = current_user
         )
         question.followers.add(current_user)
+        question.updated_at = datetime.now()
         question.url = question.question.lower().replace(' ', '-')
         question.save()
         return question
@@ -73,6 +74,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             author = kwargs['current_user'],
             question = Question.objects.get(url = validated_data.get('question'))
         )
+        answer.updated_at = datetime.now()
         answer.save()
         return answer
 
