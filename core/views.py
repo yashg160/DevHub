@@ -140,6 +140,14 @@ class QuestionView(APIView):
             'message' : 'Question added succesfully'
         })
 
+    def delete(self, request, url):
+        try:
+            question = Question.objects.get(url = url)
+        except core.models.Question.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Question does not exist'})
+        question.delete()
+        return Response({'status' : 'success', 'message' : 'Question deleted succesfully'})
+
 class AnswerView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
@@ -179,7 +187,7 @@ class AnswerView(APIView):
         except core.models.Answer.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
         updated_answer = request.data.get('answer')
-        serializer = QuestionSerializer(answer, updated_answer, current_user=request.user)
+        serializer = AnswerSerializer(answer, updated_answer, current_user=request.user)
         if serializer.is_valid():
             serializer.save()
         else :
@@ -190,3 +198,11 @@ class AnswerView(APIView):
             'message' : 'Answer updated succesfully',
             'id' : serializer.data.id
         })
+
+    def delete(self, request, answer_id):
+        try:
+            answer = Answer.objects.get(id = answer_id)
+        except core.models.Answer.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Answer does not exist'})
+        answer.delete()
+        return Response({'status' : 'success', 'message' : 'Answer deleted succesfully'})
