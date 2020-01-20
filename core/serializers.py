@@ -1,3 +1,4 @@
+# pylint: disable=W0221
 from datetime import datetime
 from rest_framework import serializers
 from core.models import Genre, Topic, Question, Answer
@@ -25,7 +26,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         fields = ('question', 'asker', 'requested', 'genres', 'followers', 'topics', 'url',
                   'created_at', 'answers', )
 
-    # pylint: disable=W0221
     def create(self, validated_data, **kwargs):
         current_user = kwargs['current_user']
         question = Question.objects.create(
@@ -37,7 +37,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         question.save()
         return question
 
-    # pylint: disable=W0221
     def update(self, instance, validated_data, **kwargs):
         new_question = validated_data.get('question', instance.question)
         requested = validated_data.get('requested', [])
@@ -65,14 +64,23 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('answer', 'author', 'question.question', 'upvoters', 'created_at', )
+        fields = ('answer', 'author', 'upvoters', 'created_at', )
 
     # pylint: disable=W0221
     def create(self, validated_data, **kwargs):
         answer = Answer.objects.create(
             answer = validated_data.get('answer'),
             author = kwargs['current_user'],
-            question = Question.objects.get(url = validated_data.get('url'))
+            question = Question.objects.get(url = validated_data.get('question'))
         )
         answer.save()
         return answer
+
+    def update(self, instance, validated_data, **kwargs):
+        instance.answer = validated_data.get('answer', instance.answer)
+        if validated_data.get('upvote', False) and instance.author != kwargs['current_user']:
+            instance.upvoters.add(kwargs['current_user'])
+
+        instance.updated_at = datetime.now()
+        instance.save()
+        return instance

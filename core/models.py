@@ -42,10 +42,12 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
     updated_at = models.DateTimeField(auto_now_add = True, blank = True)
 
+    def __str__(self):
+        return self.id
 
 class Comment(models.Model):
     comment = models.CharField(max_length = 200)
-    author = models.ForeignKey(CustomUser, on_delete = models.CASCADE, 
+    author = models.ForeignKey(CustomUser, on_delete = models.CASCADE,
                                related_name = "written_comments")
     answer = models.ForeignKey(Answer, on_delete = models.CASCADE, related_name="comments")
     upvoters = models.ManyToManyField(CustomUser, related_name="upvoted_comments")
