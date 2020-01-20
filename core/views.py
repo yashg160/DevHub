@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, authentication_classes
 import core
 from core.utils.pagination import SmallResultSetPagination
 from core.utils.permissions import isSuperuserOrReadOnly
-from core.serializers import GenreSerializer, QuestionSerializer
+from core.serializers import GenreSerializer, QuestionSerializer, AnswerSerializer
 from core.models import Genre, Question, Answer
 # from django.contrib.auth import get_user_model
 
@@ -111,7 +111,7 @@ class QuestionView(APIView):
         return Response({
             'status' : 'success',
             'message' : 'Question updated succesfully',
-            'url' : serializer.data
+            'url' : serializer.data.url
         })
 
     def get(self, request, url):
@@ -120,6 +120,8 @@ class QuestionView(APIView):
         except core.models.Question.DoesNotExist :
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
         serialized = QuestionSerializer(question)
+        if not serialized.is_valid():
+            return Response({'status' : 'error', 'message' : serialized.errors})
         return Response({'status' : 'success', 'data' : serialized.data})
 
     def post(self, request):
@@ -136,4 +138,55 @@ class QuestionView(APIView):
         return Response({
             'status' : 'success',
             'message' : 'Question added succesfully'
+        })
+
+class AnswerView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, answer_id):
+        try:
+            answer = Answer.objects.get(id = answer_id)
+        except core.models.Answer.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Invalid Answer ID'})
+        serialized = AnswerSerializer(answer)
+
+        if not serialized.is_valid():
+            return Response({'status' : 'error', 'message' : serialized.errors})
+
+        return Response({'status' : 'success', 'data' : serialized.data})
+
+    def post(self, request):
+        try :
+            answer = request.data.get('answer')
+        except:
+            return Response({'status' : 'error', 'message' : 'Missing answer in request body'})
+
+        serializer = AnswerSerializer(answer, current_user = request.user)
+        if serializer.is_valid():
+            serializer.save()
+        else :
+            return Response({'status' : 'error', 'message' : serializer.errors})
+        return Response({
+            'status' : 'success',
+            'message' : 'Answer created successfully',
+            'answer_id' : serializer.data.id
+        })
+
+    def update(self, request, answer_id):
+        try:
+            answer = Answer.objects.get(id = answer_id)
+        except core.models.Answer.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Answer does not exist'})
+        updated_answer = request.data.get('answer')
+        serializer = QuestionSerializer(answer, updated_answer, current_user=request.user)
+        if serializer.is_valid():
+            serializer.save()
+        else :
+            return Response({'status' : 'error', 'message' : serializer.errors})
+
+        return Response({
+            'status' : 'success',
+            'message' : 'Answer updated succesfully',
+            'id' : serializer.data.id
         })
