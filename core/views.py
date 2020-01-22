@@ -1,11 +1,11 @@
+# pylint: disable=W0703
 from django.db.models import Count, Subquery, OuterRef
-
+from django.utils import timezone
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, authentication_classes
-
 import core
 from core.utils.pagination import SmallResultSetPagination
 from core.utils.permissions import isSuperuserOrReadOnly
@@ -96,13 +96,15 @@ class QuestionView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     authentication_classes = [TokenAuthentication]
 
-    def update(self, request, url):
+    def put(self, request, url):
         try:
             question = Question.objects.get(url = url)
         except core.models.Question.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
         updated_question = request.data.get('question')
-        serializer = QuestionSerializer(question, updated_question, current_user=request.user)
+        serializer = QuestionSerializer(question)
+        serializer.update(question, updated_question, request.user)
+
         if serializer.is_valid():
             serializer.save()
         else :
@@ -120,25 +122,7 @@ class QuestionView(APIView):
         except core.models.Question.DoesNotExist :
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
         serialized = QuestionSerializer(question)
-        if not serialized.is_valid():
-            return Response({'status' : 'error', 'message' : serialized.errors})
         return Response({'status' : 'success', 'data' : serialized.data})
-
-    def post(self, request):
-        try :
-            question = request.data.get('question')
-        except:
-            return Response({'status' : 'error', 'message' : 'Missing question in request body'})
-
-        serializer = QuestionSerializer(question, current_user = request.user)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            return Response({'status' : 'error', 'message' : serializer.errors})
-        return Response({
-            'status' : 'success',
-            'message' : 'Question added succesfully'
-        })
 
     def delete(self, request, url):
         try:
@@ -164,30 +148,15 @@ class AnswerView(APIView):
 
         return Response({'status' : 'success', 'data' : serialized.data})
 
-    def post(self, request):
-        try :
-            answer = request.data.get('answer')
-        except:
-            return Response({'status' : 'error', 'message' : 'Missing answer in request body'})
-
-        serializer = AnswerSerializer(answer, current_user = request.user)
-        if serializer.is_valid():
-            serializer.save()
-        else :
-            return Response({'status' : 'error', 'message' : serializer.errors})
-        return Response({
-            'status' : 'success',
-            'message' : 'Answer created successfully',
-            'answer_id' : serializer.data.id
-        })
-
-    def update(self, request, answer_id):
+    def put(self, request, answer_id):
         try:
             answer = Answer.objects.get(id = answer_id)
         except core.models.Answer.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
         updated_answer = request.data.get('answer')
-        serializer = AnswerSerializer(answer, updated_answer, current_user=request.user)
+        serializer = AnswerSerializer(answer)
+        serializer.update(answer, updated_answer, request.user)
+
         if serializer.is_valid():
             serializer.save()
         else :
@@ -206,3 +175,61 @@ class AnswerView(APIView):
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
         answer.delete()
         return Response({'status' : 'success', 'message' : 'Answer deleted succesfully'})
+
+
+class QuestionCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        data = request.data
+        print(data, '*'*100)
+        if not data.get('question') :
+            return Response({'status' : 'error', 'message' : 'Missing question in request body'})
+        if Question.objects.filter(question = data.get('question')).exists() :
+            return Response({'status' : 'error', 'message' : 'Question already exists'})
+        try:
+            question = Question.objects.create(
+                question = data.get('question'),
+                asker = request.user
+            )
+            question.save()
+            question.followers.add(request.user)
+            question.updated_at = timezone.now()
+            question.url = question.question.lower().replace(' ', '-').replace('?', '')
+            question.save()
+
+        except Exception as e:
+            # return Response({'status' : 'error', 'message' : "An error occurred! We'll look into this"})
+            return Response({'status' : 'error', 'message' : str(e)})
+        return Response({
+            'status' : 'success',
+            'message' : 'Question added succesfully'
+        })
+
+class AnswerCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        data = request.data
+        print(data, '8'*100)
+        if not data.get('answer') :
+            return Response({'status' : 'error', 'message' : 'Missing answer in request body'})
+        try :
+            answer = Answer.objects.create(
+                answer = data.get('answer'),
+                author = request.user,
+                question = Question.objects.get(url = data.get('question'))
+            )
+            answer.updated_at = timezone.now()
+            answer.save()
+        except Exception as e:
+            # return Response({'status' : 'error', 'message' : "An error occurred! We'll look into this"})
+            return Response({'status' : 'error', 'message' : str(e)})
+
+        return Response({
+            'status' : 'success',
+            'message' : 'Answer created successfully',
+            'answer_id' : answer.id
+        })

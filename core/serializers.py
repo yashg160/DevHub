@@ -24,26 +24,13 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('question', 'asker', 'requested', 'genres', 'followers', 'topics', 'url',
-                  'created_at', 'answers', )
+                  'created_at', 'updated_at', 'answers', )
 
-    def create(self, validated_data, **kwargs):
-        current_user = kwargs['current_user']
-        question = Question.objects.create(
-            question = validated_data.get('question'),
-            asker = current_user
-        )
-        question.followers.add(current_user)
-        question.updated_at = datetime.now()
-        question.url = question.question.lower().replace(' ', '-')
-        question.save()
-        return question
-
-    def update(self, instance, validated_data, **kwargs):
+    def update(self, instance, validated_data, current_user):
         new_question = validated_data.get('question', instance.question)
         requested = validated_data.get('requested', [])
         followed = validated_data.get('followed', False)
         unfollowed = validated_data.get('unfollowed', False)
-        current_user = kwargs['current_user']
         if followed:
             instance.followers.add(current_user)
 
@@ -65,23 +52,14 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('answer', 'author', 'upvoters', 'created_at', )
+        model = Answer
+        fields = ('answer', 'author', 'upvoters', 'created_at', 'updated_at', )
 
     # pylint: disable=W0221
-    def create(self, validated_data, **kwargs):
-        answer = Answer.objects.create(
-            answer = validated_data.get('answer'),
-            author = kwargs['current_user'],
-            question = Question.objects.get(url = validated_data.get('question'))
-        )
-        answer.updated_at = datetime.now()
-        answer.save()
-        return answer
-
-    def update(self, instance, validated_data, **kwargs):
+    def update(self, instance, validated_data, current_user):
         instance.answer = validated_data.get('answer', instance.answer)
-        if validated_data.get('upvote', False) and instance.author != kwargs['current_user']:
-            instance.upvoters.add(kwargs['current_user'])
+        if validated_data.get('upvote', False) and instance.author != current_user:
+            instance.upvoters.add(current_user)
 
         instance.updated_at = datetime.now()
         instance.save()
