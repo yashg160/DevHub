@@ -1,5 +1,3 @@
-from django.utils import timezone
-import pytz
 from django.db import models
 from users.models import CustomUser
 
@@ -25,9 +23,9 @@ class Question(models.Model):
     genres = models.ManyToManyField(Genre, related_name = "questions")
     followers = models.ManyToManyField(CustomUser, related_name="followed_questions")
     topics = models.ManyToManyField(Topic, related_name="questions")
-    url = models.CharField(max_length = 150)
+    url = models.CharField(max_length = 150, unique=True)
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(blank = True)
+    updated_at = models.DateTimeField(null=True, blank = True)
 
     class Meta:
         ordering = ('-created_at', )
@@ -42,10 +40,10 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE, related_name="answers")
     upvoters = models.ManyToManyField(CustomUser, related_name="upvoted_answers")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(blank = True)
+    updated_at = models.DateTimeField(blank = True, null=True)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 class Comment(models.Model):
     comment = models.CharField(max_length = 200)
@@ -58,4 +56,4 @@ class Comment(models.Model):
     child_comment = models.OneToOneField("self", on_delete = models.CASCADE,
                                          related_name="previous_in_thread")
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
-    updated_at = models.DateTimeField(blank = True)
+    updated_at = models.DateTimeField(null=True, blank = True)
