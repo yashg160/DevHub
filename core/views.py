@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, authentication_classes
 import core
 from core.utils.pagination import SmallResultSetPagination
 from core.utils.permissions import isSuperuserOrReadOnly
-from core.serializers import GenreSerializer, QuestionSerializer, AnswerSerializer
+from core.serializers import GenreSerializer, QuestionSerializer, AnswerSerializer, HomePageSerializer
 from core.models import Genre, Question, Answer
 # from django.contrib.auth import get_user_model
 
@@ -78,7 +78,7 @@ def subscribe_genres(request):
 def HomePageView(request):
     paginator = SmallResultSetPagination()
     subscribed_genres = request.user.subscribed_genres
-
+    print(subscribed_genres.all())
     answer_subquery = Answer.objects.filter(
         question=OuterRef('pk')
         ).annotate(
@@ -86,10 +86,10 @@ def HomePageView(request):
         ).order_by('-upvotes')
 
     questions = Question.objects.annotate(
-        answer=Subquery(answer_subquery.values('answer')[:1])
+        answer=Subquery(answer_subquery.values('id')[:1])
         ).filter(genres__in = subscribed_genres.all())
-
-    result_page = paginator.paginate_queryset(questions, request)
+    result = HomePageSerializer(questions, many=True).data
+    result_page = paginator.paginate_queryset(result, request)
     return paginator.get_paginated_response(result_page)
 
 class QuestionView(APIView):
