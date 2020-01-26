@@ -21,10 +21,16 @@ class TopicSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    asker_name = serializers.CharField(source = 'asker.username')
+    followers_list = serializers.SerializerMethodField()
+
+    def get_followers_list(self, instance):
+        return([follower.username for follower in instance.followers.all()])
+
     class Meta:
         model = Question
-        fields = ('question', 'asker', 'requested', 'genres', 'followers', 'topics', 'url',
-                  'created_at', 'updated_at', 'answers', )
+        fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list', 
+                  'topics', 'url', 'created_at', 'updated_at', 'answers', )
 
     def update(self, instance, validated_data, current_user):
         new_question = validated_data.get('question', instance.question)
@@ -44,16 +50,23 @@ class QuestionSerializer(serializers.ModelSerializer):
                     instance.requested.add(user)
 
         instance.question = new_question
-        instance.url = new_question.lower().replace(' ', '-')
+        instance.url = new_question.lower().replace(' ', '-').replace('?', '')
         instance.updated_at = datetime.now()
         instance.save()
         return instance
 
 
 class AnswerSerializer(serializers.ModelSerializer):
+    url = serializers.CharField(source='question.url')
+    author_name = serializers.CharField(source='author.username')
+    upvoters = serializers.SerializerMethodField()
+
+    def get_upvoters(self, instance):
+        return([person.username for person in instance.upvoters.all()])
+
     class Meta:
         model = Answer
-        fields = ('answer', 'author', 'upvoters', 'created_at', 'updated_at', )
+        fields = ('id', 'url', 'answer', 'author_name', 'upvoters', 'created_at', 'updated_at', )
 
     # pylint: disable=W0221
     def update(self, instance, validated_data, current_user):

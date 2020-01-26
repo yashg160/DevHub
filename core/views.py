@@ -101,19 +101,15 @@ class QuestionView(APIView):
             question = Question.objects.get(url = url)
         except core.models.Question.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
-        updated_question = request.data.get('question')
+        if question.asker != request.user :
+            return Response({'status' : 'error', 'message' : 'Not allowed to update this question'}) 
+        updated_question = request.data
         serializer = QuestionSerializer(question)
         serializer.update(question, updated_question, request.user)
-
-        if serializer.is_valid():
-            serializer.save()
-        else :
-            return Response({'status' : 'error', 'message' : serializer.errors})
-
         return Response({
             'status' : 'success',
             'message' : 'Question updated succesfully',
-            'url' : serializer.data.url
+            'url' : serializer.data['url']
         })
 
     def get(self, request, url):
@@ -129,6 +125,8 @@ class QuestionView(APIView):
             question = Question.objects.get(url = url)
         except core.models.Question.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
+        if question.asker != request.user :
+            return Response({'status' : 'error', 'message' : 'Not allowed to update this question'}) 
         question.delete()
         return Response({'status' : 'success', 'message' : 'Question deleted succesfully'})
 
@@ -143,9 +141,6 @@ class AnswerView(APIView):
             return Response({'status' : 'error', 'message' : 'Invalid Answer ID'})
         serialized = AnswerSerializer(answer)
 
-        if not serialized.is_valid():
-            return Response({'status' : 'error', 'message' : serialized.errors})
-
         return Response({'status' : 'success', 'data' : serialized.data})
 
     def put(self, request, answer_id):
@@ -153,19 +148,16 @@ class AnswerView(APIView):
             answer = Answer.objects.get(id = answer_id)
         except core.models.Answer.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
-        updated_answer = request.data.get('answer')
+        if request.user != answer.author :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to change this answer'})
+        updated_answer = request.data
         serializer = AnswerSerializer(answer)
         serializer.update(answer, updated_answer, request.user)
-
-        if serializer.is_valid():
-            serializer.save()
-        else :
-            return Response({'status' : 'error', 'message' : serializer.errors})
 
         return Response({
             'status' : 'success',
             'message' : 'Answer updated succesfully',
-            'id' : serializer.data.id
+            'answer_id' : serializer.data['id']
         })
 
     def delete(self, request, answer_id):
@@ -173,6 +165,8 @@ class AnswerView(APIView):
             answer = Answer.objects.get(id = answer_id)
         except core.models.Answer.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
+        if answer.author != request.user :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to delete this answer'})
         answer.delete()
         return Response({'status' : 'success', 'message' : 'Answer deleted succesfully'})
 
@@ -183,7 +177,6 @@ class QuestionCreateView(APIView):
 
     def post(self, request):
         data = request.data
-        print(data, '*'*100)
         if not data.get('question') :
             return Response({'status' : 'error', 'message' : 'Missing question in request body'})
         if Question.objects.filter(question = data.get('question')).exists() :
@@ -213,7 +206,6 @@ class AnswerCreateView(APIView):
 
     def post(self, request):
         data = request.data
-        print(data, '8'*100)
         if not data.get('answer') :
             return Response({'status' : 'error', 'message' : 'Missing answer in request body'})
         try :
