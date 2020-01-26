@@ -42,7 +42,7 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 
 # Resource 
 ### 1. /api/genre : 
-GET : Returns all the Genres, along with information about whether a user is subscribed or not.
+> GET : Returns all the Genres, along with information about whether a user is subscribed or not.
 ```
 {
     "status" : "success"
@@ -57,7 +57,7 @@ GET : Returns all the Genres, along with information about whether a user is sub
 ```
 
 ### 2. /api/genres/subscribe : 
-POST : Subscribe to the genres specified in body, which may look like this :
+> POST : Subscribe to the genres specified in body, which may look like this :
 ```
 ## Request body 
 {
@@ -72,7 +72,7 @@ POST : Subscribe to the genres specified in body, which may look like this :
 ```
 
 ### 3. /api/home :
-GET : Returns questions with their top upvoted answers (With Genres that are subscribed by the user)
+> GET : Returns questions with their top upvoted answers (With Genres that are subscribed by the user)
 ```
 {
     "count": 55,
@@ -91,7 +91,7 @@ GET : Returns questions with their top upvoted answers (With Genres that are sub
 ```
 
 ### 4. /api/questions :
-POST : Create a new questions by making a POST request to this endpoint.
+> POST : Create a new questions by making a POST request to this endpoint.
 ```
 ## Request body 
 {
@@ -107,6 +107,7 @@ POST : Create a new questions by making a POST request to this endpoint.
 
 ### 5. /api/questions/<question_url>
 > GET : Get all the details along with all answers for this question
+
 > PUT : Update an existing question
 ```
 ## PUT request example
@@ -132,5 +133,7 @@ POST : Create a new questions by making a POST request to this endpoint.
 
 ### 7. /api/answers/<answer_id>
 > GET : Get the answer stored on this ID
+
 > PUT : Update the answer stored on this ID (obviously allowed only of you're the author)
+
 > DELETE : Delete the answer stored on this ID
