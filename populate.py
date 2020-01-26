@@ -26,9 +26,11 @@ def add_genres():
         Genre.objects.create(
             name = genre_name
         )
+    print(f'Created {len(GENRES)} genres succesfully!')
 
-def add_users(n = 50):
+def add_users(n = 50, t = 5):
     data = {}
+    genre = Genre.objects.all()
     for _ in tqdm(range(n)):
         profile = fake.simple_profile(sex=None)
         new_user = User.objects.create(
@@ -37,8 +39,12 @@ def add_users(n = 50):
             first_name = profile['name'].split(' ')[0],
             last_name = profile['name'].split(' ')[1]
         )
+        
         token = Token.objects.create(user = new_user)
         data[new_user.username] = token.key
+        for _ in range(t):
+            new_user.subscribed_genres.add(genre[randint(0, genre.count()-1)])
+        new_user.save()
     print("Created objects : ")
     for key, val in data.items():
         print(f'{key} : {val}')
