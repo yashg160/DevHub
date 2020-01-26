@@ -38,3 +38,99 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 4. Create other pages (about, help etc.)
 
 5. Create a 'Remember Me' checkbox
+
+
+# Resource 
+### 1. /api/genre : 
+GET : Returns all the Genres, along with information about whether a user is subscribed or not.
+```
+{
+    "status" : "success"
+    "data" : {
+        "Technology" : false,
+        "Religion" : true,
+        ...
+
+        "Health" : false
+    }
+}
+```
+
+### 2. /api/genres/subscribe : 
+POST : Subscribe to the genres specified in body, which may look like this :
+```
+## Request body 
+{
+    "genres" : "Technology,Politics"
+}
+
+## Response
+{
+    "status": "success",
+    "message": "Subscribed lance69 to Technology,Politics"
+}
+```
+
+### 3. /api/home :
+GET : Returns questions with their top upvoted answers (With Genres that are subscribed by the user)
+```
+{
+    "count": 55,
+    "next": "http://127.0.0.1:8000/api/home?page=2",
+    "previous": null,
+    "results": [
+        {
+            "question": "Is math related to science?",
+            ... 
+        },
+        ...
+        ...
+    ]
+}
+         
+```
+
+### 4. /api/questions :
+POST : Create a new questions by making a POST request to this endpoint.
+```
+## Request body 
+{
+    "question" : "Is math related to science"
+}
+
+## Response body
+{
+    "status" : "success",
+    "message" : "Question added successfully"
+} 
+```
+
+### 5. /api/questions/<question_url>
+> GET : Get all the details along with all answers for this question
+> PUT : Update an existing question
+```
+## PUT request example
+{
+    "question" : "<updated-question-here>,
+    "requested" : ["keshav01", "lance69"] // Newly answer requested people
+    "followed" : True // Makes the current user follow the question
+    "unfollowed" : False // Makes the current user unfollow the question 
+}
+```
+> DELETE : Delete the question, if you're the owner
+
+### 6. /api/answers
+> POST : Create a new answer to a question.
+```
+## Request example
+{
+    "question" : "is-math-related-to-science", // This is the url of the question
+    "answer" : "Well that really is hard to answer if we considering the current state of ...
+                ..."
+}
+```
+
+### 7. /api/answers/<answer_id>
+> GET : Get the answer stored on this ID
+> PUT : Update the answer stored on this ID (obviously allowed only of you're the author)
+> DELETE : Delete the answer stored on this ID
