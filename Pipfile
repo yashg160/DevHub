@@ -11,6 +11,8 @@ idna = "==2.8"
 requests = "==2.22.0"
 urllib3 = "==1.25.7"
 pylint-django = "*"
+faker = "*"
+tqdm = "*"
 
 [dev-packages]
 pylint = "*"
