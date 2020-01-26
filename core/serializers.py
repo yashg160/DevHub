@@ -3,6 +3,7 @@ from datetime import datetime
 from rest_framework import serializers
 from core.models import Genre, Topic, Question, Answer
 from users.models import CustomUser
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -23,14 +24,22 @@ class TopicSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     asker_name = serializers.CharField(source = 'asker.username')
     followers_list = serializers.SerializerMethodField()
+    all_answers = serializers.SerializerMethodField()
+    genres = serializers.SerializerMethodField()
 
     def get_followers_list(self, instance):
         return([follower.username for follower in instance.followers.all()])
 
+    def get_all_answers(self, instance):
+        return([AnswerSerializer(answer).data for answer in instance.answers.all()])
+
+    def get_genres(self, instance):
+        return([genre.name for genre in instance.genres.all()])
+
     class Meta:
         model = Question
         fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list', 
-                  'topics', 'url', 'created_at', 'updated_at', 'answers', )
+                  'topics', 'url', 'created_at', 'updated_at', 'all_answers', )
 
     def update(self, instance, validated_data, current_user):
         new_question = validated_data.get('question', instance.question)
@@ -57,16 +66,21 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source='question.url')
+    question = serializers.CharField(source='question.url')
     author_name = serializers.CharField(source='author.username')
     upvoters = serializers.SerializerMethodField()
+    upvotes = serializers.SerializerMethodField()
 
     def get_upvoters(self, instance):
         return([person.username for person in instance.upvoters.all()])
 
+    def get_upvotes(self, instance):
+        return instance.upvoters.all().count()
+
     class Meta:
         model = Answer
-        fields = ('id', 'url', 'answer', 'author_name', 'upvoters', 'created_at', 'updated_at', )
+        fields = ('id', 'question', 'answer', 'upvotes', 'author_name', 'upvoters',
+                  'created_at', 'updated_at', )
 
     # pylint: disable=W0221
     def update(self, instance, validated_data, current_user):
@@ -77,3 +91,23 @@ class AnswerSerializer(serializers.ModelSerializer):
         instance.updated_at = datetime.now()
         instance.save()
         return instance
+
+class HomePageSerializer(serializers.ModelSerializer):
+    asker_name = serializers.CharField(source = 'asker.username')
+    followers_list = serializers.SerializerMethodField()
+    answer = serializers.SerializerMethodField()
+    genres = serializers.SerializerMethodField()
+
+    def get_followers_list(self, instance):
+        return([follower.username for follower in instance.followers.all()])
+
+    def get_answer(self, instance):
+        return AnswerSerializer(Answer.objects.get(id=instance.answer)).data
+
+    def get_genres(self, instance):
+        return([genre.name for genre in instance.genres.all()])
+
+    class Meta:
+        model = Question
+        fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list',
+                  'topics', 'url', 'created_at', 'updated_at', 'answer', )
