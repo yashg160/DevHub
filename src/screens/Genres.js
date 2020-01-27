@@ -81,8 +81,7 @@ export default class Genres extends React.Component {
 								key={i}
 								style={{
 									margin: '0.5rem',
-									padding: '1rem',
-									backgroundColor: g[1] ? 'secondary' : null
+									padding: '1rem'
 								}}
 							/>
 						))}
