@@ -18,7 +18,8 @@ export default class Genres extends React.Component {
 
 		this.state = {
 			loading: true,
-			content: null
+			content: null,
+			genreTouched: false
 		};
 	}
 
@@ -53,6 +54,16 @@ export default class Genres extends React.Component {
 			});
 	}
 
+	handleGenreClick(i) {
+		if (this.state.content[i][1]) {
+			this.state.content[i][1] = false;
+		} else {
+			this.state.content[i][1] = true;
+		}
+		this.state.genreTouched = true;
+		this.forceUpdate();
+	}
+
 	render() {
 		if (this.state.loading) return <Backdrop open={this.state.loading} />;
 		return (
@@ -83,6 +94,9 @@ export default class Genres extends React.Component {
 									margin: '0.5rem',
 									padding: '1rem'
 								}}
+								color={g[1] ? 'primary' : 'secondary'}
+								clickable
+								onClick={() => this.handleGenreClick(i)}
 							/>
 						))}
 					</div>
