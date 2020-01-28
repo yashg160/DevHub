@@ -6,6 +6,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+import InfiniteScroll from 'react-infinite-scroll-component';
+
 import serverUrl from '../config';
 
 import Cookies from 'js-cookie';
@@ -17,7 +24,8 @@ export default class Dashboard extends React.Component {
 		this.state = {
 			user: null,
 			loading: true,
-			error: false
+			error: false,
+			result: []
 		};
 	}
 
@@ -34,19 +42,25 @@ export default class Dashboard extends React.Component {
 		return res;
 	}
 
-	componentDidMount() {
+	fetchResult() {
 		var token = Cookies.get('TOKEN');
 		console.log(token);
 
 		this.getResults(token)
 			.then(res => {
 				console.group(res);
+				res.results.map(r => this.state.result.push(r));
+				console.log(this.state);
 				this.setState({ loading: false, error: false });
 			})
 			.catch(error => {
 				this.setState({ error: true, loading: false });
 				console.error(error);
 			});
+	}
+
+	componentDidMount() {
+		this.fetchResult();
 	}
 	render() {
 		if (this.state.loading)
