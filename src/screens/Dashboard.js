@@ -25,12 +25,14 @@ export default class Dashboard extends React.Component {
 			user: null,
 			loading: true,
 			error: false,
-			result: []
+			result: [],
+			hasMore: false,
+			next: null
 		};
 	}
 
-	async getResults(token) {
-		let rawResponse = await fetch(serverUrl + '/api/home', {
+	async getResults(token, url) {
+		let rawResponse = await fetch(url, {
 			method: 'GET',
 			headers: {
 				Authorization: `Token ${token}`,
@@ -46,11 +48,30 @@ export default class Dashboard extends React.Component {
 		var token = Cookies.get('TOKEN');
 		console.log(token);
 
-		this.getResults(token)
+		/*
+        Check for the url in state. If the function is being called for the first time, then "next" will be null in state.
+
+        If "next" already exists, then use that url to fetch the request. Later again set the next url in response in the state.
+        */
+
+		let url = serverUrl + '/api/home';
+		this.state.next
+			? (url = this.state.next)
+			: console.log('Fetching from next page');
+
+		this.getResults(token, url)
 			.then(res => {
 				console.group(res);
+
+				//Push each of the answer in the response to the state
 				res.results.map(r => this.state.result.push(r));
 				console.log(this.state);
+
+				//Check if "next" url exists in response. If it exists, then set hasMore in state to true.
+				//Also store the next url to make future requests for the infinite scrolling
+				if (res.next) this.setState({ hasMore: true, next: res.next });
+				else this.setState({ hasMore: false, next: null });
+
 				this.setState({ loading: false, error: false });
 			})
 			.catch(error => {
@@ -97,7 +118,42 @@ export default class Dashboard extends React.Component {
 							flexDirection: 'column',
 							alignItems: 'center',
 							justifyContent: 'center'
-						}}></div>
+						}}>
+						<InfiniteScroll
+							dataLength={this.state.result.length}
+							next={() => this.fetchResult()}
+							hasMore={this.state.hasMore}
+							loader={<h2>Loading...</h2>}
+							endMessage={
+								<p style={{ textAlign: 'center' }}>
+									<b>Yay! You have seen it all</b>
+								</p>
+							}>
+							{this.state.result.map((res, i) => (
+								<ExpansionPanel>
+									<ExpansionPanelSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls={`panel${i}-control`}
+										id={`panel${i}-header`}>
+										<Typography variant='h5'>
+											{res.question}
+										</Typography>
+										<Typography variant='body1'>
+											Anser by {res.answer.author_name}
+										</Typography>
+										<Typography variant='body2'>
+											Anser by {res.answer.updated_at}
+										</Typography>
+									</ExpansionPanelSummary>
+									<ExpansionPanelDetails>
+										<Typography>
+											{res.answer.answer}
+										</Typography>
+									</ExpansionPanelDetails>
+								</ExpansionPanel>
+							))}
+						</InfiniteScroll>
+					</div>
 				</Container>
 			</div>
 		);
