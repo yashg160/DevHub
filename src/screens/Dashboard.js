@@ -21,10 +21,32 @@ export default class Dashboard extends React.Component {
 		};
 	}
 
+	async getResults(token) {
+		let rawResponse = await fetch(serverUrl + '/api/home', {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json'
+			}
+		});
+
+		let res = await rawResponse.json();
+		return res;
+	}
+
 	componentDidMount() {
 		var token = Cookies.get('TOKEN');
 		console.log(token);
-		this.setState({ loading: false });
+
+		this.getResults(token)
+			.then(res => {
+				console.group(res);
+				this.setState({ loading: false, error: false });
+			})
+			.catch(error => {
+				this.setState({ error: true, loading: false });
+				console.error(error);
+			});
 	}
 	render() {
 		if (this.state.loading)
