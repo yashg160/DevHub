@@ -32,13 +32,37 @@ export default class Dashboard extends React.Component {
 		else if (this.state.error) return <h1>There was an error</h1>;
 
 		return (
-			<div>
+			<div style={{ backgroundColor: '#e3e3e3' }}>
 				<AppBar position='static'>
 					<Toolbar>
 						<Typography variant='h6'>Reactora</Typography>
 					</Toolbar>
 				</AppBar>
-				<Container maxWidth='md'></Container>
+				<Container
+					maxWidth='md'
+					style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+					<div
+						style={{
+							padding: '1rem',
+							backgroundColor: '#fff',
+							height: '100%',
+							borderRadius: '0.5rem'
+						}}>
+						<Typography variant='body1'>User Name</Typography>
+						<Typography variant='h4'>
+							What is your question or link?
+						</Typography>
+					</div>
+
+					<div
+						style={{
+							width: '100%',
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center'
+						}}></div>
+				</Container>
 			</div>
 		);
 	}
