@@ -32,7 +32,7 @@ export default class Question extends React.Component {
 			loading: true,
 			error: false,
 			question: null,
-			modalVisible: false
+			modalVisible: true
 		};
 	}
 
@@ -206,14 +206,14 @@ export default class Question extends React.Component {
 						variant='contained'
 						color='primary'
 						startIcon={<CreateIcon />}
-						onClick={() => this.setState({ modalVisible: true })}>
+						onClick={() => this.setState({ modalVisible: true })}
+						style={{ marginTop: '0.5rem' }}>
 						<Typography
 							variant='body1'
 							style={{
 								fontWeight: 500,
 								fontSize: 18,
-								textTransform: 'capitalize',
-								marginTop: '0.5rem'
+								textTransform: 'capitalize'
 							}}>
 							Answer
 						</Typography>
@@ -249,6 +249,70 @@ export default class Question extends React.Component {
 						</div>
 					))}
 				</Container>
+				<Modal
+					aria-labelledby='modal-answer'
+					aria-describedby='modal-answer'
+					open={this.state.modalVisible}
+					onClose={() => this.setState({ modalVisible: false })}
+					closeAfterTransition
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Fade in={this.state.modalVisible}>
+						<div style={{ width: '50%', backgroundColor: '#fff' }}>
+							<div
+								style={{
+									backgroundColor: '#e7e7e7',
+									padding: '1rem'
+								}}>
+								<Typography variant='h6'>
+									Write an Answer
+								</Typography>
+							</div>
+
+							<div style={{ padding: '1rem 2rem 2rem 2rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{ fontWeight: 700 }}>
+										Tips on giving a good answer
+									</Typography>
+									<Typography variant='body1'>
+										Read all answers before writing a new
+										one
+									</Typography>
+									<Typography variant='body1'>
+										Use proper grammar to prevent confusion.
+										Avoid using jargon.
+									</Typography>
+									<Typography variant='body1'>
+										If possible, provide links or sources to
+										any data you would like to provide.
+									</Typography>
+								</div>
+
+								<div style={{ marginTop: '1rem' }}>
+									<Typography variant='body1'>
+										The question is
+									</Typography>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 600,
+											textTransform: 'capitalize'
+										}}>
+										{this.state.question.question}
+									</Typography>
+								</div>
+							</div>
+						</div>
+					</Fade>
+				</Modal>
 			</div>
 		);
 	}
