@@ -159,16 +159,22 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):
         instance.comment = validated_data.get('comment', instance.comment)
-        
+        current_user = validated_data.get('current_user')
         if validated_data.get('upvote', False):
-            instance.comment.upvoters.add(
-                CustomUser.objects.get(id = validated_data.get('current_user'))
-            )
+            try:
+                instance.comment.upvoters.add(
+                    CustomUser.objects.get(username = current_user)
+                )
+            except:
+                pass
         
         elif validated_data.get('remove_upvote', False):
-            instance.comment.upvoters.remove(
-                CustomUser.objects.get(id = validated_data.get('current_user'))
-            )
+            try:
+                instance.comment.upvoters.remove(
+                    CustomUser.objects.get(username = current_user)
+                )
+            except:
+                pass
         instance.updated_at = datetime.now()
         instance.save()
         return instance

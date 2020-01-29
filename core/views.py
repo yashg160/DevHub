@@ -254,7 +254,7 @@ class CommentView(APIView):
         if request.user != comment.author :
             return Response({'status' : 'error', 'message' : 'Not authenticated to change this comment'})
         updated_comment = request.data
-        updated_comment['current_user'] = request.user
+        updated_comment['current_user'] = request.user.username
         serializer = CommentSerializer(comment)
         serializer.update(comment, updated_comment)
 
