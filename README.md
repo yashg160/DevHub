@@ -137,3 +137,28 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 > PUT : Update the answer stored on this ID (obviously allowed only of you're the author)
 
 > DELETE : Delete the answer stored on this ID
+
+### 8. /api/comments
+> POST : Add a new comment to an answer
+```
+## Request example
+{
+    "comment" : "Hey this is a comment",
+    "answer" : "<answer_id> // Required
+    "parent_comment" : "<id_of_parent_comment>" // to be used if reply to another comment
+}
+```
+### 9. /api/comments/<comment_id>
+> GET : Get the answer stored on this ID
+
+> PUT : Update the answer stored on this ID (obviously allowed only of you're the author)
+```
+## PUT request example
+{
+    "comment" : "<updated-comment-here>,
+    "upvote" : True // Makes the current user upvote the question
+    "remove_upvote" : True // Makes the current user unfollow the question 
+}
+```
+
+> DELETE : Delete the answer stored on this ID

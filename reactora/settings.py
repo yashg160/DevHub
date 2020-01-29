@@ -37,11 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'users',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +131,6 @@ USE_TZ = True
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-#CORS_ORIGIN_WHITELIST = ['http://*', 'https://*']
 CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
 
 CORS_ALLOW_CREDENTIALS = True
