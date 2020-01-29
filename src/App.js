@@ -11,8 +11,11 @@ function App() {
 	return (
 		<Router>
 			<Switch>
+				<Route
+					path='/questions/:questionUrl/answer'
+					component={Answer}
+				/>
 				<Route path='/questions/:questionUrl' component={Question} />
-				<Route exact path='/answer' component={Answer} />
 				<Route exact path='/dashboard' component={Dashboard} />
 				<Route exact path='/' component={Home} />
 				<Route exact path='/genres' component={Genres} />
