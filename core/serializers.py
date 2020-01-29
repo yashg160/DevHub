@@ -1,7 +1,7 @@
 # pylint: disable=W0221
 from datetime import datetime
 from rest_framework import serializers
-from core.models import Genre, Topic, Question, Answer
+from core.models import Genre, Topic, Question, Answer, Comment
 from users.models import CustomUser
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -75,6 +75,7 @@ class AnswerSerializer(serializers.ModelSerializer):
     question = serializers.CharField(source='question.url')
     author_name = serializers.CharField(source='author.username')
     upvoters = serializers.SerializerMethodField()
+    comment_thread = serializers.SerializerMethodField()
     upvotes = serializers.SerializerMethodField()
 
     def get_upvoters(self, instance):
@@ -83,10 +84,15 @@ class AnswerSerializer(serializers.ModelSerializer):
     def get_upvotes(self, instance):
         return instance.upvoters.all().count()
 
+    def get_comment_thread(self, instance):
+        primary_comment = instance.replied_comments.filter(parent_comment = None)
+        if(primary_comment.count() == 0): return []
+        return [CommentThreadSerializer(comment).data for comment in primary_comment]
+        
     class Meta:
         model = Answer
         fields = ('id', 'question', 'answer', 'upvotes', 'author_name', 'upvoters',
-                  'created_at', 'updated_at', )
+                  'comment_thread', 'created_at', 'updated_at', )
 
     # pylint: disable=W0221
     def update(self, instance, validated_data, current_user):
@@ -117,3 +123,52 @@ class HomePageSerializer(serializers.ModelSerializer):
         model = Question
         fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list',
                   'topics', 'url', 'created_at', 'updated_at', 'answer', )
+
+
+class CommentThreadSerializer(serializers.ModelSerializer):
+    child_comments = serializers.SerializerMethodField()
+    author_name = serializers.CharField(source = 'author.username')
+    upvotes = serializers.SerializerMethodField()
+    
+    def get_child_comments(self, instance):
+        child_comments = Comment.objects.filter(parent_comment = instance)
+        if child_comments.count() == 0:
+            return []
+        return([CommentThreadSerializer(comment).data for comment in child_comments]) 
+
+    def get_upvotes(self, instance):
+        return instance.upvoters.all().count()
+
+    class Meta:
+        model = Comment
+        fields = ('answer', 'author_name', 'comment', 'upvotes', 'child_comments', 
+                  'created_at', 'updated_at', )
+
+
+class CommentSerializer(serializers.HyperlinkedModelSerializer):
+    author_name = serializers.CharField(source = 'author.username')
+    upvotes = serializers.SerializerMethodField()
+
+    def get_upvotes(self, instance):
+        return instance.upvoters.all().count()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'comment', 'author_name', 'upvotes', 'parent_comment',
+                  'created_at', 'updated_at', )
+
+    def update(self, instance, validated_data):
+        instance.comment = validated_data.get('comment', instance.comment)
+        
+        if validated_data.get('upvote', False):
+            instance.comment.upvoters.add(
+                CustomUser.objects.get(id = validated_data.get('current_user'))
+            )
+        
+        elif validated_data.get('remove_upvote', False):
+            instance.comment.upvoters.remove(
+                CustomUser.objects.get(id = validated_data.get('current_user'))
+            )
+        instance.updated_at = datetime.now()
+        instance.save()
+        return instance
