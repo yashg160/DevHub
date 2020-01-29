@@ -4,6 +4,8 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -176,14 +178,100 @@ export default class Dashboard extends React.Component {
 
 		return (
 			<div style={{ backgroundColor: '#e3e3e3' }}>
-				<AppBar position='static'>
+				<AppBar position='fixed'>
 					<Toolbar>
-						<Typography variant='h6'>Reactora</Typography>
+						<Container maxWidth='lg'>
+							<div
+								style={{
+									display: 'flex',
+									flexGrow: 1,
+									flexDirection: 'row',
+									justifyContent: 'space-between'
+								}}>
+								<Typography variant='h5'>Reactora</Typography>
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row'
+									}}>
+									<Link
+										style={{
+											color: '#f01818',
+											marginRight: '2rem'
+										}}
+										onClick={() =>
+											this.props.history.push(
+												'/dashboard'
+											)
+										}>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'row',
+												alignItems: 'center'
+											}}>
+											<DashboardIcon />
+											<Typography
+												variant='body1'
+												style={{
+													fontWeight: 600,
+													marginLeft: '0.5rem'
+												}}>
+												Dashboard
+											</Typography>
+										</div>
+									</Link>
+
+									<Link
+										style={{
+											color: '#fff',
+											marginLeft: '2rem'
+										}}
+										onClick={() =>
+											this.props.history.push('/genres')
+										}>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'row',
+												alignItems: 'center'
+											}}>
+											<GroupIcon />
+											<Typography
+												variant='body1'
+												style={{
+													fontWeight: 600,
+													marginLeft: '0.5rem'
+												}}>
+												Genres
+											</Typography>
+										</div>
+									</Link>
+								</div>
+								<Button
+									variant='contained'
+									onClick={() => console.log('Add q pressed')}
+									style={{ position: 'relative' }}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 600,
+											textTransform: 'capitalize'
+										}}>
+										Add Question
+									</Typography>
+								</Button>
+							</div>
+						</Container>
 					</Toolbar>
 				</AppBar>
 				<Container
 					maxWidth='md'
-					style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
+					style={{
+						paddingTop: '2rem',
+						paddingBottom: '2rem',
+						marginTop: '4rem'
+					}}>
 					<div
 						style={{
 							padding: '1rem',
