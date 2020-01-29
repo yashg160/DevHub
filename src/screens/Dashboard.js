@@ -34,7 +34,9 @@ export default class Dashboard extends React.Component {
 			hasMore: false,
 			next: null,
 			modalVisible: true,
-			newQuestion: ''
+			newQuestion: '',
+			newQuestionError: false,
+			questionPosted: false
 		};
 	}
 
@@ -84,6 +86,61 @@ export default class Dashboard extends React.Component {
 			.catch(error => {
 				this.setState({ error: true, loading: false });
 				console.error(error);
+			});
+	}
+
+	async checkQuestion() {
+		const { newQuestion } = this.state;
+
+		if (newQuestion == '' || newQuestion.length < 5) throw Error();
+	}
+
+	async postQuestion(token) {
+		const url = serverUrl + '/api/questions';
+
+		let rawResponse = await fetch(url, {
+			method: 'POST',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: '*/*',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				question: this.state.newQuestion
+			})
+		});
+
+		let res = rawResponse.json();
+		if (res.statusCode !== 200) throw Error();
+		return res;
+	}
+
+	handleAskQuestion() {
+		var token = Cookies.get('TOKEN');
+		console.log(token);
+
+		/*
+            In this method we handle the posting of a new question. First task is to check the string for any error.
+            If there is an error, throw the error and catch it later in th catch callback
+        */
+		this.checkQuestion()
+			.then(() => this.postQuestion())
+			.then(res => {
+				console.group(res);
+				this.setState({
+					loading: false,
+					newQuestionError: false,
+					questionPosted: true,
+					modalVisible: false
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({
+					loading: false,
+					newQuestionError: true,
+					questionPosted: false
+				});
 			});
 	}
 
@@ -235,6 +292,17 @@ export default class Dashboard extends React.Component {
 											newQuestion: event.target.value
 										})
 									}
+									onFocus={() =>
+										this.setState({
+											newQuestionError: false
+										})
+									}
+									error={this.state.newQuestionError}
+									helperText={
+										this.state.newQuestionError
+											? 'Please check your question again'
+											: ''
+									}
 								/>
 							</div>
 							<div
@@ -255,9 +323,7 @@ export default class Dashboard extends React.Component {
 								</Button>
 								<Button
 									variant='contained'
-									onClick={() =>
-										console.log('Add questionm pressed')
-									}
+									onClick={() => this.handleAskQuestion()}
 									style={{ marginLeft: '0.2rem' }}>
 									Add question
 								</Button>
