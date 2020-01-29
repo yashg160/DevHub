@@ -9,10 +9,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
 
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CreateIcon from '@material-ui/icons/Create';
 
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
@@ -34,7 +31,8 @@ export default class Question extends React.Component {
 		this.state = {
 			loading: true,
 			error: false,
-			question: null
+			question: null,
+			modalVisible: false
 		};
 	}
 
@@ -203,6 +201,23 @@ export default class Question extends React.Component {
 						}}>
 						{this.state.question.question}
 					</Typography>
+
+					<Button
+						variant='contained'
+						color='primary'
+						startIcon={<CreateIcon />}
+						onClick={() => this.setState({ modalVisible: true })}>
+						<Typography
+							variant='body1'
+							style={{
+								fontWeight: 500,
+								fontSize: 18,
+								textTransform: 'capitalize',
+								marginTop: '0.5rem'
+							}}>
+							Answer
+						</Typography>
+					</Button>
 
 					<Typography
 						variant='h6'
