@@ -5,12 +5,14 @@ import Home from './screens/Home';
 import Dashboard from './screens/Dashboard';
 import Genres from './screens/Genres';
 import Question from './screens/Question';
+import Answer from './screens/Answer';
 
 function App() {
 	return (
 		<Router>
 			<Switch>
 				<Route path='/questions/:questionUrl' component={Question} />
+				<Route exact path='/answer' component={Answer} />
 				<Route exact path='/dashboard' component={Dashboard} />
 				<Route exact path='/' component={Home} />
 				<Route exact path='/genres' component={Genres} />
