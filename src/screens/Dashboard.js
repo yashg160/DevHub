@@ -11,11 +11,16 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
+import TextField from '@material-ui/core/TextField';
+
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
 
 import Cookies from 'js-cookie';
+import { Button } from '@material-ui/core';
 
 export default class Dashboard extends React.Component {
 	constructor(props) {
@@ -27,7 +32,9 @@ export default class Dashboard extends React.Component {
 			error: false,
 			result: [],
 			hasMore: false,
-			next: null
+			next: null,
+			modalVisible: true,
+			newQuestion: ''
 		};
 	}
 
@@ -104,7 +111,8 @@ export default class Dashboard extends React.Component {
 							backgroundColor: '#fff',
 							height: '100%',
 							borderRadius: '0.5rem'
-						}}>
+						}}
+						onClick={() => this.setState({ modalVisible: true })}>
 						<Typography variant='body1'>User Name</Typography>
 						<Typography variant='h4'>
 							What is your question or link?
@@ -130,7 +138,7 @@ export default class Dashboard extends React.Component {
 								</p>
 							}>
 							{this.state.result.map((res, i) => (
-								<ExpansionPanel>
+								<ExpansionPanel key={i}>
 									<ExpansionPanelSummary
 										expandIcon={<ExpandMoreIcon />}
 										aria-controls={`panel${i}-control`}
@@ -155,6 +163,108 @@ export default class Dashboard extends React.Component {
 						</InfiniteScroll>
 					</div>
 				</Container>
+				<Modal
+					aria-labelledby='modal-question'
+					aria-describedby='modal-ask-question'
+					open={this.state.modalVisible}
+					onClose={() => this.setState({ modalVisible: false })}
+					closeAfterTransition
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Fade in={this.state.modalVisible}>
+						<div
+							style={{
+								padding: '1.5rem',
+								backgroundColor: '#fff',
+								width: '50%'
+							}}>
+							<div
+								style={{
+									width: '100%',
+									height: '2rem',
+									backgroundColor: '#e3e3e3'
+								}}>
+								<Typography variant='h6'>
+									Add Question
+								</Typography>
+							</div>
+
+							<div>
+								<Typography
+									variant='h6'
+									style={{ fontWeight: 700 }}>
+									Tips on getting good answers quickly
+								</Typography>
+								<Typography variant='body1'>
+									Make sure your question hasn't been asked
+									already
+								</Typography>
+								<Typography variant='body1'>
+									Keep your question short and to the point
+								</Typography>
+								<Typography variant='body1'>
+									Double-check grammar and spelling
+								</Typography>
+							</div>
+
+							<div>
+								<Typography variant='subtitle1'>
+									User Name asked
+								</Typography>
+								<TextField
+									id='question'
+									label='Your Question'
+									InputProps={{
+										style: { fontSize: 28, fontWeight: 600 }
+									}}
+									placeholder={
+										'Start you question with "What," "Why," or "How."'
+									}
+									multiline
+									rowsMax='3'
+									fullWidth
+									value={this.state.newQuestion}
+									onChange={event =>
+										this.setState({
+											newQuestion: event.target.value
+										})
+									}
+								/>
+							</div>
+							<div
+								style={{
+									padding: '2rem',
+									display: 'flex',
+									flexDirection: 'row',
+									justifyContent: 'flex-end',
+									alignItems: 'center'
+								}}>
+								<Button
+									variant='text'
+									onClick={() =>
+										this.setState({ modalVisible: false })
+									}
+									style={{ marginRight: '0.2rem' }}>
+									Cancel
+								</Button>
+								<Button
+									variant='contained'
+									onClick={() =>
+										console.log('Add questionm pressed')
+									}
+									style={{ marginLeft: '0.2rem' }}>
+									Add question
+								</Button>
+							</div>
+						</div>
+					</Fade>
+				</Modal>
 			</div>
 		);
 	}
