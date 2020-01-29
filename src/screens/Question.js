@@ -11,11 +11,6 @@ import Typography from '@material-ui/core/Typography';
 
 import CreateIcon from '@material-ui/icons/Create';
 
-import Dialog from '@material-ui/core/Dialog';
-import Modal from '@material-ui/core/Modal';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -32,8 +27,7 @@ export default class Question extends React.Component {
 		this.state = {
 			loading: true,
 			error: false,
-			question: null,
-			modalVisible: true
+			question: null
 		};
 	}
 
