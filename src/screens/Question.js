@@ -135,7 +135,7 @@ export default class Question extends React.Component {
 
 										<Link
 											style={{
-												color: '#f01818',
+												color: '#fff',
 												marginLeft: '2rem'
 											}}
 											onClick={() =>
@@ -166,7 +166,13 @@ export default class Question extends React.Component {
 						</Container>
 					</Toolbar>
 				</AppBar>
-				<Container maxWidth='md' style={{ marginTop: '3rem' }}>
+				<Container
+					maxWidth='md'
+					style={{
+						marginTop: '3rem',
+						paddingTop: '2rem',
+						paddingBottom: '2rem'
+					}}>
 					<div
 						style={{
 							display: 'flex',
@@ -174,12 +180,17 @@ export default class Question extends React.Component {
 							alignItems: 'center'
 						}}>
 						{this.state.question.genres.map((g, i) => (
-							<div key={i} style={{ backgroundColor: '#e3e3e3' }}>
-								<Typography variant='subtitle2'>
-									{g}
-									{'   '}
-								</Typography>
-							</div>
+							<Typography
+								variant='subtitle2'
+								key={i}
+								style={{
+									backgroundColor: '#e3e3e3',
+									padding: '0.5rem',
+									marginRight: '1rem'
+								}}>
+								{g}
+								{'   '}
+							</Typography>
 						))}
 					</div>
 
@@ -187,12 +198,15 @@ export default class Question extends React.Component {
 						variant='h4'
 						style={{
 							fontWeight: 600,
-							textTransform: 'capitalize'
+							textTransform: 'capitalize',
+							marginTop: '2rem'
 						}}>
 						{this.state.question.question}
 					</Typography>
 
-					<Typography variant='h6' style={{ fontWeight: 500 }}>
+					<Typography
+						variant='h6'
+						style={{ fontWeight: 500, marginTop: '1rem' }}>
 						{this.state.question.all_answers.length} Answers
 					</Typography>
 					<hr></hr>
@@ -207,7 +221,7 @@ export default class Question extends React.Component {
 									{answer.author_name}
 								</Typography>
 								<Typography variant='subtitle2'>
-									Updated at{' '}
+									Updated{' '}
 									{new Date(answer.updated_at).toString()}
 								</Typography>
 								<Typography

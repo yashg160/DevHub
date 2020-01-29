@@ -346,17 +346,12 @@ export default class Dashboard extends React.Component {
 												}}
 												onClick={() =>
 													this.props.history.push(
-                                                        `/questions/${res.url}`
+														`/questions/${res.url}`
 													)
 												}>
 												{res.question}
 											</Typography>
 										</div>
-										{/* 
-										
-                                        <Typography>
-											{res.answer.answer}
-										</Typography>*/}
 									</ExpansionPanelSummary>
 									<ExpansionPanelDetails>
 										<div
