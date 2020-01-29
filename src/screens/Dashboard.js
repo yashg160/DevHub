@@ -15,12 +15,17 @@ import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
 
 import Cookies from 'js-cookie';
-import { Button } from '@material-ui/core';
 
 export default class Dashboard extends React.Component {
 	constructor(props) {
@@ -36,7 +41,8 @@ export default class Dashboard extends React.Component {
 			modalVisible: true,
 			newQuestion: '',
 			newQuestionError: false,
-			showSnackbar: false
+			showSnackbar: false,
+			messageSnackbar: 'Snackbar messsage'
 		};
 	}
 
@@ -346,6 +352,45 @@ export default class Dashboard extends React.Component {
 						</div>
 					</Fade>
 				</Modal>
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left'
+					}}
+					open={this.state.showSnackbar}
+					autoHideDuration={5000}
+					onClose={() => this.setState({ showSnackbar: false })}
+					ContentProps={{
+						'aria-describedby': 'messsage-snackbar',
+						style: { backgroundColor: '#fff' }
+					}}
+					message={
+						<span id='message-snackbar' sty>
+							<Typography
+								variant='body1'
+								style={{ color: '#000' }}>
+								{this.state.messageSnackbar}
+							</Typography>
+						</span>
+					}
+					transitionDuration={{
+						enter: 300,
+						exit: 300
+					}}
+					style={{
+						backgroundColor: '#fff'
+					}}
+					action={[
+						<IconButton
+							key='close'
+							aria-label='close'
+							color='secondary'
+							onClick={() =>
+								this.setState({ showSnackbar: false })
+							}>
+							<CloseIcon />
+						</IconButton>
+					]}></Snackbar>
 			</div>
 		);
 	}
