@@ -201,7 +201,12 @@ export default class Question extends React.Component {
 						variant='contained'
 						color='primary'
 						startIcon={<CreateIcon />}
-						onClick={() => this.setState({ modalVisible: true })}
+						onClick={() =>
+							this.props.history.push({
+								pathname: `/questions/${this.state.question.url}/answer`,
+								state: { question: this.state.question }
+							})
+						}
 						style={{ marginTop: '0.5rem' }}>
 						<Typography
 							variant='body1'
