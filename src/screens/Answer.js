@@ -9,17 +9,12 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
 
-import CreateIcon from '@material-ui/icons/Create';
+import SendIcon from '@material-ui/icons/Send';
+import { Redirect } from 'react-router-dom';
 
-import Dialog from '@material-ui/core/Dialog';
-import Modal from '@material-ui/core/Modal';
-import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 
 import Link from '@material-ui/core/Link';
 
@@ -31,10 +26,61 @@ export default class Answer extends React.Component {
 		this.state = {
 			loading: false,
 			error: false,
+			toQuestion: false,
 			questionUrl: this.props.match.params.questionUrl,
 			question: this.props.history.location.state.question,
 			answerValue: ''
 		};
+	}
+
+	async checkAnswer() {
+		if (this.state.answerValue.length === 0) throw Error('ERR_ANSWER');
+	}
+
+	async postAnswer(token) {
+		const questionUrl = this.state.questionUrl;
+
+		let rawResponse = await fetch(serverUrl + '/api/answers', {
+			method: 'POST',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				question: questionUrl,
+				answer: this.state.answerValue
+			})
+		});
+
+		let res = await rawResponse.json();
+
+		if (res.status !== 'success') throw Error('ERR_SERVER');
+		return res;
+	}
+
+	handleSubmitPress() {
+		const token = Cookies.get('TOKEN');
+		console.log(token);
+
+		this.checkAnswer()
+			.then(() => this.postAnswer(token))
+			.then(res => {
+				console.group(res);
+				this.setState({
+					loading: false,
+					error: false,
+					toQuestion: true
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({
+					loading: false,
+					error: true,
+					toQuestion: false
+				});
+			});
 	}
 
 	componentDidMount() {
@@ -42,7 +88,13 @@ export default class Answer extends React.Component {
 	}
 
 	render() {
-		if (this.state.loading)
+		if (this.state.toQuestion)
+			return (
+				<Redirect
+					to={{ pathname: `/questions/${this.state.questionUrl}` }}
+				/>
+			);
+		else if (this.state.loading)
 			return <Backdrop open={this.state.loading} color='#fff' />;
 		else
 			return (
@@ -192,6 +244,22 @@ export default class Answer extends React.Component {
 							}
 							variant='filled'
 						/>
+						<Button
+							variant='contained'
+							color='primary'
+							endIcon={<SendIcon />}
+							onClick={() => this.handleSubmitPress()}
+							style={{ marginTop: '1rem' }}>
+							<Typography
+								variant='body1'
+								style={{
+									fontWeight: 500,
+									fontSize: 18,
+									textTransform: 'capitalize'
+								}}>
+								Submit
+							</Typography>
+						</Button>
 					</Container>
 				</div>
 			);
