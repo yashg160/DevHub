@@ -17,9 +17,10 @@ import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+
+import Link from '@material-ui/core/Link';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -38,7 +39,7 @@ export default class Dashboard extends React.Component {
 			result: [],
 			hasMore: false,
 			next: null,
-			modalVisible: true,
+			modalVisible: false,
 			newQuestion: '',
 			newQuestionError: false,
 			showSnackbar: false,
@@ -188,13 +189,23 @@ export default class Dashboard extends React.Component {
 							padding: '1rem',
 							backgroundColor: '#fff',
 							height: '100%',
-							borderRadius: '0.5rem'
-						}}
-						onClick={() => this.setState({ modalVisible: true })}>
+							borderRadius: '0.5rem',
+							marginBottom: '2rem',
+							color: '#bababa',
+							borderStyle: 'solid',
+							borderColor: '#bababa',
+							borderWidth: '0.1rem'
+						}}>
 						<Typography variant='body1'>User Name</Typography>
-						<Typography variant='h4'>
-							What is your question or link?
-						</Typography>
+						<Link
+							onClick={() =>
+								this.setState({ modalVisible: true })
+							}
+							color='inherit'>
+							<Typography variant='h4'>
+								What is your question or link?
+							</Typography>
+						</Link>
 					</div>
 
 					<div
@@ -216,25 +227,60 @@ export default class Dashboard extends React.Component {
 								</p>
 							}>
 							{this.state.result.map((res, i) => (
-								<ExpansionPanel key={i}>
+								<ExpansionPanel
+									key={i}
+									style={{
+										marginTop: '1rem',
+										marginBottom: '1rem'
+									}}>
 									<ExpansionPanelSummary
 										expandIcon={<ExpandMoreIcon />}
 										aria-controls={`panel${i}-control`}
 										id={`panel${i}-header`}>
-										<Typography variant='h5'>
-											{res.question}
-										</Typography>
-										<Typography variant='body1'>
-											Anser by {res.answer.author_name}
-										</Typography>
-										<Typography variant='body2'>
-											Anser by {res.answer.updated_at}
-										</Typography>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'column'
+											}}>
+											<Typography variant='subtitle2'>
+												Recommended for you
+											</Typography>
+											<Typography
+												variant='h6'
+												style={{
+													textTransform: 'capitalize',
+													fontWeight: 700
+												}}>
+												{res.question}
+											</Typography>
+										</div>
+										{/* 
+										
+                                        <Typography>
+											{res.answer.answer}
+										</Typography>*/}
 									</ExpansionPanelSummary>
 									<ExpansionPanelDetails>
-										<Typography>
-											{res.answer.answer}
-										</Typography>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'column'
+											}}>
+											<Typography variant='body1'>
+												{res.answer.author_name}
+											</Typography>
+											<Typography variant='subtitle2'>
+												Updated at{' '}
+												{new Date(
+													res.answer.updated_at
+												).toString()}
+											</Typography>
+											<Typography
+												variant='body1'
+												style={{ marginTop: '2rem' }}>
+												{res.answer.answer}
+											</Typography>
+										</div>
 									</ExpansionPanelDetails>
 								</ExpansionPanel>
 							))}
