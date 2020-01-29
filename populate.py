@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from faker import Faker
 from tqdm import tqdm
 
-from core.models import Question, Answer, Genre
+from core.models import Question, Answer, Genre, Comment
 User = get_user_model()
 fake = Faker()
 fake.seed_instance(4500)
@@ -86,6 +86,8 @@ def add_answers(m = 5):
 
 
 if __name__ == "__main__" :
+    Token.objects.all().delete()
+    Comment.objects.all().delete()
     Genre.objects.all().delete()
     User.objects.all().delete()
     Question.objects.all().delete()
