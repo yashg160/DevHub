@@ -177,9 +177,9 @@ export default class Dashboard extends React.Component {
 		else if (this.state.error) return <h1>There was an error</h1>;
 
 		return (
-			<div style={{ backgroundColor: '#e3e3e3' }}>
+			<div style={{ backgroundColor: '#f7f7f7' }}>
 				<AppBar position='fixed'>
-					<Toolbar>
+					<Toolbar variant='dense'>
 						<Container maxWidth='lg'>
 							<div
 								style={{
@@ -208,7 +208,8 @@ export default class Dashboard extends React.Component {
 											style={{
 												display: 'flex',
 												flexDirection: 'row',
-												alignItems: 'center'
+												alignItems: 'center',
+												justifyContent: 'center'
 											}}>
 											<DashboardIcon />
 											<Typography
@@ -250,7 +251,9 @@ export default class Dashboard extends React.Component {
 								</div>
 								<Button
 									variant='contained'
-									onClick={() => console.log('Add q pressed')}
+									onClick={() =>
+										this.setState({ modalVisible: true })
+									}
 									style={{ position: 'relative' }}>
 									<Typography
 										variant='body2'
@@ -270,7 +273,7 @@ export default class Dashboard extends React.Component {
 					style={{
 						paddingTop: '2rem',
 						paddingBottom: '2rem',
-						marginTop: '4rem'
+						marginTop: '3rem'
 					}}>
 					<div
 						style={{

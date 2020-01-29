@@ -4,6 +4,11 @@ import { Redirect } from 'react-router-dom';
 import Backdrop from '@material-ui/core/Backdrop';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import Link from '@material-ui/core/Link';
+
+import GroupIcon from '@material-ui/icons/Group';
+
 import Typography from '@material-ui/core/Typography';
 
 import Chip from '@material-ui/core/Chip';
@@ -125,9 +130,85 @@ export default class Genres extends React.Component {
 			);
 		return (
 			<div>
-				<AppBar position='static'>
-					<Toolbar>
-						<Typography variant='h6'>Reactora</Typography>
+				<AppBar position='fixed'>
+					<Toolbar variant='dense'>
+						<Container maxWidth='lg'>
+							<div
+								style={{
+									display: 'flex',
+									flexGrow: 1,
+									flexDirection: 'row',
+									justifyContent: 'space-between'
+								}}>
+								<Typography variant='h5' style={{ flex: 1 }}>
+									Reactora
+								</Typography>
+								<div style={{ flex: 2 }}>
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'row'
+										}}>
+										<Link
+											style={{
+												color: '#fff',
+												marginRight: '2rem'
+											}}
+											onClick={() =>
+												this.props.history.push(
+													'/dashboard'
+												)
+											}>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row',
+													alignItems: 'center',
+													justifyContent: 'center'
+												}}>
+												<DashboardIcon />
+												<Typography
+													variant='body1'
+													style={{
+														fontWeight: 600,
+														marginLeft: '0.5rem'
+													}}>
+													Dashboard
+												</Typography>
+											</div>
+										</Link>
+
+										<Link
+											style={{
+												color: '#f01818',
+												marginLeft: '2rem'
+											}}
+											onClick={() =>
+												this.props.history.push(
+													'/genres'
+												)
+											}>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row',
+													alignItems: 'center'
+												}}>
+												<GroupIcon />
+												<Typography
+													variant='body1'
+													style={{
+														fontWeight: 600,
+														marginLeft: '0.5rem'
+													}}>
+													Genres
+												</Typography>
+											</div>
+										</Link>
+									</div>
+								</div>
+							</div>
+						</Container>
 					</Toolbar>
 				</AppBar>
 				<Container maxWidth='md' style={{}}>
