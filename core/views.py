@@ -9,8 +9,9 @@ from rest_framework.decorators import api_view, authentication_classes
 import core
 from core.utils.pagination import SmallResultSetPagination
 from core.utils.permissions import isSuperuserOrReadOnly
-from core.serializers import GenreSerializer, QuestionSerializer, AnswerSerializer, HomePageSerializer
-from core.models import Genre, Question, Answer
+from core.serializers import (GenreSerializer, QuestionSerializer, AnswerSerializer, HomePageSerializer,
+                              CommentSerializer)
+from core.models import Genre, Question, Answer, Comment
 # from django.contrib.auth import get_user_model
 
 # User = get_user_model()
@@ -192,9 +193,12 @@ class QuestionCreateView(APIView):
             question.url = question.question.lower().replace(' ', '-').replace('?', '')
             question.save()
 
-        except Exception as e:
-            # return Response({'status' : 'error', 'message' : "An error occurred! We'll look into this"})
-            return Response({'status' : 'error', 'message' : str(e)})
+        except:
+            return Response({
+                'status' : 'error', 
+                'message' : "An error occurred! We'll look into this"
+            })
+            # return Response({'status' : 'error', 'message' : str(e)})
         return Response({
             'status' : 'success',
             'message' : 'Question added succesfully'
@@ -216,12 +220,90 @@ class AnswerCreateView(APIView):
             )
             answer.updated_at = timezone.now()
             answer.save()
-        except Exception as e:
-            # return Response({'status' : 'error', 'message' : "An error occurred! We'll look into this"})
-            return Response({'status' : 'error', 'message' : str(e)})
+        except:
+            return Response({
+                'status' : 'error', 
+                'message' : "An error occurred! We'll look into this"
+            })
+            # return Response({'status' : 'error', 'message' : str(e)})
 
         return Response({
             'status' : 'success',
             'message' : 'Answer created successfully',
             'answer_id' : answer.id
+        })
+
+class CommentView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id = comment_id)
+        except core.models.comment.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Comment does not exist'})
+        return Response({
+            'status' : 'success',
+            'data' : CommentSerializer(comment).data
+        })
+
+    def put(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id = comment_id)
+        except core.models.Comment.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Comment does not exist'})
+        if request.user != comment.author :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to change this comment'})
+        updated_comment = request.data
+        updated_comment['current_user'] = request.user
+        serializer = CommentSerializer(comment)
+        serializer.update(comment, updated_comment)
+
+        return Response({
+            'status' : 'success',
+            'message' : 'Answer updated succesfully',
+            'answer_id' : serializer.data['id']
+        })
+    
+    def delete(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id = comment_id)
+        except core.models.Comment.DoesNotExist:
+            return Response({'status' : 'error', 'message' : 'Comment does not exist'})
+        if comment.author != request.user :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to delete this comment'})
+        comment.delete()
+        return Response({'status' : 'success', 'message' : 'Comment deleted succesfully'})
+
+class CommentCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        data = request.data
+        if not data.get('comment') :
+            return Response({'status' : 'error', 'message' : 'Missing answer in request body'})
+        try :
+            answer = Answer.objects.get(id = data.get('answer'))
+            comment = Comment.objects.create(
+                comment = data.get('comment'),
+                author = request.user,
+                answer = answer
+            )
+            comment.upvoters.add(request.user)
+            comment.updated_at = comment.created_at
+            parent_comment = data.get('parent_comment', False)
+            if parent_comment:
+                comment.parent_comment = Comment.objects.get(id = parent_comment)
+            comment.save()
+        except Exception as e:
+            # return Response({
+            #     'status' : 'error', 
+            #     'message' : "An error occurred! We'll look into this"
+            # })
+            return Response({'status' : 'error', 'message' : str(e)})
+
+        return Response({
+            'status' : 'success',
+            'message' : 'Comment created successfully',
+            'comment_id' : comment.id
         })
