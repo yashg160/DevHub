@@ -1,0 +1,7 @@
+.question-link {
+	transition: 0.2s;
+}
+
+.question-link:hover {
+	text-decoration: underline solid black;
+}

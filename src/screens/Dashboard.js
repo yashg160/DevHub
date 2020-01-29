@@ -1,4 +1,5 @@
 import React from 'react';
+import './styles/dashboard.css';
 
 import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
@@ -337,11 +338,17 @@ export default class Dashboard extends React.Component {
 												Recommended for you
 											</Typography>
 											<Typography
+												className='question-link'
 												variant='h6'
 												style={{
 													textTransform: 'capitalize',
 													fontWeight: 700
-												}}>
+												}}
+												onClick={() =>
+													this.props.history.push(
+                                                        `/questions/${res.url}`
+													)
+												}>
 												{res.question}
 											</Typography>
 										</div>
