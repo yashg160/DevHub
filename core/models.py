@@ -49,11 +49,12 @@ class Comment(models.Model):
     comment = models.CharField(max_length = 200)
     author = models.ForeignKey(CustomUser, on_delete = models.CASCADE,
                                related_name = "written_comments")
-    answer = models.ForeignKey(Answer, on_delete = models.CASCADE, related_name="comments")
+    answer = models.ForeignKey(Answer, on_delete = models.CASCADE, related_name="replied_comments")
     upvoters = models.ManyToManyField(CustomUser, related_name="upvoted_comments")
-    parent_comment = models.OneToOneField("self", on_delete = models.CASCADE,
-                                          related_name="next_in_thread")
-    child_comment = models.OneToOneField("self", on_delete = models.CASCADE,
-                                         related_name="previous_in_thread")
+    parent_comment = models.ForeignKey("self", on_delete = models.CASCADE,
+                                          related_name="next_in_thread", null=True, blank=False)
     created_at = models.DateTimeField(auto_now_add = True, blank = True)
     updated_at = models.DateTimeField(null=True, blank = True)
+
+    class Meta:
+        ordering = ('-created_at', )
