@@ -36,7 +36,7 @@ export default class Dashboard extends React.Component {
 			modalVisible: true,
 			newQuestion: '',
 			newQuestionError: false,
-			questionPosted: false
+			showSnackbar: false
 		};
 	}
 
@@ -92,17 +92,14 @@ export default class Dashboard extends React.Component {
 	async checkQuestion() {
 		const { newQuestion } = this.state;
 
-		if (newQuestion == '' || newQuestion.length < 5) throw Error();
+		if (newQuestion === '') throw Error('ERR_QUESTION');
 	}
 
 	async postQuestion(token) {
-		const url = serverUrl + '/api/questions';
-
-		let rawResponse = await fetch(url, {
+		let rawResponse = await fetch(serverUrl + '/api/questions', {
 			method: 'POST',
 			headers: {
 				Authorization: `Token ${token}`,
-				Accept: '*/*',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -110,8 +107,9 @@ export default class Dashboard extends React.Component {
 			})
 		});
 
-		let res = rawResponse.json();
-		if (res.statusCode !== 200) throw Error();
+		let res = await rawResponse.json();
+		console.group(res);
+		if (res.status !== 'success') throw Error('ERR_SERVER');
 		return res;
 	}
 
@@ -123,24 +121,41 @@ export default class Dashboard extends React.Component {
             In this method we handle the posting of a new question. First task is to check the string for any error.
             If there is an error, throw the error and catch it later in th catch callback
         */
+		this.setState({
+			loading: true,
+			newQuestionError: false,
+			showSnackbar: false
+		});
+
 		this.checkQuestion()
-			.then(() => this.postQuestion())
+			.then(() => this.postQuestion(token))
 			.then(res => {
-				console.group(res);
 				this.setState({
 					loading: false,
 					newQuestionError: false,
-					questionPosted: true,
-					modalVisible: false
+					showSnackbar: true,
+					messageSnackbar: 'Question posted successfully.',
+					modalVisible: false,
+					newQuestion: ''
 				});
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({
-					loading: false,
-					newQuestionError: true,
-					questionPosted: false
-				});
+				if (error.message == 'ERR_SERVER') {
+					this.setState({
+						loading: false,
+						newQuestionError: false,
+						showSnackbar: true,
+						messageSnackbar: 'An error occurred. Try again.'
+					});
+				} else if (error.message == 'ERR_QUESTION') {
+					this.setState({
+						loading: false,
+						newQuestionError: true,
+						showSnackbar: false,
+						messageSnackbar: 'An error occurred. Try again.'
+					});
+				}
 			});
 	}
 
@@ -300,7 +315,7 @@ export default class Dashboard extends React.Component {
 									error={this.state.newQuestionError}
 									helperText={
 										this.state.newQuestionError
-											? 'Please check your question again'
+											? 'Please check your question'
 											: ''
 									}
 								/>
