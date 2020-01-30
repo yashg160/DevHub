@@ -311,11 +311,44 @@ export default class Question extends React.Component {
 									flexDirection: 'column',
 									alignItems: 'flex-start'
 								}}>
-								<Typography
-									variant='body1'
-									style={{ fontWeight: 600 }}>
-									{answer.author_name}
-								</Typography>
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'space-between',
+										alignItems: 'center',
+										width: '100%'
+									}}>
+									<Typography
+										variant='body1'
+										style={{ fontWeight: 600 }}>
+										{answer.author_name}
+									</Typography>
+									<Button
+										disabled={
+											!(
+												answer.author_name ===
+												this.state.user.name
+											)
+										}
+										variant='text'
+										style={{
+											color: '#919191',
+											marginTop: '0.5rem'
+										}}
+										startIcon={<EditIcon />}
+										onClick={() => this.editAnswerClick(i)}>
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 600,
+												textTransform: 'capitalize'
+											}}>
+											Edit Answer
+										</Typography>
+									</Button>
+								</div>
+
 								<Typography
 									variant='subtitle2'
 									style={{ color: '#919191' }}>
@@ -334,29 +367,6 @@ export default class Question extends React.Component {
 									style={{ marginTop: '2rem' }}>
 									{answer.answer}
 								</Typography>
-								<Button
-									disabled={
-										!(
-											answer.author_name ===
-											this.state.user.name
-										)
-									}
-									variant='text'
-									style={{
-										color: '#919191',
-										marginTop: '0.5rem'
-									}}
-									startIcon={<EditIcon />}
-									onClick={() => this.editAnswerClick(i)}>
-									<Typography
-										variant='body2'
-										style={{
-											fontWeight: 600,
-											textTransform: 'capitalize'
-										}}>
-										Edit Answer
-									</Typography>
-								</Button>
 							</div>
 							<hr />
 						</div>
