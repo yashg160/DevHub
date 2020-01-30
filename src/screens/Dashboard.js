@@ -172,6 +172,15 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
+	followClick(i) {
+		/* 
+		Here i is the index of the question in results array in state 
+		Use it to refer to which question to follow
+
+		Get the username of the user and pass it to the PUT request to the answers/ endpoint
+		*/
+	}
+
 	componentDidMount() {
 		this.fetchResult();
 	}
@@ -409,7 +418,10 @@ export default class Dashboard extends React.Component {
 												<Button
 													variant='text'
 													style={{ color: '#919191' }}
-													startIcon={<RssFeedIcon />}>
+													startIcon={<RssFeedIcon />}
+													onClick={e =>
+														this.followClick(i)
+													}>
 													<Typography
 														variant='body2'
 														style={{
