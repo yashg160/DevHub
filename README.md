@@ -163,5 +163,5 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 
 > DELETE : Delete the answer stored on this ID
 
-### 10. /users/<username>
+### 10. /users/<user_name>
 > Get : Get the profile data of specified username
