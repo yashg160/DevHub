@@ -384,7 +384,18 @@ export default class Dashboard extends React.Component {
 												<Button
 													variant='text'
 													style={{ color: '#919191' }}
-													startIcon={<CreateIcon />}>
+													startIcon={<CreateIcon />}
+													onClick={event => {
+														event.stopPropagation();
+														this.props.history.push(
+															{
+																pathname: `questions/${res.url}/answer`,
+																state: {
+																	question: res
+																}
+															}
+														);
+													}}>
 													<Typography
 														variant='body2'
 														style={{
