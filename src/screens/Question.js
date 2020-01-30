@@ -28,10 +28,16 @@ export default class Question extends React.Component {
 		super(props);
 
 		this.state = {
+			user: null,
 			loading: true,
 			error: false,
 			question: null
 		};
+	}
+
+	editAnswerClick(i) {
+		// Here i is the index of the question to edit the answer of
+		console.log('Clicked editAnswerClick');
 	}
 
 	async getQuestionData(token, questionUrl) {
@@ -52,17 +58,37 @@ export default class Question extends React.Component {
 		return res;
 	}
 
+	async getUser(userName, token) {
+		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		});
+
+		let res = await rawResponse.json();
+		console.group(res);
+
+		if (res.status !== 'success') throw Error('ERR_USER_FETCH');
+		this.setState({ user: res.data });
+		return;
+	}
+
 	componentDidMount() {
 		var token = Cookies.get('TOKEN');
+		var userName = Cookies.get('USER_NAME');
+		console.log(userName);
 		console.log(token);
 
 		var questionUrl = this.props.match.params.questionUrl;
 		console.log(questionUrl);
 
-		this.getQuestionData(token, questionUrl)
+		this.getUser(userName, token)
+			.then(() => this.getQuestionData(token, questionUrl))
 			.then(res => {
 				console.group(res);
-
 				this.setState({
 					loading: false,
 					error: false,
@@ -283,7 +309,7 @@ export default class Question extends React.Component {
 								style={{
 									display: 'flex',
 									flexDirection: 'column',
-									justifyContent: 'flex-start'
+									alignItems: 'flex-start'
 								}}>
 								<Typography
 									variant='body1'
