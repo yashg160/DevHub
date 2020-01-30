@@ -309,7 +309,8 @@ export default class Dashboard extends React.Component {
 							display: 'flex',
 							flexDirection: 'column',
 							alignItems: 'center',
-							justifyContent: 'center'
+							justifyContent: 'center',
+							marginTop: '2rem'
 						}}>
 						<InfiniteScroll
 							dataLength={this.state.result.length}
@@ -325,9 +326,8 @@ export default class Dashboard extends React.Component {
 								<ExpansionPanel
 									key={i}
 									style={{
-										marginTop: '1rem',
-										marginBottom: '1.5rem',
-										padding: '0.5rem'
+										marginBottom: '2rem',
+										padding: '1rem'
 									}}>
 									<ExpansionPanelSummary
 										expandIcon={<ExpandMoreIcon />}
@@ -346,11 +346,12 @@ export default class Dashboard extends React.Component {
 													display: 'flex',
 													flexDirection: 'row',
 													alignItems: 'center',
-													marginTop: '0.5rem',
+													marginTop: '0.3rem',
 													marginBottom: '1rem'
 												}}>
 												{res.genres.map((g, i) => (
 													<Typography
+														key={i}
 														variant='body2'
 														style={{
 															marginRight: '1rem',
@@ -377,10 +378,12 @@ export default class Dashboard extends React.Component {
 											<div
 												style={{
 													display: 'flex',
-													flexDirection: 'row'
+													flexDirection: 'row',
+													marginTop: '1rem'
 												}}>
 												<Button
 													variant='text'
+													style={{ color: '#919191' }}
 													startIcon={<CreateIcon />}>
 													<Typography
 														variant='body2'
@@ -394,6 +397,7 @@ export default class Dashboard extends React.Component {
 												</Button>
 												<Button
 													variant='text'
+													style={{ color: '#919191' }}
 													startIcon={<RssFeedIcon />}>
 													<Typography
 														variant='body2'
@@ -402,11 +406,16 @@ export default class Dashboard extends React.Component {
 															textTransform:
 																'capitalize'
 														}}>
-														Follow
+														Follow &#183;{' '}
+														{
+															res.followers_list
+																.length
+														}
 													</Typography>
 												</Button>
 												<Button
 													variant='text'
+													style={{ color: '#919191' }}
 													startIcon={
 														<EmojiPeopleIcon />
 													}>
