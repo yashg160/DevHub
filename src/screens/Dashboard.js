@@ -28,6 +28,7 @@ import Link from '@material-ui/core/Link';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
+import EditIcon from '@material-ui/icons/Edit';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -217,6 +218,11 @@ export default class Dashboard extends React.Component {
 		let res = await rawResponse.json();
 		console.group(res); */
 		console.log('Follow: To be implemented');
+	}
+
+	editAnswerClick(i) {
+		// Here i is the index of the question to edit the answer of
+		console.log('Clicked editAnswerClick');
 	}
 
 	componentDidMount() {
@@ -560,7 +566,8 @@ export default class Dashboard extends React.Component {
 											<div
 												style={{
 													display: 'flex',
-													flexDirection: 'column'
+													flexDirection: 'column',
+													alignItems: 'flex-start'
 												}}>
 												<Typography variant='body1'>
 													{res.answer.author_name}
@@ -578,6 +585,33 @@ export default class Dashboard extends React.Component {
 													}}>
 													{res.answer.answer}
 												</Typography>
+												<Button
+													disabled={
+														!(
+															res.answer
+																.author_name ===
+															this.state.user.name
+														)
+													}
+													variant='text'
+													style={{
+														color: '#919191',
+														marginTop: '0.5rem'
+													}}
+													startIcon={<EditIcon />}
+													onClick={() =>
+														this.editAnswerClick(i)
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Edit Answer
+													</Typography>
+												</Button>
 											</div>
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
