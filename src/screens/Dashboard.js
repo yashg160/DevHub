@@ -338,7 +338,9 @@ export default class Dashboard extends React.Component {
 					style={{
 						display: 'flex',
 						flexDirection: 'row',
-						justifyContent: 'center'
+						justifyContent: 'center',
+						paddingLeft: '8rem',
+						paddingRight: '8rem'
 					}}>
 					<div style={{ flex: 1 }}>
 						<Typography variant='h4'>
@@ -351,7 +353,7 @@ export default class Dashboard extends React.Component {
 							paddingTop: '2rem',
 							paddingBottom: '2rem',
 							marginTop: '3rem',
-							flex: 4
+							flex: 3
 						}}>
 						<div
 							style={{
