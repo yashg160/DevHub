@@ -2,6 +2,7 @@ from rest_framework import permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from users.models import CustomUser
 from django.contrib.auth import get_user_model
 import requests
 from json import dumps, loads
@@ -23,7 +24,6 @@ def authorize_user(request, code):
             'Authorization' : 'token ' + access_token.split('&')[0].split('=')[1]
         }
     )
-    print(user_data)
     data = loads(user_data.text)
     User = get_user_model()
     user, created_user = User.objects.get_or_create(
@@ -37,4 +37,19 @@ def authorize_user(request, code):
         "data" : data,
         "first_login" : created_user,
         "token" : token.key
+    })
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def get_user_data(request, username):
+    try:
+        user = CustomUser.objects.get(username=username)
+    except :
+        return Response({'status' : 'error', 'message' : 'No such User found'})
+    
+    user_data = requests.get(user.extra_detail_url)
+    
+    return Response({
+        'status' : 'success',
+        'data' : loads(user_data.text)
     })
