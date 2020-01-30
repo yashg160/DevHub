@@ -29,6 +29,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import EditIcon from '@material-ui/icons/Edit';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -419,7 +420,20 @@ export default class Dashboard extends React.Component {
 								dataLength={this.state.result.length}
 								next={() => this.fetchResult()}
 								hasMore={this.state.hasMore}
-								loader={<h2>Loading...</h2>}
+								loader={
+									<div
+										style={{
+											width: '100%',
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center'
+										}}>
+										<CircularProgress
+											color='secondary'
+											style={{ margin: '2rem' }}
+										/>
+									</div>
+								}
 								endMessage={
 									<p style={{ textAlign: 'center' }}>
 										<b>Yay! You have seen it all</b>
