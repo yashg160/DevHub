@@ -668,96 +668,139 @@ export default class Dashboard extends React.Component {
 					<Fade in={this.state.modalVisible}>
 						<div
 							style={{
-								padding: '1.5rem',
 								backgroundColor: '#fff',
 								width: '50%'
 							}}>
 							<div
 								style={{
-									width: '100%',
-									height: '2rem',
-									backgroundColor: '#e3e3e3'
+									backgroundColor: '#e3e3e3',
+									padding: '1rem'
 								}}>
 								<Typography variant='h6'>
 									Add Question
 								</Typography>
 							</div>
 
-							<div>
-								<Typography
-									variant='h6'
-									style={{ fontWeight: 700 }}>
-									Tips on getting good answers quickly
-								</Typography>
-								<Typography variant='body1'>
-									Make sure your question hasn't been asked
-									already
-								</Typography>
-								<Typography variant='body1'>
-									Keep your question short and to the point
-								</Typography>
-								<Typography variant='body1'>
-									Double-check grammar and spelling
-								</Typography>
-							</div>
+							<div style={{ padding: '1rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 700,
+											marginBottom: '0.5rem'
+										}}>
+										Tips on getting good answers quickly
+									</Typography>
 
-							<div>
-								<Typography variant='subtitle1'>
-									User Name asked
-								</Typography>
-								<TextField
-									id='question'
-									label='Your Question'
-									InputProps={{
-										style: { fontSize: 28, fontWeight: 600 }
-									}}
-									placeholder={
-										'Start you question with "What," "Why," or "How."'
-									}
-									multiline
-									rowsMax='3'
-									fullWidth
-									value={this.state.newQuestion}
-									onChange={event =>
-										this.setState({
-											newQuestion: event.target.value
-										})
-									}
-									onFocus={() =>
-										this.setState({
-											newQuestionError: false
-										})
-									}
-									error={this.state.newQuestionError}
-									helperText={
-										this.state.newQuestionError
-											? 'Please check your question'
-											: ''
-									}
-								/>
-							</div>
-							<div
-								style={{
-									padding: '2rem',
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'flex-end',
-									alignItems: 'center'
-								}}>
-								<Button
-									variant='text'
-									onClick={() =>
-										this.setState({ modalVisible: false })
-									}
-									style={{ marginRight: '0.2rem' }}>
-									Cancel
-								</Button>
-								<Button
-									variant='contained'
-									onClick={() => this.handleAskQuestion()}
-									style={{ marginLeft: '0.2rem' }}>
-									Add question
-								</Button>
+									<div style={{ marginTop: '1rem' }}>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Make sure your question hasn't been
+											asked already
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Keep your question short and to the
+											point
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Double-check grammar and spelling
+										</Typography>
+									</div>
+								</div>
+
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-start',
+										marginTop: '1.5rem',
+										marginBottom: '1.5rem',
+										alignItems: 'center'
+									}}>
+									<Avatar
+										src={this.state.user.avatar_url}
+										alt={this.state.user.name}
+										style={{
+											height: '2rem',
+											width: '2rem'
+										}}
+									/>
+									<Typography
+										variant='body1'
+										style={{ marginLeft: '1rem' }}>
+										Posting as {this.state.user.name}
+									</Typography>
+								</div>
+
+								<div>
+									<Typography variant='subtitle1'>
+										User Name asked
+									</Typography>
+									<TextField
+										id='question'
+										label='Your Question'
+										InputProps={{
+											style: {
+												fontSize: 26,
+												fontWeight: 600
+											}
+										}}
+										placeholder={
+											'Start you question with "What," "Why," or "How."'
+										}
+										multiline
+										rowsMax='3'
+										fullWidth
+										value={this.state.newQuestion}
+										onChange={event =>
+											this.setState({
+												newQuestion: event.target.value
+											})
+										}
+										onFocus={() =>
+											this.setState({
+												newQuestionError: false
+											})
+										}
+										error={this.state.newQuestionError}
+										helperText={
+											this.state.newQuestionError
+												? 'Please check your question'
+												: ''
+										}
+									/>
+								</div>
+								<div
+									style={{
+										padding: '2rem',
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-end',
+										alignItems: 'center'
+									}}>
+									<Button
+										variant='text'
+										onClick={() =>
+											this.setState({
+												modalVisible: false
+											})
+										}
+										style={{ marginRight: '0.2rem' }}>
+										Cancel
+									</Button>
+									<Button
+										color='primary'
+										variant='contained'
+										onClick={() => this.handleAskQuestion()}
+										style={{ marginLeft: '0.2rem' }}>
+										Add question
+									</Button>
+								</div>
 							</div>
 						</div>
 					</Fade>
