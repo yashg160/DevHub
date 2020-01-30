@@ -118,25 +118,6 @@ export default class Dashboard extends React.Component {
 		return res.data;
 	}
 
-	fetchUser() {
-		var userName = Cookies.get('USER_NAME');
-		var token = Cookies.get('TOKEN');
-		console.log(userName);
-		console.log(token);
-		this.getUser(userName, token)
-			.then(user => {
-				console.group(user);
-
-				this.setState({
-					user
-				});
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ error: true });
-			});
-	}
-
 	async checkQuestion() {
 		const { newQuestion } = this.state;
 
@@ -217,8 +198,21 @@ export default class Dashboard extends React.Component {
 	}
 
 	componentDidMount() {
-		this.fetchUser();
-		this.fetchResult();
+		var userName = Cookies.get('USER_NAME');
+		var token = Cookies.get('TOKEN');
+		console.log(userName);
+		console.log(token);
+
+		this.getUser(userName, token)
+			.then(user => {
+				this.fetchResult();
+				console.group(user);
+				this.setState({ user });
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ error: true, loading: false });
+			});
 	}
 	render() {
 		if (this.state.loading)
