@@ -188,13 +188,34 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	followClick(i) {
+	async followClick(i) {
 		/* 
 		Here i is the index of the question in results array in state 
 		Use it to refer to which question to follow
-
-		Get the username of the user and pass it to the PUT request to the answers/ endpoint
 		*/
+
+		//Get the token as cookie
+		/* var token = Cookies.get('TOKEN');
+
+		let rawResponse = await fetch(
+			serverUrl + `/api/questions/${this.state.result[i].url}`,
+			{
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					followed: 'True',
+					unfollowed: 'False'
+				})
+			}
+		);
+
+		let res = await rawResponse.json();
+		console.group(res); */
+		console.log('Follow: To be implemented');
 	}
 
 	componentDidMount() {
