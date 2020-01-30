@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
+import EditIcon from '@material-ui/icons/Edit';
 
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -281,7 +282,8 @@ export default class Question extends React.Component {
 							<div
 								style={{
 									display: 'flex',
-									flexDirection: 'column'
+									flexDirection: 'column',
+									justifyContent: 'flex-start'
 								}}>
 								<Typography
 									variant='body1'
@@ -306,6 +308,29 @@ export default class Question extends React.Component {
 									style={{ marginTop: '2rem' }}>
 									{answer.answer}
 								</Typography>
+								<Button
+									disabled={
+										!(
+											answer.author_name ===
+											this.state.user.name
+										)
+									}
+									variant='text'
+									style={{
+										color: '#919191',
+										marginTop: '0.5rem'
+									}}
+									startIcon={<EditIcon />}
+									onClick={() => this.editAnswerClick(i)}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 600,
+											textTransform: 'capitalize'
+										}}>
+										Edit Answer
+									</Typography>
+								</Button>
 							</div>
 							<hr />
 						</div>
