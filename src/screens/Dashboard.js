@@ -342,7 +342,7 @@ export default class Dashboard extends React.Component {
 					}}>
 					<div style={{ flex: 1 }}>
 						<Typography variant='h4'>
-							This might container related questions
+							This might contain related questions
 						</Typography>
 					</div>
 					<Container
@@ -584,9 +584,68 @@ export default class Dashboard extends React.Component {
 						</div>
 					</Container>
 					<div style={{ flex: 1 }}>
-						<Typography variant='h4' style={{ position: 'fixed' }}>
-							This will contain tips to improve your feed
-						</Typography>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								justifyContent: 'center',
+								marginTop: '5rem',
+								position: 'fixed'
+							}}>
+							<div
+								style={{
+									padding: '1rem',
+									borderStyle: 'solid',
+									borderColor: '#bababa',
+									borderWidth: '0.05rem'
+								}}>
+								<Typography
+									variant='body1'
+									style={{ fontWeight: 600 }}>
+									Tips to improve your feed
+								</Typography>
+							</div>
+							<div
+								style={{
+									padding: '1rem',
+									backgroundColor: '#fff',
+									borderStyle: 'solid',
+									borderColor: '#bababa',
+									borderWidth: '0.05rem',
+									borderTop: 'none'
+								}}>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Visit your feed
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Subscribe to more genres
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Follow more topics
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Answer more questions
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Ask more questions
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Upvote more good answers
+								</Typography>
+							</div>
+						</div>
 					</div>
 				</Container>
 
