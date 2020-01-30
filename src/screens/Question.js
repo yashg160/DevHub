@@ -10,6 +10,8 @@ import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
 
 import CreateIcon from '@material-ui/icons/Create';
+import RssFeedIcon from '@material-ui/icons/RssFeed';
+import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -163,8 +165,7 @@ export default class Question extends React.Component {
 					maxWidth='md'
 					style={{
 						marginTop: '3rem',
-						paddingTop: '2rem',
-						paddingBottom: '2rem'
+						padding: '2rem'
 					}}>
 					<div
 						style={{
@@ -197,27 +198,67 @@ export default class Question extends React.Component {
 						{this.state.question.question}
 					</Typography>
 
-					<Button
-						variant='contained'
-						color='primary'
-						startIcon={<CreateIcon />}
-						onClick={() =>
-							this.props.history.push({
-								pathname: `/questions/${this.state.question.url}/answer`,
-								state: { question: this.state.question }
-							})
-						}
-						style={{ marginTop: '0.5rem' }}>
-						<Typography
-							variant='body1'
-							style={{
-								fontWeight: 500,
-								fontSize: 18,
-								textTransform: 'capitalize'
-							}}>
-							Answer
-						</Typography>
-					</Button>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							alignItems: 'center',
+							justifyContent: 'flex-start',
+							marginTop: '0.5rem'
+						}}>
+						<Button
+							variant='text'
+							color='primary'
+							startIcon={<CreateIcon />}
+							onClick={() =>
+								this.props.history.push({
+									pathname: `/questions/${this.state.question.url}/answer`,
+									state: { question: this.state.question }
+								})
+							}
+							style={{ marginRight: '0.5rem' }}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 500,
+									fontSize: 18,
+									textTransform: 'capitalize'
+								}}>
+								Answer
+							</Typography>
+						</Button>
+						<Button
+							variant='text'
+							color='primary'
+							startIcon={<RssFeedIcon />}
+							onClick={() => this.handleFollowClick()}
+							style={{ marginRight: '1rem' }}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 500,
+									fontSize: 18,
+									textTransform: 'capitalize'
+								}}>
+								Follow
+							</Typography>
+						</Button>
+						<Button
+							variant='text'
+							color='primary'
+							startIcon={<EmojiPeopleIcon />}
+							onClick={() => this.handleRequestClick()}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 500,
+									fontSize: 18,
+									textTransform: 'capitalize'
+								}}>
+								Request
+							</Typography>
+						</Button>
+					</div>
 
 					<Typography
 						variant='h6'
@@ -232,10 +273,14 @@ export default class Question extends React.Component {
 									display: 'flex',
 									flexDirection: 'column'
 								}}>
-								<Typography variant='body1'>
+								<Typography
+									variant='body1'
+									style={{ fontWeight: 600 }}>
 									{answer.author_name}
 								</Typography>
-								<Typography variant='subtitle2'>
+								<Typography
+									variant='subtitle2'
+									style={{ color: '#919191' }}>
 									Updated{' '}
 									{new Date(answer.updated_at).toString()}
 								</Typography>
