@@ -590,7 +590,15 @@ export default class Dashboard extends React.Component {
 													Updated at{' '}
 													{new Date(
 														res.answer.updated_at
-													).toString()}
+													).toLocaleDateString(
+														'en-US',
+														{
+															weekday: 'long',
+															year: 'numeric',
+															month: 'long',
+															day: 'numeric'
+														}
+													)}
 												</Typography>
 												<Typography
 													variant='body1'
