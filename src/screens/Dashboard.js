@@ -326,7 +326,8 @@ export default class Dashboard extends React.Component {
 									key={i}
 									style={{
 										marginTop: '1rem',
-										marginBottom: '1rem'
+										marginBottom: '1.5rem',
+										padding: '0.5rem'
 									}}>
 									<ExpansionPanelSummary
 										expandIcon={<ExpandMoreIcon />}
@@ -340,6 +341,25 @@ export default class Dashboard extends React.Component {
 											<Typography variant='subtitle2'>
 												Recommended for you
 											</Typography>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row',
+													alignItems: 'center',
+													marginTop: '0.5rem',
+													marginBottom: '1rem'
+												}}>
+												{res.genres.map((g, i) => (
+													<Typography
+														variant='body2'
+														style={{
+															marginRight: '1rem',
+															color: '#a3a3a3'
+														}}>
+														&#9679; {g}
+													</Typography>
+												))}
+											</div>
 											<Typography
 												className='question-link'
 												variant='h6'
