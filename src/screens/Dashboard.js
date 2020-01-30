@@ -8,6 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -344,21 +345,43 @@ export default class Dashboard extends React.Component {
 							padding: '1rem',
 							backgroundColor: '#fff',
 							height: '100%',
-							borderRadius: '0.5rem',
+							borderRadius: '0.3rem',
 							marginBottom: '2rem',
 							color: '#bababa',
 							borderStyle: 'solid',
 							borderColor: '#bababa',
 							borderWidth: '0.1rem'
 						}}>
-						<Typography variant='body1'>User Name</Typography>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'row',
+								alignItems: 'center',
+								marginBottom: '.5rem'
+							}}>
+							<Avatar
+								alt={this.state.user.name}
+								src={this.state.user.avatar_url}
+								style={{
+									height: '1.5rem',
+									width: '1.5rem',
+									marginRight: '0.5rem'
+								}}
+							/>
+							<Typography variant='body1'>
+								{this.state.user.name}
+							</Typography>
+						</div>
+
 						<Link
 							onClick={() =>
 								this.setState({ modalVisible: true })
 							}
 							color='inherit'>
-							<Typography variant='h4'>
-								What is your question or link?
+							<Typography
+								variant='h6'
+								style={{ fontWeight: 600 }}>
+								What is your question today?
 							</Typography>
 						</Link>
 					</div>
