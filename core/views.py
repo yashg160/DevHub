@@ -260,7 +260,7 @@ class CommentView(APIView):
 
         return Response({
             'status' : 'success',
-            'message' : 'Answer updated succesfully',
+            'message' : 'Comment updated succesfully',
             'answer_id' : serializer.data['id']
         })
     
