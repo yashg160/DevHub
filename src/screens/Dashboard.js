@@ -217,8 +217,8 @@ export default class Dashboard extends React.Component {
 	}
 
 	componentDidMount() {
-		this.fetchResult();
 		this.fetchUser();
+		this.fetchResult();
 	}
 	render() {
 		if (this.state.loading)
