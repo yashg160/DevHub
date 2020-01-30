@@ -74,6 +74,16 @@ export default class Question extends React.Component {
 			});
 	}
 
+	handleRequestClick() {
+		// Method is to be implemented
+		console.log('Pressed on follow button');
+	}
+
+	handleFollowClick() {
+		// Method is to be implemented
+		console.log('Pressed on request button');
+	}
+
 	render() {
 		if (this.state.loading)
 			return <Backdrop open={this.state.loading} color='#fff' />;
