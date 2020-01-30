@@ -282,7 +282,14 @@ export default class Question extends React.Component {
 									variant='subtitle2'
 									style={{ color: '#919191' }}>
 									Updated{' '}
-									{new Date(answer.updated_at).toString()}
+									{new Date(
+										answer.updated_at
+									).toLocaleDateString('en-US', {
+										weekday: 'long',
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric'
+									})}
 								</Typography>
 								<Typography
 									variant='body1'
