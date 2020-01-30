@@ -24,6 +24,9 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import Link from '@material-ui/core/Link';
+import CreateIcon from '@material-ui/icons/Create';
+import RssFeedIcon from '@material-ui/icons/RssFeed';
+import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -351,6 +354,53 @@ export default class Dashboard extends React.Component {
 												}>
 												{res.question}
 											</Typography>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row'
+												}}>
+												<Button
+													variant='text'
+													startIcon={<CreateIcon />}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Answer
+													</Typography>
+												</Button>
+												<Button
+													variant='text'
+													startIcon={<RssFeedIcon />}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Follow
+													</Typography>
+												</Button>
+												<Button
+													variant='text'
+													startIcon={
+														<EmojiPeopleIcon />
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Request
+													</Typography>
+												</Button>
+											</div>
 										</div>
 									</ExpansionPanelSummary>
 									<ExpansionPanelDetails>
