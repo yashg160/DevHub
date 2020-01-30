@@ -24,13 +24,33 @@ export default class Answer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			loading: false,
+			loading: true,
 			error: false,
 			toQuestion: false,
 			questionUrl: this.props.match.params.questionUrl,
-			question: this.props.history.location.state.question,
+			question: null,
+			editAnswer: false,
+			answerId: null,
 			answerValue: ''
 		};
+	}
+
+	async getQuestionData(token, questionUrl) {
+		let rawResponse = await fetch(
+			serverUrl + `/api/questions/${questionUrl}`,
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+
+		let res = await rawResponse.json();
+		if (res.status !== 'success') throw Error('ERR_SERVER');
+		return res;
 	}
 
 	async checkAnswer() {
@@ -59,6 +79,8 @@ export default class Answer extends React.Component {
 		return res;
 	}
 
+	async putAnswer(token) {}
+
 	handleSubmitPress() {
 		const token = Cookies.get('TOKEN');
 		console.log(token);
@@ -84,18 +106,50 @@ export default class Answer extends React.Component {
 	}
 
 	componentDidMount() {
+		console.log(this.props);
+		console.group(this.state);
+
+		const token = Cookies.get('TOKEN');
+
+		this.getQuestionData(token, this.state.questionUrl)
+			.then(res => {
+				console.group(res);
+				if (this.props.history.location.state.editAnswer) {
+					for (let i = 0; i < res.data.all_answers.length; i++) {
+						if (
+							res.data.all_answers[i].id ===
+							this.props.history.location.state.answerId
+						) {
+							this.setState({
+								answerValue: res.data.all_answers[i].answer
+							});
+							break;
+						}
+					}
+				}
+				this.setState({
+					loading: false,
+					error: false,
+					question: res.data
+				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ error: true, loading: false });
+			});
+		console.group(this.props);
 		console.group(this.state);
 	}
 
 	render() {
-		if (this.state.toQuestion)
+		if (this.state.loading)
+			return <Backdrop open={this.state.loading} color='#fff' />;
+		else if (this.state.toQuestion)
 			return (
 				<Redirect
 					to={{ pathname: `/questions/${this.state.questionUrl}` }}
 				/>
 			);
-		else if (this.state.loading)
-			return <Backdrop open={this.state.loading} color='#fff' />;
 		else
 			return (
 				<div style={{ backgroundColor: '#f7f7f7' }}>

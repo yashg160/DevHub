@@ -38,6 +38,14 @@ export default class Question extends React.Component {
 	editAnswerClick(i) {
 		// Here i is the index of the question to edit the answer of
 		console.log('Clicked editAnswerClick');
+		console.log(i);
+		this.props.history.push({
+			pathname: `/questions/${this.state.question.url}/answer`,
+			state: {
+				editAnswer: true,
+				answerId: this.state.question.all_answers[i].id
+			}
+		});
 	}
 
 	async getQuestionData(token, questionUrl) {
@@ -326,10 +334,11 @@ export default class Question extends React.Component {
 									</Typography>
 									<Button
 										disabled={
-											!(
+											/* !(
 												answer.author_name ===
 												this.state.user.name
-											)
+											) */
+											false
 										}
 										variant='text'
 										style={{
