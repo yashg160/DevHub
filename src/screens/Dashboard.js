@@ -227,9 +227,19 @@ export default class Dashboard extends React.Component {
 		console.log('Clicked editAnswerClick');
 	}
 
-	upvoteAnswerClick(i) {
+	upvoteAnswerClick(answerId, i) {
 		// To be implemented
 		console.log('Clicked upvote answer click');
+	}
+
+	checkUserUpvoted(upvoters) {
+		const userName = this.state.user.login;
+
+		for (let i = 0; i < upvoters.length; i++) {
+			if (upvoters[i] === userName) return true;
+		}
+
+		return false;
 	}
 
 	componentDidMount() {
@@ -641,11 +651,16 @@ export default class Dashboard extends React.Component {
 												<Button
 													variant='outlined'
 													style={{
-														color: '#919191'
+														color: this.checkUserUpvoted(
+															res.answer.upvoters
+														)
+															? '#54e1e3'
+															: '#919191'
 													}}
 													startIcon={<ThumbUpIcon />}
 													onClick={() =>
 														this.upvoteAnswerClick(
+															res.answer.id,
 															i
 														)
 													}>
