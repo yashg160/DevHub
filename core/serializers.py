@@ -48,18 +48,18 @@ class QuestionSerializer(serializers.ModelSerializer):
         unfollowed = validated_data.get('unfollowed', False)
         
         if followed and (
-            not question.followers.filter(username= current_user.username).exists()
+            not instance.followers.filter(username= current_user.username).exists()
             ):
             instance.followers.add(current_user)
         
-        if unfollowed and question.followers.filter(username= current_user.username).exists():
+        if unfollowed and instance.followers.filter(username= current_user.username).exists():
             instance.followers.remove(current_user)
 
         if current_user == instance.asker :
             for username in requested :
                 user = CustomUser.objects.get(username = username)
                 if user != instance.asker and (
-                    not question.requested.filter(username = user1.username).exists()
+                    not instance.requested.filter(username = user1.username).exists()
                     ):
                     instance.requested.add(user)
 
