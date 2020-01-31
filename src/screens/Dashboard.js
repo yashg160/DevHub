@@ -616,7 +616,8 @@ export default class Dashboard extends React.Component {
 														!(
 															res.answer
 																.author_name ===
-															this.state.user.name
+															this.state.user
+																.login
 														)
 													}
 													variant='text'
@@ -644,7 +645,9 @@ export default class Dashboard extends React.Component {
 													}}
 													startIcon={<ThumbUpIcon />}
 													onClick={() =>
-														this.upvoteAnswerClick(i)
+														this.upvoteAnswerClick(
+															i
+														)
 													}>
 													<Typography
 														variant='body2'
