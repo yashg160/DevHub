@@ -102,9 +102,9 @@ class QuestionView(APIView):
             question = Question.objects.get(url = url)
         except core.models.Question.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Question does not exist'})
-        if question.asker != request.user :
-            return Response({'status' : 'error', 'message' : 'Not allowed to update this question'}) 
         updated_question = request.data
+        if updated_question.get('question', False) and question.asker != request.user :
+            return Response({'status' : 'error', 'message' : 'Not allowed to update this question'}) 
         serializer = QuestionSerializer(question)
         serializer.update(question, updated_question, request.user)
         return Response({
@@ -149,9 +149,9 @@ class AnswerView(APIView):
             answer = Answer.objects.get(id = answer_id)
         except core.models.Answer.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Answer does not exist'})
-        if request.user != answer.author :
-            return Response({'status' : 'error', 'message' : 'Not authenticated to change this answer'})
         updated_answer = request.data
+        if updated_answer.get('answer', False) and request.user != answer.author :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to change this answer'})
         serializer = AnswerSerializer(answer)
         serializer.update(answer, updated_answer, request.user)
 
@@ -251,12 +251,13 @@ class CommentView(APIView):
             comment = Comment.objects.get(id = comment_id)
         except core.models.Comment.DoesNotExist:
             return Response({'status' : 'error', 'message' : 'Comment does not exist'})
-        if request.user != comment.author :
-            return Response({'status' : 'error', 'message' : 'Not authenticated to change this comment'})
         updated_comment = request.data
+
+        if updated_comment.get('comment', False) and request.user != comment.author :
+            return Response({'status' : 'error', 'message' : 'Not authenticated to change this comment'})
         updated_comment['current_user'] = request.user.username
         serializer = CommentSerializer(comment)
-        serializer.update(comment, updated_comment)
+        serializer.update(comment, updated_comment, request.user)
 
         return Response({
             'status' : 'success',
