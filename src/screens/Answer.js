@@ -106,23 +106,20 @@ export default class Answer extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log(this.props);
-		console.group(this.state);
-
 		const token = Cookies.get('TOKEN');
 
 		this.getQuestionData(token, this.state.questionUrl)
 			.then(res => {
 				console.group(res);
-				if (this.props.history.location.state.editAnswer) {
+				let answerValue = null;
+
+				if (this.props.location.state.editAnswer) {
 					for (let i = 0; i < res.data.all_answers.length; i++) {
 						if (
 							res.data.all_answers[i].id ===
-							this.props.history.location.state.answerId
+							this.props.location.state.answerId
 						) {
-							this.setState({
-								answerValue: res.data.all_answers[i].answer
-							});
+							answerValue = res.data.all_answers[i].answer;
 							break;
 						}
 					}
@@ -130,15 +127,18 @@ export default class Answer extends React.Component {
 				this.setState({
 					loading: false,
 					error: false,
-					question: res.data
+					question: res.data,
+					answerValue,
+					editAnswer: this.props.location.state.editAnswer,
+					answerId: this.props.location.state.answerId
 				});
+				console.log(this.props);
+				console.log(this.state);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ error: true, loading: false });
 			});
-		console.group(this.props);
-		console.group(this.state);
 	}
 
 	render() {
