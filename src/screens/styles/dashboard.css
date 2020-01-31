@@ -3,5 +3,15 @@
 }
 
 .question-link:hover {
-	text-decoration: underline solid black;
+	text-decoration: underline solid #8a8a8a;
+}
+
+.hidden {
+	display: none;
+}
+
+@media only screen and (min-width: 992px) {
+	.hidden {
+		display: inherit;
+	}
 }
