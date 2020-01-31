@@ -346,14 +346,16 @@ export default class Dashboard extends React.Component {
 						display: 'flex',
 						flexDirection: 'row',
 						justifyContent: 'center',
-						paddingLeft: '8rem',
-						paddingRight: '8rem'
+						paddingLeft: '4rem',
+						paddingRight: '4rem',
+						paddingBottom: '4rem'
 					}}>
 					<div
 						className='hidden'
 						style={{
 							flex: 1,
-							marginTop: '4rem'
+							marginTop: '4rem',
+							marginRight: '2rem'
 						}}>
 						<div>
 							<Typography variant='h5'>
@@ -632,7 +634,11 @@ export default class Dashboard extends React.Component {
 					</div>
 					<div
 						className='hidden'
-						style={{ flex: 1, marginTop: '4rem' }}>
+						style={{
+							flex: 1,
+							marginTop: '4rem',
+							marginLeft: '2rem'
+						}}>
 						<div
 							style={{
 								display: 'flex',
