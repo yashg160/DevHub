@@ -294,7 +294,7 @@ export default class Dashboard extends React.Component {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						upvote: false
+						remove_upvote: true
 					})
 				}
 			);
