@@ -47,21 +47,20 @@ class QuestionSerializer(serializers.ModelSerializer):
         followed = validated_data.get('followed', False)
         unfollowed = validated_data.get('unfollowed', False)
         
-        if followed:
-            try:
-                instance.followers.add(current_user)
-            except:
-                pass
+        if followed and (
+            not question.followers.filter(username= current_user.username).exists()
+            ):
+            instance.followers.add(current_user)
         
-        if unfollowed:
-            try : 
-                instance.followers.remove(current_user)
-            except:
-                pass
+        if unfollowed and question.followers.filter(username= current_user.username).exists():
+            instance.followers.remove(current_user)
+
         if current_user == instance.asker :
             for username in requested :
                 user = CustomUser.objects.get(username = username)
-                if user != instance.asker and user not in instance.requested.all():
+                if user != instance.asker and (
+                    not question.requested.filter(username = user1.username).exists()
+                    ):
                     instance.requested.add(user)
 
         instance.question = new_question
@@ -157,24 +156,18 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'comment', 'author_name', 'upvotes', 'parent_comment',
                   'created_at', 'updated_at', )
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data, current_user):
         instance.comment = validated_data.get('comment', instance.comment)
-        current_user = validated_data.get('current_user')
-        if validated_data.get('upvote', False):
-            try:
-                instance.comment.upvoters.add(
-                    CustomUser.objects.get(username = current_user)
-                )
-            except:
-                pass
         
-        elif validated_data.get('remove_upvote', False):
-            try:
-                instance.comment.upvoters.remove(
-                    CustomUser.objects.get(username = current_user)
-                )
-            except:
-                pass
+        upvote = validated_data.get('upvote', False)
+        remove_upvote = validated_data.get('remove_upvote', False)
+
+        if upvote and (not instance.upvoters.get(username = current_user.username).exists()):
+            instance.comment.upvoters.add(current_user)
+        
+        if remove_upvote and instance.upvoters.get(username = current_user.username).exists():
+            instance.comment.upvoters.remove(current_user)
+
         instance.updated_at = datetime.now()
         instance.save()
         return instance
