@@ -79,50 +79,78 @@ export default class Answer extends React.Component {
 		return res;
 	}
 
-	async putAnswer(token) {}
+	async putAnswer(token) {
+		let rawResponse = await fetch(
+			serverUrl + `/api/answers/${this.state.answerId}`,
+			{
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					answer: this.state.answerValue
+				})
+			}
+		);
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status !== 'success') throw Error('ERR_PUT_ANSWER');
+		return res;
+	}
 
 	handleSubmitPress() {
 		const token = Cookies.get('TOKEN');
 		console.log(token);
 
-		this.checkAnswer()
-			.then(() => this.postAnswer(token))
-			.then(res => {
-				console.group(res);
-				this.setState({
-					loading: false,
-					error: false,
-					toQuestion: true
+		if (this.state.editAnswer) {
+			this.checkAnswer()
+				.then(() => this.putAnswer(token))
+				.then(res => {
+					console.log(res);
+				})
+				.catch(error => {
+					console.log(error);
 				});
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({
-					loading: false,
-					error: true,
-					toQuestion: false
+		} else {
+			this.checkAnswer()
+				.then(() => this.postAnswer(token))
+				.then(res => {
+					console.log(res);
+					this.setState({
+						loading: false,
+						error: false,
+						toQuestion: true
+					});
+				})
+				.catch(error => {
+					console.error(error);
+					this.setState({
+						loading: false,
+						error: true,
+						toQuestion: false
+					});
 				});
-			});
+		}
 	}
 
 	componentDidMount() {
-		console.log(this.props);
-		console.group(this.state);
-
 		const token = Cookies.get('TOKEN');
 
 		this.getQuestionData(token, this.state.questionUrl)
 			.then(res => {
-				console.group(res);
-				if (this.props.history.location.state.editAnswer) {
+				console.log(res);
+				let answerValue = null;
+
+				if (this.props.location.state.editAnswer) {
 					for (let i = 0; i < res.data.all_answers.length; i++) {
 						if (
 							res.data.all_answers[i].id ===
-							this.props.history.location.state.answerId
+							this.props.location.state.answerId
 						) {
-							this.setState({
-								answerValue: res.data.all_answers[i].answer
-							});
+							answerValue = res.data.all_answers[i].answer;
 							break;
 						}
 					}
@@ -130,15 +158,18 @@ export default class Answer extends React.Component {
 				this.setState({
 					loading: false,
 					error: false,
-					question: res.data
+					question: res.data,
+					answerValue: answerValue === null ? '' : answerValue,
+					editAnswer: this.props.location.state.editAnswer,
+					answerId: this.props.location.state.answerId
 				});
+				console.log(this.props);
+				console.log(this.state);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ error: true, loading: false });
 			});
-		console.group(this.props);
-		console.group(this.state);
 	}
 
 	render() {

@@ -23,6 +23,7 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 import Link from '@material-ui/core/Link';
 import CreateIcon from '@material-ui/icons/Create';
@@ -191,18 +192,32 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async followClick(i) {
-		/* 
-		Here i is the index of the question in results array in state 
-		Use it to refer to which question to follow
-		*/
+	removeValueFromArray(arr, value) {
+		var filteredArray = arr.filter(val => val !== value);
+		console.log(filteredArray);
+		return filteredArray;
+	}
+
+	checkUserInArray(arr) {
+		for (let i = 0; i < arr.length; i++)
+			if (arr[i] === this.state.user.login) return true;
+		return false;
+	}
+
+	async followClick(event, url, followers, index) {
+		//First we check if the user has already followed the question. If yes, unfollow it. Else, follow the question
+
+		// Also prevent the panel from expanding or shrinking.
+		event.stopPropagation();
 
 		//Get the token as cookie
-		/* var token = Cookies.get('TOKEN');
+		var token = Cookies.get('TOKEN');
 
-		let rawResponse = await fetch(
-			serverUrl + `/api/questions/${this.state.result[i].url}`,
-			{
+		var userFollowed = this.checkUserInArray(followers);
+
+		if (userFollowed) {
+			// User has already followed the question. Remove the follow.
+			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
 				method: 'PUT',
 				headers: {
 					Authorization: `Token ${token}`,
@@ -210,20 +225,115 @@ export default class Dashboard extends React.Component {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					followed: 'True',
-					unfollowed: 'False'
+					unfollowed: true
 				})
-			}
-		);
+			});
 
-		let res = await rawResponse.json();
-		console.group(res); */
-		console.log('Follow: To be implemented');
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[
+					index
+				].followers_list = this.removeValueFromArray(
+					this.state.result[index].followers_list,
+					this.state.user.login
+				);
+			}
+			console.log(res);
+		} else {
+			// User has followed the question. Add the follow
+			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					followed: true
+				})
+			});
+
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[index].followers_list.push(
+					this.state.user.login
+				);
+			}
+			console.log(res);
+		}
+		this.forceUpdate();
+		return;
 	}
 
 	editAnswerClick(i) {
 		// Here i is the index of the question to edit the answer of
 		console.log('Clicked editAnswerClick');
+	}
+
+	async upvoteAnswerClick(answerId, upvoters, index) {
+		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
+		let userUpvoted = false;
+
+		for (let i = 0; i < upvoters.length; i++) {
+			if (upvoters[i] === this.state.user.login) userUpvoted = true;
+		}
+
+		// Get the token from cookies
+		var token = Cookies.get('TOKEN');
+		console.log(token);
+		console.log(userUpvoted);
+		if (userUpvoted) {
+			// User has already upvoted. Remove the upvote
+			let rawResponse = await fetch(
+				serverUrl + `/api/answers/${answerId}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Token ${token}`,
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						remove_upvote: true
+					})
+				}
+			);
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[
+					index
+				].answer.upvoters = this.removeValueFromArray(
+					this.state.result[index].answer.upvoters,
+					this.state.user.login
+				);
+			}
+			console.log(res);
+		} else {
+			// Upvote the answer by this user
+			let rawResponse = await fetch(
+				serverUrl + `/api/answers/${answerId}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Token ${token}`,
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						upvote: true
+					})
+				}
+			);
+
+			let res = await rawResponse.json();
+			if (res.status === 'success')
+				this.state.result[index].answer.upvoters.push(
+					this.state.user.login
+				);
+			console.log(res);
+		}
+		this.forceUpdate();
+		return;
 	}
 
 	componentDidMount() {
@@ -249,7 +359,7 @@ export default class Dashboard extends React.Component {
 		else if (this.state.error) return <h1>There was an error</h1>;
 
 		return (
-			<div style={{ backgroundColor: '#f7f7f7' }}>
+			<div style={{ backgroundColor: '#eeeeee' }}>
 				<AppBar position='fixed'>
 					<Toolbar variant='dense'>
 						<Container maxWidth='lg'>
@@ -346,179 +456,207 @@ export default class Dashboard extends React.Component {
 						display: 'flex',
 						flexDirection: 'row',
 						justifyContent: 'center',
-						paddingLeft: '8rem',
-						paddingRight: '8rem'
+						paddingLeft: '4rem',
+						paddingRight: '4rem',
+						paddingBottom: '4rem'
 					}}>
-					<div style={{ flex: 1 }}>
-						<Typography variant='h4'>
-							This might contain related questions
-						</Typography>
-					</div>
-					<Container
-						maxWidth='md'
+					<div
+						className='hidden'
 						style={{
-							paddingTop: '2rem',
-							paddingBottom: '2rem',
-							marginTop: '3rem',
-							flex: 3
+							flex: 1,
+							marginTop: '4rem',
+							marginRight: '2rem'
 						}}>
-						<div
-							style={{
-								padding: '1rem',
-								backgroundColor: '#fff',
-								borderRadius: '0.3rem',
-								marginBottom: '2rem',
-								color: '#bababa',
-								borderStyle: 'solid',
-								borderColor: '#bababa',
-								borderWidth: '0.1rem'
-							}}>
+						<div>
+							<Typography variant='h5'>
+								This div will contain some other content such as
+								related questions or feed.
+							</Typography>
+						</div>
+					</div>
+
+					<div
+						style={{
+							flex: 3,
+							maxWidth: '75%',
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center',
+							marginTop: '2rem'
+						}}>
+						<InfiniteScroll
+							dataLength={this.state.result.length}
+							next={() => this.fetchResult()}
+							hasMore={this.state.hasMore}
+							loader={
+								<div
+									style={{
+										width: '100%',
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center'
+									}}>
+									<CircularProgress
+										color='secondary'
+										style={{ margin: '2rem' }}
+									/>
+								</div>
+							}
+							endMessage={
+								<p style={{ textAlign: 'center' }}>
+									<b>Yay! You have seen it all</b>
+								</p>
+							}>
 							<div
 								style={{
-									display: 'flex',
-									flexDirection: 'row',
-									alignItems: 'center',
-									marginBottom: '.5rem'
+									marginTop: '4rem',
+									backgroundColor: '#fff',
+									border: '0.2rem solid #bababa',
+									borderRadius: '1rem',
+									color: '#8a8a8a',
+									width: '90%',
+									padding: '1rem',
+									marginBottom: '3rem'
 								}}>
-								<Avatar
-									alt={this.state.user.name}
-									src={this.state.user.avatar_url}
+								<div
 									style={{
-										height: '1.5rem',
-										width: '1.5rem',
-										marginRight: '0.5rem'
-									}}
-								/>
-								<Typography variant='body1'>
-									{this.state.user.name}
-								</Typography>
-							</div>
-
-							<Link
-								onClick={() =>
-									this.setState({ modalVisible: true })
-								}
-								color='inherit'>
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center'
+									}}>
+									<Avatar
+										src={this.state.user.avatar_url}
+										alt={this.state.user.name}
+										style={{
+											height: '3rem',
+											width: '3rem',
+											marginRight: '1rem'
+										}}
+									/>
+									<Typography variant='body1'>
+										{this.state.user.name}
+									</Typography>
+								</div>
 								<Typography
 									variant='h6'
-									style={{ fontWeight: 600 }}>
-									What is your question today?
+									onClick={() =>
+										this.setState({ modalVisible: true })
+									}
+									className='question-link'
+									style={{
+										fontWeight: 600,
+										marginTop: '.5rem'
+									}}>
+									What is question today?
 								</Typography>
-							</Link>
-						</div>
-
-						<div
-							style={{
-								width: '100%',
-								display: 'flex',
-								flexDirection: 'column',
-								alignItems: 'center',
-								justifyContent: 'center',
-								marginTop: '2rem'
-							}}>
-							<InfiniteScroll
-								dataLength={this.state.result.length}
-								next={() => this.fetchResult()}
-								hasMore={this.state.hasMore}
-								loader={
-									<div
-										style={{
-											width: '100%',
-											display: 'flex',
-											justifyContent: 'center',
-											alignItems: 'center'
-										}}>
-										<CircularProgress
-											color='secondary'
-											style={{ margin: '2rem' }}
-										/>
-									</div>
-								}
-								endMessage={
-									<p style={{ textAlign: 'center' }}>
-										<b>Yay! You have seen it all</b>
-									</p>
-								}>
-								{this.state.result.map((res, i) => (
-									<ExpansionPanel
-										key={i}
-										style={{
-											marginBottom: '2rem',
-											padding: '1rem'
-										}}>
-										<ExpansionPanelSummary
-											expandIcon={<ExpandMoreIcon />}
-											aria-controls={`panel${i}-control`}
-											id={`panel${i}-header`}>
+							</div>
+							{this.state.result.map((res, i) => (
+								<ExpansionPanel
+									key={i}
+									style={{
+										marginBottom: '2rem',
+										padding: '0.5rem'
+									}}>
+									<ExpansionPanelSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls={`panel${i}-control`}
+										id={`panel${i}-header`}>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'column'
+											}}>
+											<Typography variant='subtitle2'>
+												Recommended for you
+											</Typography>
 											<div
 												style={{
 													display: 'flex',
-													flexDirection: 'column'
+													flexDirection: 'row',
+													alignItems: 'center',
+													marginTop: '0.3rem',
+													marginBottom: '1rem'
 												}}>
-												<Typography variant='subtitle2'>
-													Recommended for you
-												</Typography>
-												<div
+												{res.genres.map((g, i) => (
+													<Typography
+														key={i}
+														variant='body2'
+														style={{
+															marginRight: '1rem',
+															color: '#a3a3a3'
+														}}>
+														&#9679; {g}
+													</Typography>
+												))}
+											</div>
+											<Typography
+												className='question-link'
+												variant='h6'
+												style={{
+													textTransform: 'capitalize',
+													fontWeight: 700
+												}}
+												onClick={() =>
+													this.props.history.push(
+														`/questions/${res.url}`
+													)
+												}>
+												{res.question}
+											</Typography>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row',
+													marginTop: '1rem'
+												}}>
+												<Button
+													variant='text'
 													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														alignItems: 'center',
-														marginTop: '0.3rem',
-														marginBottom: '1rem'
-													}}>
-													{res.genres.map((g, i) => (
-														<Typography
-															key={i}
-															variant='body2'
-															style={{
-																marginRight:
-																	'1rem',
-																color: '#a3a3a3'
-															}}>
-															&#9679; {g}
-														</Typography>
-													))}
-												</div>
-												<Typography
-													className='question-link'
-													variant='h6'
-													style={{
-														textTransform:
-															'capitalize',
-														fontWeight: 700
+														color: '#919191'
 													}}
-													onClick={() =>
+													startIcon={<CreateIcon />}
+													onClick={event => {
+														event.stopPropagation();
 														this.props.history.push(
-															`/questions/${res.url}`
-														)
-													}>
-													{res.question}
-												</Typography>
-												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														marginTop: '1rem'
+															{
+																pathname: `questions/${res.url}/answer`,
+																state: {
+																	question: res
+																}
+															}
+														);
 													}}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Answer
+													</Typography>
+												</Button>
+
+												{this.checkUserInArray(
+													res.followers_list
+												) ? (
 													<Button
 														variant='text'
 														style={{
-															color: '#919191'
+															color: '#54e1e3'
 														}}
 														startIcon={
-															<CreateIcon />
+															<RssFeedIcon />
 														}
-														onClick={event => {
-															event.stopPropagation();
-															this.props.history.push(
-																{
-																	pathname: `questions/${res.url}/answer`,
-																	state: {
-																		question: res
-																	}
-																}
-															);
-														}}>
+														onClick={e =>
+															this.followClick(
+																e,
+																res.url,
+																res.followers_list,
+																i
+															)
+														}>
 														<Typography
 															variant='body2'
 															style={{
@@ -526,9 +664,15 @@ export default class Dashboard extends React.Component {
 																textTransform:
 																	'capitalize'
 															}}>
-															Answer
+															Unfollow &#183;{' '}
+															{
+																res
+																	.followers_list
+																	.length
+															}
 														</Typography>
 													</Button>
+												) : (
 													<Button
 														variant='text'
 														style={{
@@ -538,7 +682,12 @@ export default class Dashboard extends React.Component {
 															<RssFeedIcon />
 														}
 														onClick={e =>
-															this.followClick(i)
+															this.followClick(
+																e,
+																res.url,
+																res.followers_list,
+																i
+															)
 														}>
 														<Typography
 															variant='body2'
@@ -555,74 +704,14 @@ export default class Dashboard extends React.Component {
 															}
 														</Typography>
 													</Button>
-													<Button
-														variant='text'
-														style={{
-															color: '#919191'
-														}}
-														startIcon={
-															<EmojiPeopleIcon />
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 600,
-																textTransform:
-																	'capitalize'
-															}}>
-															Request
-														</Typography>
-													</Button>
-												</div>
-											</div>
-										</ExpansionPanelSummary>
-										<ExpansionPanelDetails>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'column',
-													alignItems: 'flex-start'
-												}}>
-												<Typography variant='body1'>
-													{res.answer.author_name}
-												</Typography>
-												<Typography variant='subtitle2'>
-													Updated at{' '}
-													{new Date(
-														res.answer.updated_at
-													).toLocaleDateString(
-														'en-US',
-														{
-															weekday: 'long',
-															year: 'numeric',
-															month: 'long',
-															day: 'numeric'
-														}
-													)}
-												</Typography>
-												<Typography
-													variant='body1'
-													style={{
-														marginTop: '2rem'
-													}}>
-													{res.answer.answer}
-												</Typography>
+												)}
 												<Button
-													disabled={
-														!(
-															res.answer
-																.author_name ===
-															this.state.user.name
-														)
-													}
 													variant='text'
 													style={{
-														color: '#919191',
-														marginTop: '0.5rem'
+														color: '#919191'
 													}}
-													startIcon={<EditIcon />}
-													onClick={() =>
-														this.editAnswerClick(i)
+													startIcon={
+														<EmojiPeopleIcon />
 													}>
 													<Typography
 														variant='body2'
@@ -631,23 +720,151 @@ export default class Dashboard extends React.Component {
 															textTransform:
 																'capitalize'
 														}}>
-														Edit Answer
+														Request
 													</Typography>
 												</Button>
 											</div>
-										</ExpansionPanelDetails>
-									</ExpansionPanel>
-								))}
-							</InfiniteScroll>
-						</div>
-					</Container>
-					<div style={{ flex: 1 }}>
+										</div>
+									</ExpansionPanelSummary>
+									<ExpansionPanelDetails>
+										<div
+											style={{
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'flex-start'
+											}}>
+											<Typography variant='body1'>
+												{res.answer.author_name}
+											</Typography>
+											<Typography variant='subtitle2'>
+												Updated at{' '}
+												{new Date(
+													res.answer.updated_at
+												).toLocaleDateString('en-US', {
+													weekday: 'long',
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric'
+												})}
+											</Typography>
+											<Typography
+												variant='body1'
+												style={{
+													marginTop: '2rem'
+												}}>
+												{res.answer.answer}
+											</Typography>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'row',
+													marginTop: '0.5rem'
+												}}>
+												<Button
+													disabled={
+														!(
+															res.answer
+																.author_name ===
+															this.state.user
+																.login
+														)
+													}
+													variant='text'
+													style={{
+														color: '#919191'
+													}}
+													startIcon={<EditIcon />}
+													onClick={() =>
+														this.editAnswerClick(i)
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															textTransform:
+																'capitalize',
+															fontWeight: 700
+														}}>
+														Edit Answer
+													</Typography>
+												</Button>
+												{this.checkUserInArray(
+													res.answer.upvoters
+												) ? (
+													<Button
+														variant='outlined'
+														style={{
+															color: '#54e1e3'
+														}}
+														startIcon={
+															<ThumbUpIcon />
+														}
+														onClick={() =>
+															this.upvoteAnswerClick(
+																res.answer.id,
+																res.answer
+																	.upvoters,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 700,
+																textTransform:
+																	'capitalize'
+															}}>
+															Remove &#183;{' '}
+															{res.answer.upvotes}
+														</Typography>
+													</Button>
+												) : (
+													<Button
+														variant='outlined'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<ThumbUpIcon />
+														}
+														onClick={() =>
+															this.upvoteAnswerClick(
+																res.answer.id,
+																res.answer
+																	.upvoters,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 700,
+																textTransform:
+																	'capitalize'
+															}}>
+															Upvote &#183;{' '}
+															{res.answer.upvotes}
+														</Typography>
+													</Button>
+												)}
+											</div>
+										</div>
+									</ExpansionPanelDetails>
+								</ExpansionPanel>
+							))}
+						</InfiniteScroll>
+					</div>
+					<div
+						className='hidden'
+						style={{
+							flex: 1,
+							marginTop: '4rem',
+							marginLeft: '2rem'
+						}}>
 						<div
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
 								justifyContent: 'center',
-								marginTop: '5rem',
 								position: 'fixed'
 							}}>
 							<div
