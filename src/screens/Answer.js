@@ -79,30 +79,61 @@ export default class Answer extends React.Component {
 		return res;
 	}
 
-	async putAnswer(token) {}
+	async putAnswer(token) {
+		let rawResponse = await fetch(
+			serverUrl + `/api/answers/${this.state.answerId}`,
+			{
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					answer: this.state.answerValue
+				})
+			}
+		);
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status !== 'success') throw Error('ERR_PUT_ANSWER');
+		return res;
+	}
 
 	handleSubmitPress() {
 		const token = Cookies.get('TOKEN');
 		console.log(token);
 
-		this.checkAnswer()
-			.then(() => this.postAnswer(token))
-			.then(res => {
-				console.group(res);
-				this.setState({
-					loading: false,
-					error: false,
-					toQuestion: true
+		if (this.state.editAnswer) {
+			this.checkAnswer()
+				.then(() => this.putAnswer(token))
+				.then(res => {
+					console.log(res);
+				})
+				.catch(error => {
+					console.log(error);
 				});
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({
-					loading: false,
-					error: true,
-					toQuestion: false
+		} else {
+			this.checkAnswer()
+				.then(() => this.postAnswer(token))
+				.then(res => {
+					console.log(res);
+					this.setState({
+						loading: false,
+						error: false,
+						toQuestion: true
+					});
+				})
+				.catch(error => {
+					console.error(error);
+					this.setState({
+						loading: false,
+						error: true,
+						toQuestion: false
+					});
 				});
-			});
+		}
 	}
 
 	componentDidMount() {
@@ -110,7 +141,7 @@ export default class Answer extends React.Component {
 
 		this.getQuestionData(token, this.state.questionUrl)
 			.then(res => {
-				console.group(res);
+				console.log(res);
 				let answerValue = null;
 
 				if (this.props.location.state.editAnswer) {
@@ -128,7 +159,7 @@ export default class Answer extends React.Component {
 					loading: false,
 					error: false,
 					question: res.data,
-					answerValue,
+					answerValue: answerValue === null ? '' : answerValue,
 					editAnswer: this.props.location.state.editAnswer,
 					answerId: this.props.location.state.answerId
 				});
