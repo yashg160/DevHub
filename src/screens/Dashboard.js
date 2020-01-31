@@ -323,16 +323,6 @@ export default class Dashboard extends React.Component {
 		return;
 	}
 
-	checkUserUpvoted(upvoters) {
-		const userName = this.state.user.login;
-
-		for (let i = 0; i < upvoters.length; i++) {
-			if (upvoters[i] === userName) return true;
-		}
-
-		return false;
-	}
-
 	componentDidMount() {
 		var userName = Cookies.get('USER_NAME');
 		var token = Cookies.get('TOKEN');
@@ -784,34 +774,65 @@ export default class Dashboard extends React.Component {
 														Edit Answer
 													</Typography>
 												</Button>
-												<Button
-													variant='outlined'
-													style={{
-														color: this.checkUserUpvoted(
-															res.answer.upvoters
-														)
-															? '#54e1e3'
-															: '#919191'
-													}}
-													startIcon={<ThumbUpIcon />}
-													onClick={() =>
-														this.upvoteAnswerClick(
-															res.answer.id,
-															res.answer.upvoters,
-															i
-														)
-													}>
-													<Typography
-														variant='body2'
+												{this.checkUserInArray(
+													res.answer.upvoters
+												) ? (
+													<Button
+														variant='outlined'
 														style={{
-															fontWeight: 700,
-															textTransform:
-																'capitalize'
-														}}>
-														Upvote &#183;{' '}
-														{res.answer.upvotes}
-													</Typography>
-												</Button>
+															color: '#54e1e3'
+														}}
+														startIcon={
+															<ThumbUpIcon />
+														}
+														onClick={() =>
+															this.upvoteAnswerClick(
+																res.answer.id,
+																res.answer
+																	.upvoters,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 700,
+																textTransform:
+																	'capitalize'
+															}}>
+															Remove &#183;{' '}
+															{res.answer.upvotes}
+														</Typography>
+													</Button>
+												) : (
+													<Button
+														variant='outlined'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<ThumbUpIcon />
+														}
+														onClick={() =>
+															this.upvoteAnswerClick(
+																res.answer.id,
+																res.answer
+																	.upvoters,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 700,
+																textTransform:
+																	'capitalize'
+															}}>
+															Upvote &#183;{' '}
+															{res.answer.upvotes}
+														</Typography>
+													</Button>
+												)}
 											</div>
 										</div>
 									</ExpansionPanelDetails>
