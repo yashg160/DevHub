@@ -174,14 +174,14 @@ export default class Dashboard extends React.Component {
 			})
 			.catch(error => {
 				console.error(error);
-				if (error.message == 'ERR_SERVER') {
+				if (error.message === 'ERR_SERVER') {
 					this.setState({
 						loading: false,
 						newQuestionError: false,
 						showSnackbar: true,
 						messageSnackbar: 'An error occurred. Try again.'
 					});
-				} else if (error.message == 'ERR_QUESTION') {
+				} else if (error.message === 'ERR_QUESTION') {
 					this.setState({
 						loading: false,
 						newQuestionError: true,
