@@ -198,10 +198,9 @@ export default class Dashboard extends React.Component {
 		return filteredArray;
 	}
 
-	checkUserFollowed(followers, index) {
-		for (let i = 0; i < followers.length; i++) {
-			if (followers[i] === this.state.user.login) return true;
-		}
+	checkUserInArray(arr) {
+		for (let i = 0; i < arr.length; i++)
+			if (arr[i] === this.state.user.login) return true;
 		return false;
 	}
 
@@ -214,7 +213,7 @@ export default class Dashboard extends React.Component {
 		//Get the token as cookie
 		var token = Cookies.get('TOKEN');
 
-		var userFollowed = this.checkUserFollowed(followers, index);
+		var userFollowed = this.checkUserInArray(followers);
 
 		if (userFollowed) {
 			// User has already followed the question. Remove the follow.
@@ -636,9 +635,8 @@ export default class Dashboard extends React.Component {
 													</Typography>
 												</Button>
 
-												{this.checkUserFollowed(
-													res.followers_list,
-													i
+												{this.checkUserInArray(
+													res.followers_list
 												) ? (
 													<Button
 														variant='text'
