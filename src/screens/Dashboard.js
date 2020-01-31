@@ -265,11 +265,6 @@ export default class Dashboard extends React.Component {
 		return;
 	}
 
-	editAnswerClick(i) {
-		// Here i is the index of the question to edit the answer of
-		console.log('Clicked editAnswerClick');
-	}
-
 	async upvoteAnswerClick(answerId, upvoters, index) {
 		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
 		let userUpvoted = false;
@@ -760,33 +755,6 @@ export default class Dashboard extends React.Component {
 													flexDirection: 'row',
 													marginTop: '0.5rem'
 												}}>
-												<Button
-													disabled={
-														!(
-															res.answer
-																.author_name ===
-															this.state.user
-																.login
-														)
-													}
-													variant='text'
-													style={{
-														color: '#919191'
-													}}
-													startIcon={<EditIcon />}
-													onClick={() =>
-														this.editAnswerClick(i)
-													}>
-													<Typography
-														variant='body2'
-														style={{
-															textTransform:
-																'capitalize',
-															fontWeight: 700
-														}}>
-														Edit Answer
-													</Typography>
-												</Button>
 												{this.checkUserInArray(
 													res.answer.upvoters
 												) ? (
