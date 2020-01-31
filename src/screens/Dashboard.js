@@ -385,7 +385,8 @@ export default class Dashboard extends React.Component {
 												alignItems: 'center',
 												marginRight: '0.5rem',
 												borderRadius: '0.2rem',
-												padding: '0.2rem'
+												padding: '0.2rem',
+												color: '#'
 											}}
 											className='link-div'>
 											<DashboardIcon
