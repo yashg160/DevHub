@@ -23,6 +23,7 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 import Link from '@material-ui/core/Link';
 import CreateIcon from '@material-ui/icons/Create';
@@ -224,6 +225,11 @@ export default class Dashboard extends React.Component {
 	editAnswerClick(i) {
 		// Here i is the index of the question to edit the answer of
 		console.log('Clicked editAnswerClick');
+	}
+
+	upvoteAnswerClick(i) {
+		// To be implemented
+		console.log('Clicked upvote answer click');
 	}
 
 	componentDidMount() {
@@ -599,33 +605,59 @@ export default class Dashboard extends React.Component {
 												}}>
 												{res.answer.answer}
 											</Typography>
-											<Button
-												disabled={
-													!(
-														res.answer
-															.author_name ===
-														this.state.user.name
-													)
-												}
-												variant='text'
+											<div
 												style={{
-													color: '#919191',
+													display: 'flex',
+													flexDirection: 'row',
 													marginTop: '0.5rem'
-												}}
-												startIcon={<EditIcon />}
-												onClick={() =>
-													this.editAnswerClick(i)
-												}>
-												<Typography
-													variant='body2'
+												}}>
+												<Button
+													disabled={
+														!(
+															res.answer
+																.author_name ===
+															this.state.user.name
+														)
+													}
+													variant='text'
 													style={{
-														fontWeight: 600,
-														textTransform:
-															'capitalize'
-													}}>
-													Edit Answer
-												</Typography>
-											</Button>
+														color: '#919191'
+													}}
+													startIcon={<EditIcon />}
+													onClick={() =>
+														this.editAnswerClick(i)
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															textTransform:
+																'capitalize',
+															fontWeight: 700
+														}}>
+														Edit Answer
+													</Typography>
+												</Button>
+												<Button
+													variant='outlined'
+													style={{
+														color: '#919191'
+													}}
+													startIcon={<ThumbUpIcon />}
+													onClick={() =>
+														this.upvoteAnswerClick(i)
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 700,
+															textTransform:
+																'capitalize'
+														}}>
+														Upvote &#183;{' '}
+														{res.answer.upvotes}
+													</Typography>
+												</Button>
+											</div>
 										</div>
 									</ExpansionPanelDetails>
 								</ExpansionPanel>
