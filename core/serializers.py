@@ -99,6 +99,11 @@ class AnswerSerializer(serializers.ModelSerializer):
         if validated_data.get('upvote', False) and instance.author != current_user:
             instance.upvoters.add(current_user)
 
+        if validated_data.get('remove_upvote', False) and instance.author != current_user and (
+            instance.upvoters.filter(username=current_user.username).exists()
+        ):
+            instance.upvoters.remove(current_user)
+        
         instance.updated_at = datetime.now()
         instance.save()
         return instance
@@ -144,7 +149,7 @@ class CommentThreadSerializer(serializers.ModelSerializer):
                   'created_at', 'updated_at', )
 
 
-class CommentSerializer(serializers.HyperlinkedModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source = 'author.username')
     upvotes = serializers.SerializerMethodField()
 
