@@ -372,10 +372,7 @@ export default class Dashboard extends React.Component {
 										flexDirection: 'row'
 									}}>
 									<Link
-										style={{
-											color: '#f01818',
-											marginRight: '2rem'
-										}}
+										color='inherit'
 										onClick={() =>
 											this.props.history.push(
 												'/dashboard'
@@ -386,14 +383,22 @@ export default class Dashboard extends React.Component {
 												display: 'flex',
 												flexDirection: 'row',
 												alignItems: 'center',
-												justifyContent: 'center'
-											}}>
-											<DashboardIcon />
+												marginRight: '0.5rem',
+												borderRadius: '0.2rem',
+												padding: '0.2rem'
+											}}
+											className='link-div'>
+											<DashboardIcon
+												style={{
+													height: '2rem',
+													width: '2rem',
+													marginRight: '0.2rem'
+												}}
+											/>
 											<Typography
 												variant='body1'
 												style={{
-													fontWeight: 600,
-													marginLeft: '0.5rem'
+													fontWeight: 600
 												}}>
 												Dashboard
 											</Typography>
@@ -401,10 +406,7 @@ export default class Dashboard extends React.Component {
 									</Link>
 
 									<Link
-										style={{
-											color: '#fff',
-											marginLeft: '2rem'
-										}}
+										color='inherit'
 										onClick={() =>
 											this.props.history.push('/genres')
 										}>
@@ -412,14 +414,23 @@ export default class Dashboard extends React.Component {
 											style={{
 												display: 'flex',
 												flexDirection: 'row',
-												alignItems: 'center'
-											}}>
-											<GroupIcon />
+												alignItems: 'center',
+												marginLeft: '0.5rem',
+												padding: '0.2rem',
+												borderRadius: '0.2rem'
+											}}
+											className='link-div'>
+											<GroupIcon
+												style={{
+													height: '2rem',
+													width: '2rem',
+													marginRight: '0.2rem'
+												}}
+											/>
 											<Typography
 												variant='body1'
 												style={{
-													fontWeight: 600,
-													marginLeft: '0.5rem'
+													fontWeight: 600
 												}}>
 												Genres
 											</Typography>
