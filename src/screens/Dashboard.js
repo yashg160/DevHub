@@ -8,6 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
+import Avatar from '@material-ui/core/Avatar';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -24,6 +25,11 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 import Link from '@material-ui/core/Link';
+import CreateIcon from '@material-ui/icons/Create';
+import RssFeedIcon from '@material-ui/icons/RssFeed';
+import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
+import EditIcon from '@material-ui/icons/Edit';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -99,6 +105,22 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
+	async getUser(userName, token) {
+		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		});
+
+		let res = await rawResponse.json();
+
+		if (res.status !== 'success') throw Error('ERR_USER_FETCH');
+		return res.data;
+	}
+
 	async checkQuestion() {
 		const { newQuestion } = this.state;
 
@@ -169,8 +191,57 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
+	async followClick(i) {
+		/* 
+		Here i is the index of the question in results array in state 
+		Use it to refer to which question to follow
+		*/
+
+		//Get the token as cookie
+		/* var token = Cookies.get('TOKEN');
+
+		let rawResponse = await fetch(
+			serverUrl + `/api/questions/${this.state.result[i].url}`,
+			{
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					followed: 'True',
+					unfollowed: 'False'
+				})
+			}
+		);
+
+		let res = await rawResponse.json();
+		console.group(res); */
+		console.log('Follow: To be implemented');
+	}
+
+	editAnswerClick(i) {
+		// Here i is the index of the question to edit the answer of
+		console.log('Clicked editAnswerClick');
+	}
+
 	componentDidMount() {
-		this.fetchResult();
+		var userName = Cookies.get('USER_NAME');
+		var token = Cookies.get('TOKEN');
+		console.log(userName);
+		console.log(token);
+
+		this.getUser(userName, token)
+			.then(user => {
+				this.fetchResult();
+				console.group(user);
+				this.setState({ user });
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ error: true, loading: false });
+			});
 	}
 	render() {
 		if (this.state.loading)
@@ -270,116 +341,372 @@ export default class Dashboard extends React.Component {
 					</Toolbar>
 				</AppBar>
 				<Container
-					maxWidth='md'
+					maxWidth='lg'
 					style={{
-						paddingTop: '2rem',
-						paddingBottom: '2rem',
-						marginTop: '3rem'
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'center',
+						paddingLeft: '8rem',
+						paddingRight: '8rem'
 					}}>
-					<div
-						style={{
-							padding: '1rem',
-							backgroundColor: '#fff',
-							height: '100%',
-							borderRadius: '0.5rem',
-							marginBottom: '2rem',
-							color: '#bababa',
-							borderStyle: 'solid',
-							borderColor: '#bababa',
-							borderWidth: '0.1rem'
-						}}>
-						<Typography variant='body1'>User Name</Typography>
-						<Link
-							onClick={() =>
-								this.setState({ modalVisible: true })
-							}
-							color='inherit'>
-							<Typography variant='h4'>
-								What is your question or link?
-							</Typography>
-						</Link>
+					<div style={{ flex: 1 }}>
+						<Typography variant='h4'>
+							This might contain related questions
+						</Typography>
 					</div>
-
-					<div
+					<Container
+						maxWidth='md'
 						style={{
-							width: '100%',
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							justifyContent: 'center'
+							paddingTop: '2rem',
+							paddingBottom: '2rem',
+							marginTop: '3rem',
+							flex: 3
 						}}>
-						<InfiniteScroll
-							dataLength={this.state.result.length}
-							next={() => this.fetchResult()}
-							hasMore={this.state.hasMore}
-							loader={<h2>Loading...</h2>}
-							endMessage={
-								<p style={{ textAlign: 'center' }}>
-									<b>Yay! You have seen it all</b>
-								</p>
-							}>
-							{this.state.result.map((res, i) => (
-								<ExpansionPanel
-									key={i}
+						<div
+							style={{
+								padding: '1rem',
+								backgroundColor: '#fff',
+								borderRadius: '0.3rem',
+								marginBottom: '2rem',
+								color: '#bababa',
+								borderStyle: 'solid',
+								borderColor: '#bababa',
+								borderWidth: '0.1rem'
+							}}>
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'row',
+									alignItems: 'center',
+									marginBottom: '.5rem'
+								}}>
+								<Avatar
+									alt={this.state.user.name}
+									src={this.state.user.avatar_url}
 									style={{
-										marginTop: '1rem',
-										marginBottom: '1rem'
-									}}>
-									<ExpansionPanelSummary
-										expandIcon={<ExpandMoreIcon />}
-										aria-controls={`panel${i}-control`}
-										id={`panel${i}-header`}>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'column'
-											}}>
-											<Typography variant='subtitle2'>
-												Recommended for you
-											</Typography>
-											<Typography
-												className='question-link'
-												variant='h6'
+										height: '1.5rem',
+										width: '1.5rem',
+										marginRight: '0.5rem'
+									}}
+								/>
+								<Typography variant='body1'>
+									{this.state.user.name}
+								</Typography>
+							</div>
+
+							<Link
+								onClick={() =>
+									this.setState({ modalVisible: true })
+								}
+								color='inherit'>
+								<Typography
+									variant='h6'
+									style={{ fontWeight: 600 }}>
+									What is your question today?
+								</Typography>
+							</Link>
+						</div>
+
+						<div
+							style={{
+								width: '100%',
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								marginTop: '2rem'
+							}}>
+							<InfiniteScroll
+								dataLength={this.state.result.length}
+								next={() => this.fetchResult()}
+								hasMore={this.state.hasMore}
+								loader={
+									<div
+										style={{
+											width: '100%',
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center'
+										}}>
+										<CircularProgress
+											color='secondary'
+											style={{ margin: '2rem' }}
+										/>
+									</div>
+								}
+								endMessage={
+									<p style={{ textAlign: 'center' }}>
+										<b>Yay! You have seen it all</b>
+									</p>
+								}>
+								{this.state.result.map((res, i) => (
+									<ExpansionPanel
+										key={i}
+										style={{
+											marginBottom: '2rem',
+											padding: '1rem'
+										}}>
+										<ExpansionPanelSummary
+											expandIcon={<ExpandMoreIcon />}
+											aria-controls={`panel${i}-control`}
+											id={`panel${i}-header`}>
+											<div
 												style={{
-													textTransform: 'capitalize',
-													fontWeight: 700
-												}}
-												onClick={() =>
-													this.props.history.push(
-														`/questions/${res.url}`
-													)
-												}>
-												{res.question}
-											</Typography>
-										</div>
-									</ExpansionPanelSummary>
-									<ExpansionPanelDetails>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'column'
-											}}>
-											<Typography variant='body1'>
-												{res.answer.author_name}
-											</Typography>
-											<Typography variant='subtitle2'>
-												Updated at{' '}
-												{new Date(
-													res.answer.updated_at
-												).toString()}
-											</Typography>
-											<Typography
-												variant='body1'
-												style={{ marginTop: '2rem' }}>
-												{res.answer.answer}
-											</Typography>
-										</div>
-									</ExpansionPanelDetails>
-								</ExpansionPanel>
-							))}
-						</InfiniteScroll>
+													display: 'flex',
+													flexDirection: 'column'
+												}}>
+												<Typography variant='subtitle2'>
+													Recommended for you
+												</Typography>
+												<div
+													style={{
+														display: 'flex',
+														flexDirection: 'row',
+														alignItems: 'center',
+														marginTop: '0.3rem',
+														marginBottom: '1rem'
+													}}>
+													{res.genres.map((g, i) => (
+														<Typography
+															key={i}
+															variant='body2'
+															style={{
+																marginRight:
+																	'1rem',
+																color: '#a3a3a3'
+															}}>
+															&#9679; {g}
+														</Typography>
+													))}
+												</div>
+												<Typography
+													className='question-link'
+													variant='h6'
+													style={{
+														textTransform:
+															'capitalize',
+														fontWeight: 700
+													}}
+													onClick={() =>
+														this.props.history.push(
+															`/questions/${res.url}`
+														)
+													}>
+													{res.question}
+												</Typography>
+												<div
+													style={{
+														display: 'flex',
+														flexDirection: 'row',
+														marginTop: '1rem'
+													}}>
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<CreateIcon />
+														}
+														onClick={event => {
+															event.stopPropagation();
+															this.props.history.push(
+																{
+																	pathname: `questions/${res.url}/answer`,
+																	state: {
+																		question: res
+																	}
+																}
+															);
+														}}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Answer
+														</Typography>
+													</Button>
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<RssFeedIcon />
+														}
+														onClick={e =>
+															this.followClick(i)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Follow &#183;{' '}
+															{
+																res
+																	.followers_list
+																	.length
+															}
+														</Typography>
+													</Button>
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<EmojiPeopleIcon />
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Request
+														</Typography>
+													</Button>
+												</div>
+											</div>
+										</ExpansionPanelSummary>
+										<ExpansionPanelDetails>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column',
+													alignItems: 'flex-start'
+												}}>
+												<Typography variant='body1'>
+													{res.answer.author_name}
+												</Typography>
+												<Typography variant='subtitle2'>
+													Updated at{' '}
+													{new Date(
+														res.answer.updated_at
+													).toLocaleDateString(
+														'en-US',
+														{
+															weekday: 'long',
+															year: 'numeric',
+															month: 'long',
+															day: 'numeric'
+														}
+													)}
+												</Typography>
+												<Typography
+													variant='body1'
+													style={{
+														marginTop: '2rem'
+													}}>
+													{res.answer.answer}
+												</Typography>
+												<Button
+													disabled={
+														!(
+															res.answer
+																.author_name ===
+															this.state.user.name
+														)
+													}
+													variant='text'
+													style={{
+														color: '#919191',
+														marginTop: '0.5rem'
+													}}
+													startIcon={<EditIcon />}
+													onClick={() =>
+														this.editAnswerClick(i)
+													}>
+													<Typography
+														variant='body2'
+														style={{
+															fontWeight: 600,
+															textTransform:
+																'capitalize'
+														}}>
+														Edit Answer
+													</Typography>
+												</Button>
+											</div>
+										</ExpansionPanelDetails>
+									</ExpansionPanel>
+								))}
+							</InfiniteScroll>
+						</div>
+					</Container>
+					<div style={{ flex: 1 }}>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								justifyContent: 'center',
+								marginTop: '5rem',
+								position: 'fixed'
+							}}>
+							<div
+								style={{
+									padding: '1rem',
+									borderStyle: 'solid',
+									borderColor: '#bababa',
+									borderWidth: '0.05rem'
+								}}>
+								<Typography
+									variant='body1'
+									style={{ fontWeight: 600 }}>
+									Tips to improve your feed
+								</Typography>
+							</div>
+							<div
+								style={{
+									padding: '1rem',
+									backgroundColor: '#fff',
+									borderStyle: 'solid',
+									borderColor: '#bababa',
+									borderWidth: '0.05rem',
+									borderTop: 'none'
+								}}>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Visit your feed
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Subscribe to more genres
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Follow more topics
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Answer more questions
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Ask more questions
+								</Typography>
+								<Typography
+									variant='subtitle2'
+									style={{ marginBottom: '1rem' }}>
+									Upvote more good answers
+								</Typography>
+							</div>
+						</div>
 					</div>
 				</Container>
+
 				<Modal
 					aria-labelledby='modal-question'
 					aria-describedby='modal-ask-question'
@@ -397,96 +724,139 @@ export default class Dashboard extends React.Component {
 					<Fade in={this.state.modalVisible}>
 						<div
 							style={{
-								padding: '1.5rem',
 								backgroundColor: '#fff',
 								width: '50%'
 							}}>
 							<div
 								style={{
-									width: '100%',
-									height: '2rem',
-									backgroundColor: '#e3e3e3'
+									backgroundColor: '#e3e3e3',
+									padding: '1rem'
 								}}>
 								<Typography variant='h6'>
 									Add Question
 								</Typography>
 							</div>
 
-							<div>
-								<Typography
-									variant='h6'
-									style={{ fontWeight: 700 }}>
-									Tips on getting good answers quickly
-								</Typography>
-								<Typography variant='body1'>
-									Make sure your question hasn't been asked
-									already
-								</Typography>
-								<Typography variant='body1'>
-									Keep your question short and to the point
-								</Typography>
-								<Typography variant='body1'>
-									Double-check grammar and spelling
-								</Typography>
-							</div>
+							<div style={{ padding: '1rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 700,
+											marginBottom: '0.5rem'
+										}}>
+										Tips on getting good answers quickly
+									</Typography>
 
-							<div>
-								<Typography variant='subtitle1'>
-									User Name asked
-								</Typography>
-								<TextField
-									id='question'
-									label='Your Question'
-									InputProps={{
-										style: { fontSize: 28, fontWeight: 600 }
-									}}
-									placeholder={
-										'Start you question with "What," "Why," or "How."'
-									}
-									multiline
-									rowsMax='3'
-									fullWidth
-									value={this.state.newQuestion}
-									onChange={event =>
-										this.setState({
-											newQuestion: event.target.value
-										})
-									}
-									onFocus={() =>
-										this.setState({
-											newQuestionError: false
-										})
-									}
-									error={this.state.newQuestionError}
-									helperText={
-										this.state.newQuestionError
-											? 'Please check your question'
-											: ''
-									}
-								/>
-							</div>
-							<div
-								style={{
-									padding: '2rem',
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'flex-end',
-									alignItems: 'center'
-								}}>
-								<Button
-									variant='text'
-									onClick={() =>
-										this.setState({ modalVisible: false })
-									}
-									style={{ marginRight: '0.2rem' }}>
-									Cancel
-								</Button>
-								<Button
-									variant='contained'
-									onClick={() => this.handleAskQuestion()}
-									style={{ marginLeft: '0.2rem' }}>
-									Add question
-								</Button>
+									<div style={{ marginTop: '1rem' }}>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Make sure your question hasn't been
+											asked already
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Keep your question short and to the
+											point
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Double-check grammar and spelling
+										</Typography>
+									</div>
+								</div>
+
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-start',
+										marginTop: '1.5rem',
+										marginBottom: '1.5rem',
+										alignItems: 'center'
+									}}>
+									<Avatar
+										src={this.state.user.avatar_url}
+										alt={this.state.user.name}
+										style={{
+											height: '2rem',
+											width: '2rem'
+										}}
+									/>
+									<Typography
+										variant='body1'
+										style={{ marginLeft: '1rem' }}>
+										Posting as {this.state.user.name}
+									</Typography>
+								</div>
+
+								<div>
+									<Typography variant='subtitle1'>
+										User Name asked
+									</Typography>
+									<TextField
+										id='question'
+										label='Your Question'
+										InputProps={{
+											style: {
+												fontSize: 26,
+												fontWeight: 600
+											}
+										}}
+										placeholder={
+											'Start you question with "What," "Why," or "How."'
+										}
+										multiline
+										rowsMax='3'
+										fullWidth
+										value={this.state.newQuestion}
+										onChange={event =>
+											this.setState({
+												newQuestion: event.target.value
+											})
+										}
+										onFocus={() =>
+											this.setState({
+												newQuestionError: false
+											})
+										}
+										error={this.state.newQuestionError}
+										helperText={
+											this.state.newQuestionError
+												? 'Please check your question'
+												: ''
+										}
+									/>
+								</div>
+								<div
+									style={{
+										padding: '2rem',
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-end',
+										alignItems: 'center'
+									}}>
+									<Button
+										variant='text'
+										onClick={() =>
+											this.setState({
+												modalVisible: false
+											})
+										}
+										style={{ marginRight: '0.2rem' }}>
+										Cancel
+									</Button>
+									<Button
+										color='primary'
+										variant='contained'
+										onClick={() => this.handleAskQuestion()}
+										style={{ marginLeft: '0.2rem' }}>
+										Add question
+									</Button>
+								</div>
 							</div>
 						</div>
 					</Fade>
