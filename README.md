@@ -164,4 +164,7 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 > DELETE : Delete the answer stored on this ID
 
 ### 10. /user/<user_name>
-> Get : Get the profile data of specified username
+> Get : Get the github profile data of specified username
+
+### 11. /user/profile/<user_name>
+> Get : Get the **COMPLETE** profile data of specified username
