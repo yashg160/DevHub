@@ -227,9 +227,57 @@ export default class Dashboard extends React.Component {
 		console.log('Clicked editAnswerClick');
 	}
 
-	upvoteAnswerClick(answerId, i) {
-		// To be implemented
-		console.log('Clicked upvote answer click');
+	async upvoteAnswerClick(answerId, upvoters, i) {
+		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
+		let userUpvoted = false;
+
+		for (let i = 0; i < upvoters.length; i++) {
+			if (upvoters[i] === this.state.user.login) userUpvoted = true;
+		}
+
+		// Get the token from cookies
+		var token = Cookies.get('TOKEN');
+		console.log(token);
+		console.log(userUpvoted);
+		if (userUpvoted) {
+			// User has already upvoted. Remove the upvote
+			let rawResponse = await fetch(
+				serverUrl + `/api/answers/${answerId}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Token ${token}`,
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						upvote: false
+					})
+				}
+			);
+			let res = await rawResponse.json();
+			console.log(res);
+		} else {
+			// Upvote the answer by this user
+			let rawResponse = await fetch(
+				serverUrl + `/api/answers/${answerId}`,
+				{
+					method: 'PUT',
+					headers: {
+						Authorization: `Token ${token}`,
+						Accept: 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						upvote: true
+					})
+				}
+			);
+
+			let res = await rawResponse.json();
+			console.log(res);
+		}
+		return;
 	}
 
 	checkUserUpvoted(upvoters) {
@@ -661,6 +709,7 @@ export default class Dashboard extends React.Component {
 													onClick={() =>
 														this.upvoteAnswerClick(
 															res.answer.id,
+															res.answer.upvoters,
 															i
 														)
 													}>
