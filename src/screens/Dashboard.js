@@ -299,6 +299,14 @@ export default class Dashboard extends React.Component {
 				}
 			);
 			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[
+					index
+				].answer.upvoters = this.removeValueFromArray(
+					this.state.result[index].answer.upvoters,
+					this.state.user.login
+				);
+			}
 			console.log(res);
 		} else {
 			// Upvote the answer by this user
@@ -318,8 +326,13 @@ export default class Dashboard extends React.Component {
 			);
 
 			let res = await rawResponse.json();
+			if (res.status === 'success')
+				this.state.result[index].answer.upvoters.push(
+					this.state.user.login
+				);
 			console.log(res);
 		}
+		this.forceUpdate();
 		return;
 	}
 
