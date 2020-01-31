@@ -192,18 +192,33 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async followClick(i) {
-		/* 
-		Here i is the index of the question in results array in state 
-		Use it to refer to which question to follow
-		*/
+	removeValueFromArray(arr, value) {
+		var filteredArray = arr.filter(val => val !== value);
+		console.log(filteredArray);
+		return filteredArray;
+	}
+
+	checkUserFollowed(followers, index) {
+		for (let i = 0; i < followers.length; i++) {
+			if (followers[i] === this.state.user.login) return true;
+		}
+		return false;
+	}
+
+	async followClick(event, url, followers, index) {
+		//First we check if the user has already followed the question. If yes, unfollow it. Else, follow the question
+
+		// Also prevent the panel from expanding or shrinking.
+		event.stopPropagation();
 
 		//Get the token as cookie
-		/* var token = Cookies.get('TOKEN');
+		var token = Cookies.get('TOKEN');
 
-		let rawResponse = await fetch(
-			serverUrl + `/api/questions/${this.state.result[i].url}`,
-			{
+		var userFollowed = this.checkUserFollowed(followers, index);
+
+		if (userFollowed) {
+			// User has already followed the question. Remove the follow.
+			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
 				method: 'PUT',
 				headers: {
 					Authorization: `Token ${token}`,
@@ -211,15 +226,44 @@ export default class Dashboard extends React.Component {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					followed: 'True',
-					unfollowed: 'False'
+					unfollowed: true
 				})
-			}
-		);
+			});
 
-		let res = await rawResponse.json();
-		console.group(res); */
-		console.log('Follow: To be implemented');
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[
+					index
+				].followers_list = this.removeValueFromArray(
+					this.state.result[index].followers_list,
+					this.state.user.login
+				);
+			}
+			console.log(res);
+		} else {
+			// User has followed the question. Add the follow
+			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					followed: true
+				})
+			});
+
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[index].followers_list.push(
+					this.state.user.login
+				);
+			}
+			console.log(res);
+		}
+		this.forceUpdate();
+		return;
 	}
 
 	editAnswerClick(i) {
@@ -227,7 +271,7 @@ export default class Dashboard extends React.Component {
 		console.log('Clicked editAnswerClick');
 	}
 
-	async upvoteAnswerClick(answerId, upvoters, i) {
+	async upvoteAnswerClick(answerId, upvoters, index) {
 		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
 		let userUpvoted = false;
 
@@ -591,29 +635,75 @@ export default class Dashboard extends React.Component {
 														Answer
 													</Typography>
 												</Button>
-												<Button
-													variant='text'
-													style={{
-														color: '#919191'
-													}}
-													startIcon={<RssFeedIcon />}
-													onClick={e =>
-														this.followClick(i)
-													}>
-													<Typography
-														variant='body2'
+
+												{this.checkUserFollowed(
+													res.followers_list,
+													i
+												) ? (
+													<Button
+														variant='text'
 														style={{
-															fontWeight: 600,
-															textTransform:
-																'capitalize'
-														}}>
-														Follow &#183;{' '}
-														{
-															res.followers_list
-																.length
+															color: '#54e1e3'
+														}}
+														startIcon={
+															<RssFeedIcon />
 														}
-													</Typography>
-												</Button>
+														onClick={e =>
+															this.followClick(
+																e,
+																res.url,
+																res.followers_list,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Unfollow &#183;{' '}
+															{
+																res
+																	.followers_list
+																	.length
+															}
+														</Typography>
+													</Button>
+												) : (
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<RssFeedIcon />
+														}
+														onClick={e =>
+															this.followClick(
+																e,
+																res.url,
+																res.followers_list,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Follow &#183;{' '}
+															{
+																res
+																	.followers_list
+																	.length
+															}
+														</Typography>
+													</Button>
+												)}
 												<Button
 													variant='text'
 													style={{
