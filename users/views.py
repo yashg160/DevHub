@@ -3,6 +3,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from users.models import CustomUser
+from core.serializers import (
+    QuestionSerializer, AnswerSerializer, CommentSerializer, GenreSerializer,
+    TopicSerializer
+)
 from django.contrib.auth import get_user_model
 import requests
 from json import dumps, loads
@@ -52,4 +56,46 @@ def get_user_data(request, username):
     return Response({
         'status' : 'success',
         'data' : loads(user_data.text)
+    })
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def get_user_home(request, username):
+    try:
+        user = CustomUser.objects.get(username = username)
+    except:
+        return Response({'status' : 'error', 'message' : 'No such user found'})
+
+    # Get github data
+    try:
+        profile_data = requests.get(user.extra_detail_url).text
+    except:
+        profile_data = "{\"error\":\"No user found\"}"
+    # Get asked questions
+    asked_questions = QuestionSerializer(user.asked_questions.all(), many=True).data
+    # Get all anwers
+    answered = AnswerSerializer(user.written_answers.all(), many=True).data
+    # Get all comments
+    written_comments = CommentSerializer(user.written_comments.all(), many=True).data
+    # Get all upvoted questions, comments
+    upvoted_answers = AnswerSerializer(user.upvoted_answers.all(), many = True).data
+    upvoted_comments = CommentSerializer(user.upvoted_comments.all(), many = True).data
+    requested_answers = []
+    if request.user and request.user == user:
+        requested_answers = AnswerSerializer(user.answer_requests.all(), many = True).data
+    subscribed_genres = GenreSerializer(user.subscribed_genres.all(), many = True).data
+    followed_topics = TopicSerializer(user.followed_topics.all(), many = True).data
+    return Response({
+        'status' : 'success',
+        'data' : {
+            'profile_data' : loads(profile_data),
+            'asked_questions' : asked_questions,
+            'answered' : answered,
+            'written_comments' : written_comments,
+            'upvoted_answers' : upvoted_answers,
+            'upvoted_comments' : upvoted_comments,
+            'requested_answers' : requested_answers,
+            'subscribed_genres' : subscribed_genres,
+            'followed_topics' : followed_topics
+        }
     })
