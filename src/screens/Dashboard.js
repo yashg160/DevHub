@@ -34,7 +34,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
-
+import utils from '../utils';
+/* import removeValueFromArray from '../utils';
+import checkUserInArray from '../utils'; */
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -194,18 +196,6 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	removeValueFromArray(arr, value) {
-		var filteredArray = arr.filter(val => val !== value);
-		console.log(filteredArray);
-		return filteredArray;
-	}
-
-	checkUserInArray(arr) {
-		for (let i = 0; i < arr.length; i++)
-			if (arr[i] === this.state.user.login) return true;
-		return false;
-	}
-
 	async followClick(event, url, followers, index) {
 		//First we check if the user has already followed the question. If yes, unfollow it. Else, follow the question
 
@@ -215,7 +205,10 @@ export default class Dashboard extends React.Component {
 		//Get the token as cookie
 		var token = Cookies.get('TOKEN');
 
-		var userFollowed = this.checkUserInArray(followers);
+		var userFollowed = utils.checkUserInArray(
+			followers,
+			this.state.user.login
+		);
 
 		if (userFollowed) {
 			// User has already followed the question. Remove the follow.
@@ -235,7 +228,7 @@ export default class Dashboard extends React.Component {
 			if (res.status === 'success') {
 				this.state.result[
 					index
-				].followers_list = this.removeValueFromArray(
+				].followers_list = utils.removeValueFromArray(
 					this.state.result[index].followers_list,
 					this.state.user.login
 				);
@@ -274,7 +267,10 @@ export default class Dashboard extends React.Component {
 		const token = Cookies.get('TOKEN');
 
 		// Check if the user has already requested the answer. If yes, then remove the request on click. Else, add a request.
-		const userRequested = this.checkUserInArray(requested);
+		const userRequested = utils.checkUserInArray(
+			requested,
+			this.state.user.login
+		);
 
 		if (userRequested) {
 			// User has already requested an answer. Remove the request ???
@@ -334,7 +330,7 @@ export default class Dashboard extends React.Component {
 			if (res.status === 'success') {
 				this.state.result[
 					index
-				].answer.upvoters = this.removeValueFromArray(
+				].answer.upvoters = utils.removeValueFromArray(
 					this.state.result[index].answer.upvoters,
 					this.state.user.login
 				);
@@ -713,8 +709,9 @@ export default class Dashboard extends React.Component {
 													</Typography>
 												</Button>
 
-												{this.checkUserInArray(
-													res.followers_list
+												{utils.checkUserInArray(
+													res.followers_list,
+													this.state.user.login
 												) ? (
 													<Button
 														variant='text'
@@ -780,8 +777,9 @@ export default class Dashboard extends React.Component {
 														</Typography>
 													</Button>
 												)}
-												{this.checkUserInArray(
-													res.requested
+												{utils.checkUserInArray(
+													res.requested,
+													this.state.user.login
 												) ? (
 													<Button
 														variant='text'
@@ -882,8 +880,9 @@ export default class Dashboard extends React.Component {
 													flexDirection: 'row',
 													marginTop: '0.5rem'
 												}}>
-												{this.checkUserInArray(
-													res.answer.upvoters
+												{utils.checkUserInArray(
+													res.answer.upvoters,
+													this.state.user.login
 												) ? (
 													<Button
 														variant='outlined'
