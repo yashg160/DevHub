@@ -22,6 +22,7 @@ export default class AskedQuestions extends React.Component {
 		this.state = {
 			questions: props.questions
 		};
+		console.log(props);
 	}
 
 	componentDidMount() {}

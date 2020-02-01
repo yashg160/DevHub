@@ -134,6 +134,7 @@ export default class Profile extends React.Component {
 							<div
 								label='Asked Questions'
 								questions={this.state.questions}
+								history={this.props.history}
 							/>
 							<div label='Answers'>Answers</div>
 							<div label='Comments'>Comments</div>
