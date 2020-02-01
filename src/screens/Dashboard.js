@@ -287,7 +287,7 @@ export default class Dashboard extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div>
-					<AppBar position='fixed' style={{ marginBottom: '2rem' }}>
+					<AppBar position='fixed'>
 						<Toolbar variant='regular' color='primary'>
 							<Container maxWidth='lg'>
 								<div
@@ -422,7 +422,6 @@ export default class Dashboard extends React.Component {
 										backgroundColor: '#fff',
 										border: '0.2rem solid #bababa',
 										borderRadius: '1rem',
-										color: '#8a8a8a',
 										width: '90%',
 										padding: '1rem',
 										marginBottom: '3rem'
@@ -442,12 +441,15 @@ export default class Dashboard extends React.Component {
 												marginRight: '1rem'
 											}}
 										/>
-										<Typography variant='body1'>
+										<Typography
+											variant='body1'
+											color='textSecondary'>
 											{this.state.user.name}
 										</Typography>
 									</div>
 									<Typography
 										variant='h6'
+										color='textSecondary'
 										onClick={() =>
 											this.setState({
 												modalVisible: true
@@ -458,7 +460,7 @@ export default class Dashboard extends React.Component {
 											fontWeight: 600,
 											marginTop: '.5rem'
 										}}>
-										What is question today?
+										What is your question today?
 									</Typography>
 								</div>
 								{this.state.result.map((res, i) => (
@@ -492,10 +494,10 @@ export default class Dashboard extends React.Component {
 														<Typography
 															key={i}
 															variant='body2'
+															color='textSecondary'
 															style={{
 																marginRight:
-																	'1rem',
-																color: '#a3a3a3'
+																	'1rem'
 															}}>
 															&#9679; {g}
 														</Typography>
@@ -558,9 +560,7 @@ export default class Dashboard extends React.Component {
 													) ? (
 														<Button
 															variant='text'
-															style={{
-																color: '#54e1e3'
-															}}
+															color='primary'
 															startIcon={
 																<RssFeedIcon />
 															}
@@ -721,9 +721,7 @@ export default class Dashboard extends React.Component {
 													) ? (
 														<Button
 															variant='text'
-															style={{
-																color: '#54e1e3'
-															}}
+															color='primary'
 															startIcon={
 																<EmojiPeopleIcon />
 															}
