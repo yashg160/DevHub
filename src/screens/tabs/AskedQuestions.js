@@ -62,7 +62,8 @@ export default class AskedQuestions extends React.Component {
 								flexDirection: 'column',
 								border: '0.1rem solid #bababa',
 								padding: '1rem',
-								borderRadius: '1rem'
+								marginTop: '0.5rem',
+								marginBottom: '.5rem'
 							}}>
 							<div
 								style={{
@@ -232,7 +233,7 @@ export default class AskedQuestions extends React.Component {
 									</Button>
 								)}
 							</div>
-							<Typography variant='h6'>
+							<Typography variant='body1'>
 								{res.all_answers.length} Answers
 							</Typography>
 						</div>
