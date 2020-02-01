@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
+import Link from '@material-ui/core/Link';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -56,7 +57,7 @@ export default class Profile extends React.Component {
 			return <Backdrop open={this.state.loading} color='#fff' />;
 		else if (this.state.error) return <h1>There was an error</h1>;
 		return (
-			<div>
+			<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
 				<Grid container direction='row'>
 					<Grid
 						container
@@ -69,23 +70,51 @@ export default class Profile extends React.Component {
 							variant='circle'
 							src={this.state.user.avatar_url}
 							alt={this.state.user.name}
-							style={{ height: '16rem', width: '16rem' }}
+							style={{
+								height: '16rem',
+								width: '16rem',
+								marginBottom: '1rem'
+							}}
 						/>
-						<Typography variant='h5'>
-							{this.state.user.name}
-						</Typography>
-						<Typography variant='h6'>
-							{this.state.user.login}
-						</Typography>
-						<Typography variant='subtitle1'>
-							{this.state.user.bio}
-						</Typography>
-						<Typography variant='subtitle1'>
-							{this.state.user.company}
-						</Typography>
-						<Typography variant='subtitle1'>
-							{this.state.user.location}
-						</Typography>
+						<div style={{ marginBottom: '0.5rem' }}>
+							<Typography
+								variant='h5'
+								style={{ marginTop: '1rem', fontSize: '2rem' }}>
+								{this.state.user.name
+									? this.state.user.name
+									: null}
+							</Typography>
+							<Typography variant='h6'>
+								{this.state.user.login
+									? this.state.user.login
+									: null}
+							</Typography>
+						</div>
+
+						<div style={{ marginTop: '.5rem' }}>
+							<Typography variant='subtitle1'>
+								{this.state.user.bio
+									? this.state.user.bio
+									: null}
+							</Typography>
+							<Typography variant='subtitle1'>
+								{this.state.user.company
+									? this.state.user.company
+									: null}
+							</Typography>
+							<Typography variant='body2'>
+								{this.state.user.location
+									? this.state.user.location
+									: null}
+							</Typography>
+							<Link to={this.state.user.blog}>
+								<Typography variant='body2'>
+									{this.state.user.blog
+										? this.state.user.blog
+										: null}
+								</Typography>
+							</Link>
+						</div>
 					</Grid>
 					<Grid item sm={12} md={12} lg={9}></Grid>
 				</Grid>
