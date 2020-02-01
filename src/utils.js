@@ -12,7 +12,7 @@ function removeValueFromArray(arr, value) {
 	return filteredArray;
 }
 
-async function followClick(event, url, followers, index, login) {
+async function followClick(event, url, followers, login) {
 	//First we check if the user has already followed the question. If yes, unfollow it. Else, follow the question
 
 	// Also prevent the panel from expanding or shrinking.
@@ -61,4 +61,41 @@ async function followClick(event, url, followers, index, login) {
 	return;
 }
 
-export default { checkUserInArray, removeValueFromArray, followClick };
+async function requestClick(event, url, requested, login) {
+	// Stop the panel from expanding or contracting
+	event.stopPropagation();
+	// First get the token from cookies
+	const token = Cookies.get('TOKEN');
+
+	// Check if the user has already requested the answer. If yes, then remove the request on click. Else, add a request.
+	const userRequested = checkUserInArray(requested, login);
+
+	if (userRequested) {
+		// User has already requested an answer. Remove the request ???
+	} else {
+		// New request.
+		let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
+			method: 'PUT',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				requested: [login]
+			})
+		});
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status === 'success') return 'success';
+		else throw Error();
+	}
+}
+
+export default {
+	checkUserInArray,
+	removeValueFromArray,
+	followClick,
+	requestClick
+};

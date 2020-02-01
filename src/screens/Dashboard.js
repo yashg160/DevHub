@@ -196,44 +196,6 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async requestClick(event, url, requested, index) {
-		// Stop the panel from expanding or contracting
-		event.stopPropagation();
-		// First get the token from cookies
-		const token = Cookies.get('TOKEN');
-
-		// Check if the user has already requested the answer. If yes, then remove the request on click. Else, add a request.
-		const userRequested = utils.checkUserInArray(
-			requested,
-			this.state.user.login
-		);
-
-		if (userRequested) {
-			// User has already requested an answer. Remove the request ???
-		} else {
-			// New request.
-			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
-				method: 'PUT',
-				headers: {
-					Authorization: `Token ${token}`,
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					requested: [this.state.user.login]
-				})
-			});
-
-			let res = await rawResponse.json();
-			if (res.status === 'success') {
-				this.state.result[index].requested.push(this.state.user.login);
-			}
-			console.log(res);
-		}
-		this.forceUpdate();
-		return;
-	}
-
 	async upvoteAnswerClick(answerId, upvoters, index) {
 		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
 		let userUpvoted = false;
@@ -663,7 +625,6 @@ export default class Dashboard extends React.Component {
 																	e,
 																	res.url,
 																	res.followers_list,
-																	i,
 																	this.state
 																		.user
 																		.login
@@ -742,7 +703,6 @@ export default class Dashboard extends React.Component {
 																	e,
 																	res.url,
 																	res.followers_list,
-																	i,
 																	this.state
 																		.user
 																		.login
@@ -807,6 +767,7 @@ export default class Dashboard extends React.Component {
 														</Typography>
 													</Button>
 												)}
+
 												{utils.checkUserInArray(
 													res.requested,
 													this.state.user.login
@@ -820,12 +781,42 @@ export default class Dashboard extends React.Component {
 															<EmojiPeopleIcon />
 														}
 														onClick={event =>
-															this.requestClick(
-																event,
-																res.url,
-																res.requested,
-																i
-															)
+															utils
+																.requestClick(
+																	event,
+																	res.url,
+																	res.requested,
+																	this.state
+																		.user
+																		.login
+																)
+																.then(
+																	status => {
+																		console.log(
+																			status
+																		);
+																		if (
+																			status ===
+																			'success'
+																		)
+																			this.state.result[
+																				i
+																			].requested.push(
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		this.forceUpdate();
+																	}
+																)
+																.catch(
+																	error => {
+																		console.error(
+																			error
+																		);
+																	}
+																)
 														}>
 														<Typography
 															variant='body2'
@@ -851,12 +842,42 @@ export default class Dashboard extends React.Component {
 															<EmojiPeopleIcon />
 														}
 														onClick={event =>
-															this.requestClick(
-																event,
-																res.url,
-																res.requested,
-																i
-															)
+															utils
+																.requestClick(
+																	event,
+																	res.url,
+																	res.requested,
+																	this.state
+																		.user
+																		.login
+																)
+																.then(
+																	status => {
+																		console.log(
+																			status
+																		);
+																		if (
+																			status ===
+																			'success'
+																		)
+																			this.state.result[
+																				i
+																			].requested.push(
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		this.forceUpdate();
+																	}
+																)
+																.catch(
+																	error => {
+																		console.error(
+																			error
+																		);
+																	}
+																)
 														}>
 														<Typography
 															variant='body2'
