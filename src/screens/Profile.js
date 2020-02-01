@@ -18,11 +18,15 @@ export default class Profile extends React.Component {
 		this.state = {
 			loading: true,
 			error: false,
-			user: null
+			user: null,
+			questions: null,
+			answers: null,
+			comments: null,
+			upvotes: null
 		};
 	}
-	async getUser(userName, token) {
-		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
+	async getProfileData(userName, token) {
+		let rawResponse = await fetch(serverUrl + `/user/profile/${userName}`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Token ${token}`,
@@ -44,7 +48,15 @@ export default class Profile extends React.Component {
 
 		this.getUser(userName, token)
 			.then(res => {
-				this.setState({ user: res, loading: false, error: false });
+				this.setState({
+					user: res.profile_data,
+					questions: res.asked_questions,
+					answers: res.answered,
+					comments: res.comments,
+					upvotes: res.upvoted_answers,
+					loading: false,
+					error: false
+				});
 			})
 			.catch(error => {
 				console.error(error);
