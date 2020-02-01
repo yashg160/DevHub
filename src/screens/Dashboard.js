@@ -876,7 +876,11 @@ export default class Dashboard extends React.Component {
 																	'capitalize'
 															}}>
 															Remove &#183;{' '}
-															{res.answer.upvotes}
+															{
+																res.answer
+																	.upvoters
+																	.length
+															}
 														</Typography>
 													</Button>
 												) : (
@@ -904,7 +908,11 @@ export default class Dashboard extends React.Component {
 																	'capitalize'
 															}}>
 															Upvote &#183;{' '}
-															{res.answer.upvotes}
+															{
+																res.answer
+																	.upvoters
+																	.length
+															}
 														</Typography>
 													</Button>
 												)}
