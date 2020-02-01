@@ -265,6 +265,41 @@ export default class Dashboard extends React.Component {
 		return;
 	}
 
+	async requestClick(event, url, requested, index) {
+		// Stop the panel from expanding or contracting
+		event.stopPropagation();
+		// First get the token from cookies
+		const token = Cookies.get('TOKEN');
+
+		// Check if the user has already requested the answer. If yes, then remove the request on click. Else, add a request.
+		const userRequested = this.checkUserInArray(requested);
+
+		if (userRequested) {
+			// User has already requested an answer. Remove the request ???
+		} else {
+			// New request.
+			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
+				method: 'PUT',
+				headers: {
+					Authorization: `Token ${token}`,
+					Accept: 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					requested: [this.state.user.login]
+				})
+			});
+
+			let res = await rawResponse.json();
+			if (res.status === 'success') {
+				this.state.result[index].requested.push(this.state.user.login);
+			}
+			console.log(res);
+		}
+		this.forceUpdate();
+		return;
+	}
+
 	async upvoteAnswerClick(answerId, upvoters, index) {
 		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
 		let userUpvoted = false;
@@ -712,24 +747,71 @@ export default class Dashboard extends React.Component {
 														</Typography>
 													</Button>
 												)}
-												<Button
-													variant='text'
-													style={{
-														color: '#919191'
-													}}
-													startIcon={
-														<EmojiPeopleIcon />
-													}>
-													<Typography
-														variant='body2'
+												{this.checkUserInArray(
+													res.requested
+												) ? (
+													<Button
+														variant='text'
 														style={{
-															fontWeight: 600,
-															textTransform:
-																'capitalize'
-														}}>
-														Request
-													</Typography>
-												</Button>
+															color: '#54e1e3'
+														}}
+														startIcon={
+															<EmojiPeopleIcon />
+														}
+														onClick={event =>
+															this.requestClick(
+																event,
+																res.url,
+																res.requested,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Pull Request &#183;{' '}
+															{
+																res.requested
+																	.length
+															}
+														</Typography>
+													</Button>
+												) : (
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<EmojiPeopleIcon />
+														}
+														onClick={event =>
+															this.requestClick(
+																event,
+																res.url,
+																res.requested,
+																i
+															)
+														}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Request &#183;{' '}
+															{
+																res.requested
+																	.length
+															}
+														</Typography>
+													</Button>
+												)}
 											</div>
 										</div>
 									</ExpansionPanelSummary>
