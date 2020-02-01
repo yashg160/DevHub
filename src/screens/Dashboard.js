@@ -196,70 +196,6 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async followClick(event, url, followers, index) {
-		//First we check if the user has already followed the question. If yes, unfollow it. Else, follow the question
-
-		// Also prevent the panel from expanding or shrinking.
-		event.stopPropagation();
-
-		//Get the token as cookie
-		var token = Cookies.get('TOKEN');
-
-		var userFollowed = utils.checkUserInArray(
-			followers,
-			this.state.user.login
-		);
-
-		if (userFollowed) {
-			// User has already followed the question. Remove the follow.
-			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
-				method: 'PUT',
-				headers: {
-					Authorization: `Token ${token}`,
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					unfollowed: true
-				})
-			});
-
-			let res = await rawResponse.json();
-			if (res.status === 'success') {
-				this.state.result[
-					index
-				].followers_list = utils.removeValueFromArray(
-					this.state.result[index].followers_list,
-					this.state.user.login
-				);
-			}
-			console.log(res);
-		} else {
-			// User has followed the question. Add the follow
-			let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
-				method: 'PUT',
-				headers: {
-					Authorization: `Token ${token}`,
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					followed: true
-				})
-			});
-
-			let res = await rawResponse.json();
-			if (res.status === 'success') {
-				this.state.result[index].followers_list.push(
-					this.state.user.login
-				);
-			}
-			console.log(res);
-		}
-		this.forceUpdate();
-		return;
-	}
-
 	async requestClick(event, url, requested, index) {
 		// Stop the panel from expanding or contracting
 		event.stopPropagation();
@@ -722,12 +658,59 @@ export default class Dashboard extends React.Component {
 															<RssFeedIcon />
 														}
 														onClick={e =>
-															this.followClick(
-																e,
-																res.url,
-																res.followers_list,
-																i
-															)
+															utils
+																.followClick(
+																	e,
+																	res.url,
+																	res.followers_list,
+																	i,
+																	this.state
+																		.user
+																		.login
+																)
+																.then(
+																	status => {
+																		console.log(
+																			status
+																		);
+																		if (
+																			status ===
+																			'removed'
+																		) {
+																			this.state.result[
+																				i
+																			].followers_list = utils.removeValueFromArray(
+																				this
+																					.state
+																					.result[
+																					i
+																				]
+																					.followers_list,
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		} else {
+																			this.state.result[
+																				i
+																			].followers_list.push(
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		}
+																		this.forceUpdate();
+																	}
+																)
+																.catch(
+																	error => {
+																		console.error(
+																			error
+																		);
+																	}
+																)
 														}>
 														<Typography
 															variant='body2'
@@ -754,12 +737,59 @@ export default class Dashboard extends React.Component {
 															<RssFeedIcon />
 														}
 														onClick={e =>
-															this.followClick(
-																e,
-																res.url,
-																res.followers_list,
-																i
-															)
+															utils
+																.followClick(
+																	e,
+																	res.url,
+																	res.followers_list,
+																	i,
+																	this.state
+																		.user
+																		.login
+																)
+																.then(
+																	status => {
+																		console.log(
+																			status
+																		);
+																		if (
+																			status ===
+																			'removed'
+																		) {
+																			this.state.result[
+																				i
+																			].followers_list = utils.removeValueFromArray(
+																				this
+																					.state
+																					.result[
+																					i
+																				]
+																					.followers_list,
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		} else {
+																			this.state.result[
+																				i
+																			].followers_list.push(
+																				this
+																					.state
+																					.user
+																					.login
+																			);
+																		}
+																		this.forceUpdate();
+																	}
+																)
+																.catch(
+																	error => {
+																		console.error(
+																			error
+																		);
+																	}
+																)
 														}>
 														<Typography
 															variant='body2'
