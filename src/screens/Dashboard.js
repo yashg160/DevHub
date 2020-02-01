@@ -29,7 +29,6 @@ import Link from '@material-ui/core/Link';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-import EditIcon from '@material-ui/icons/Edit';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -37,6 +36,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import serverUrl from '../config';
 
 import Cookies from 'js-cookie';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export default class Dashboard extends React.Component {
 	constructor(props) {
@@ -50,6 +51,7 @@ export default class Dashboard extends React.Component {
 			hasMore: false,
 			next: null,
 			modalVisible: false,
+			menuVisible: null,
 			newQuestion: '',
 			newQuestionError: false,
 			showSnackbar: false,
@@ -485,7 +487,12 @@ export default class Dashboard extends React.Component {
 										style={{
 											marginRight: '1rem',
 											padding: '0.5rem'
-										}}>
+										}}
+										onClick={event =>
+											this.setState({
+												menuVisible: event.currentTarget
+											})
+										}>
 										<Avatar
 											src={this.state.user.avatar_url}
 											alt={this.state.user.name}
@@ -1174,6 +1181,21 @@ export default class Dashboard extends React.Component {
 						</div>
 					</Fade>
 				</Modal>
+				<Menu
+					id='main-menu'
+					anchorEl={this.state.menuVisible}
+					keepMounted
+					open={Boolean(this.state.menuVisible)}
+					onClose={() => this.setState({ menuVisible: null })}>
+					<MenuItem
+						onClick={() => this.setState({ menuVisible: null })}>
+						Profile
+					</MenuItem>
+					<MenuItem
+						onClick={() => this.setState({ menuVisible: null })}>
+						Sign Out
+					</MenuItem>
+				</Menu>
 				<Snackbar
 					anchorOrigin={{
 						vertical: 'bottom',
