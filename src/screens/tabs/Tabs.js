@@ -52,7 +52,11 @@ export default class Tabs extends Component {
 						if (child.props.label !== activeTab) return undefined;
 						switch (child.props.label) {
 							case 'Asked Questions':
-								return <AskedQuestions />;
+								return (
+									<AskedQuestions
+										questions={child.props.questions}
+									/>
+								);
 							case 'Answers':
 								return <Answers />;
 							case 'Comments':
