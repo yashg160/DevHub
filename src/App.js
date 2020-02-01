@@ -6,6 +6,7 @@ import Dashboard from './screens/Dashboard';
 import Genres from './screens/Genres';
 import Question from './screens/Question';
 import Answer from './screens/Answer';
+import Profile from './screens/Profile';
 
 function App() {
 	return (
@@ -20,6 +21,7 @@ function App() {
 				<Route exact path='/' component={Home} />
 				<Route exact path='/genres' component={Genres} />
 				<Route exact path='/user/signin/callback' component={Home} />
+				<Route exact path='/users/:login' component={Profile} />
 			</Switch>
 		</Router>
 	);

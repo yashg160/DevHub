@@ -1188,7 +1188,12 @@ export default class Dashboard extends React.Component {
 					open={Boolean(this.state.menuVisible)}
 					onClose={() => this.setState({ menuVisible: null })}>
 					<MenuItem
-						onClick={() => this.setState({ menuVisible: null })}>
+						onClick={() => {
+							this.setState({ menuVisible: null });
+							this.props.history.push(
+								`/users/${this.state.user.login}`
+							);
+						}}>
 						Profile
 					</MenuItem>
 					<MenuItem
