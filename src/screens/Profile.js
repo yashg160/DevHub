@@ -11,6 +11,11 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
+import AskedQuestions from './tabs/AskedQuestions';
+import Answers from './tabs/Answers';
+import Comments from './tabs/Comments';
+import Upvotes from './tabs/Upvotes';
+
 export default class Profile extends React.Component {
 	constructor(props) {
 		super(props);
@@ -46,7 +51,7 @@ export default class Profile extends React.Component {
 		const userName = this.props.match.params.login;
 		console.log(token, userName);
 
-		this.getUser(userName, token)
+		this.getProfileData(userName, token)
 			.then(res => {
 				this.setState({
 					user: res.profile_data,
@@ -131,6 +136,10 @@ export default class Profile extends React.Component {
 					<Grid item sm={12} md={12} lg={9}>
 						<Tabs>
 							{/* Here come the tabs for each of the things to be showed in the tab view */}
+							<AskedQuestions label='Asked Questions' />
+							<div label='Answers'>Answers</div>
+							<div label='Comments'>Comments</div>
+							<div label='Upvotes'>Upvotes</div>
 						</Tabs>
 					</Grid>
 				</Grid>

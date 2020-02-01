@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Tab from './Tab';
+import AskedQuestions from './AskedQuestions';
+import Answers from './Answers';
+import Comments from './Comments';
+import Upvotes from './Upvotes';
 
 export default class Tabs extends Component {
 	static propTypes = {
@@ -46,7 +50,18 @@ export default class Tabs extends Component {
 				<div className='tab-content'>
 					{children.map(child => {
 						if (child.props.label !== activeTab) return undefined;
-						return child.props.children;
+						switch (child.props.label) {
+							case 'Asked Questions':
+								return <AskedQuestions />;
+							case 'Answers':
+								return <Answers />;
+							case 'Comments':
+								return <Comments />;
+							case 'Upvotes':
+								return <Upvotes />;
+							default:
+								return <h1>There was an error.</h1>;
+						}
 					})}
 				</div>
 			</div>
