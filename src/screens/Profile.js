@@ -71,8 +71,8 @@ export default class Profile extends React.Component {
 							src={this.state.user.avatar_url}
 							alt={this.state.user.name}
 							style={{
-								height: '16rem',
-								width: '16rem',
+								height: '14rem',
+								width: '14rem',
 								marginBottom: '1rem'
 							}}
 						/>
@@ -116,7 +116,11 @@ export default class Profile extends React.Component {
 							</Link>
 						</div>
 					</Grid>
-					<Grid item sm={12} md={12} lg={9}></Grid>
+					<Grid item sm={12} md={12} lg={9}>
+						<Tabs>
+							{/* Here come the tabs for each of the things to be showed in the tab view */}
+						</Tabs>
+					</Grid>
 				</Grid>
 			</div>
 		);
