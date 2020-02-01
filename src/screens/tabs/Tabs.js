@@ -68,9 +68,37 @@ export default class Tabs extends Component {
 									/>
 								);
 							case 'Comments':
-								return <Comments />;
-							case 'Upvotes':
-								return <UpvotedAnswers />;
+								return (
+									<Comments
+										comments={child.props.comments}
+										history={child.props.history}
+									/>
+								);
+							case 'Upvoted Answers':
+								return (
+									<UpvotedAnswers
+										upvotedAnswers={
+											child.props.upvotedAnswers
+										}
+										history={child.props.history}
+									/>
+								);
+							case 'Upvoted Comments':
+								return (
+									<UpvotedComments
+										upvotedComments={
+											child.props.upvotedComments
+										}
+										history={child.props.history}
+									/>
+								);
+							case 'Requests':
+								return (
+									<Requests
+										requests={child.props.requests}
+										history={child.props.history}
+									/>
+								);
 							default:
 								return <h1>There was an error.</h1>;
 						}

@@ -22,7 +22,9 @@ export default class Profile extends React.Component {
 			questions: null,
 			answers: null,
 			comments: null,
-			upvotes: null
+			upvotedAnswers: null,
+			upvotedComments: null,
+			requests: null
 		};
 	}
 	async getProfileData(userName, token) {
@@ -53,7 +55,9 @@ export default class Profile extends React.Component {
 					questions: res.asked_questions,
 					answers: res.answered,
 					comments: res.comments,
-					upvotes: res.upvoted_answers,
+					upvotedAnswers: res.upvoted_answers,
+					upvotedComments: res.upvoted_comments,
+					requests: res.requested_answers,
 					loading: false,
 					error: false
 				});
@@ -142,10 +146,30 @@ export default class Profile extends React.Component {
 								history={this.props.history}>
 								Answers
 							</div>
-							<div label='Comments'>Comments</div>
-							<div label='Upvoted Answers'>Upvoted Answers</div>
-							<div label='Upvoted Comments'>Upvoted Comments</div>
-							<div label='Requests'>Requests</div>
+							<div
+								label='Comments'
+								comments={this.state.comments}
+								history={this.props.history}>
+								Comments
+							</div>
+							<div
+								label='Upvoted Answers'
+								upvotedAnswers={this.state.upvotedAnswers}
+								history={this.props.history}>
+								Upvoted Answers
+							</div>
+							<div
+								label='Upvoted Comments'
+								upvotedComments={this.state.upvotedComments}
+								history={this.props.history}>
+								Upvoted Comments
+							</div>
+							<div
+								label='Requests'
+								requests={this.state.requests}
+								history={this.props.history}>
+								Requests
+							</div>
 						</Tabs>
 					</Grid>
 				</Grid>
