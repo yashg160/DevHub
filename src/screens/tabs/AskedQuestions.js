@@ -1,20 +1,12 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-
 import Button from '@material-ui/core/Button';
-
-import Link from '@material-ui/core/Link';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-import serverUrl from '../../config';
 import utils from '../../utils';
-
-import Cookies from 'js-cookie';
 
 export default class AskedQuestions extends React.Component {
 	constructor(props) {

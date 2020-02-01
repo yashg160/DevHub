@@ -8,7 +8,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Backdrop from '@material-ui/core/Backdrop';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
 export default class Profile extends React.Component {
