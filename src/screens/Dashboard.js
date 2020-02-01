@@ -473,21 +473,47 @@ export default class Dashboard extends React.Component {
 										</div>
 									</Link>
 								</div>
-								<Button
-									variant='contained'
-									onClick={() =>
-										this.setState({ modalVisible: true })
-									}
-									style={{ position: 'relative' }}>
-									<Typography
-										variant='body2'
+
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center'
+									}}>
+									<div
+										className={'link-div'}
 										style={{
-											fontWeight: 600,
-											textTransform: 'capitalize'
+											marginRight: '1rem',
+											padding: '0.5rem'
 										}}>
-										Add Question
-									</Typography>
-								</Button>
+										<Avatar
+											src={this.state.user.avatar_url}
+											alt={this.state.user.name}
+											style={{
+												height: '2rem',
+												width: '2rem'
+											}}
+										/>
+									</div>
+
+									<Button
+										variant='contained'
+										onClick={() =>
+											this.setState({
+												modalVisible: true
+											})
+										}
+										style={{ position: 'relative' }}>
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 600,
+												textTransform: 'capitalize'
+											}}>
+											Add Question
+										</Typography>
+									</Button>
+								</div>
 							</div>
 						</Container>
 					</Toolbar>
