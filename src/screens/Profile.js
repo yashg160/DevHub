@@ -143,7 +143,9 @@ export default class Profile extends React.Component {
 								Answers
 							</div>
 							<div label='Comments'>Comments</div>
-							<div label='Upvotes'>Upvotes</div>
+							<div label='Upvoted Answers'>Upvoted Answers</div>
+							<div label='Upvoted Comments'>Upvoted Comments</div>
+							<div label='Requests'>Requests</div>
 						</Tabs>
 					</Grid>
 				</Grid>

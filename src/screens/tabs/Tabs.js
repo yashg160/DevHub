@@ -5,7 +5,9 @@ import Tab from './Tab';
 import AskedQuestions from './AskedQuestions';
 import Answers from './Answers';
 import Comments from './Comments';
-import Upvotes from './Upvotes';
+import UpvotedAnswers from './UpvotedAnswers';
+import UpvotedComments from './UpvotedComments';
+import Requests from './Requests';
 
 export default class Tabs extends Component {
 	static propTypes = {
@@ -68,7 +70,7 @@ export default class Tabs extends Component {
 							case 'Comments':
 								return <Comments />;
 							case 'Upvotes':
-								return <Upvotes />;
+								return <UpvotedAnswers />;
 							default:
 								return <h1>There was an error.</h1>;
 						}
