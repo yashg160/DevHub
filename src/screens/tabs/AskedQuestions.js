@@ -233,7 +233,12 @@ export default class AskedQuestions extends React.Component {
 									</Button>
 								)}
 							</div>
-							<Typography variant='body1'>
+							<Typography
+								variant='body1'
+								style={{
+									fontWeight: '600',
+									marginTop: '0.2rem'
+								}}>
 								{res.all_answers.length} Answers
 							</Typography>
 						</div>
