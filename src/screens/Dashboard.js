@@ -965,7 +965,7 @@ export default class Dashboard extends React.Component {
 							className='hidden'
 							style={{
 								flex: 1,
-								marginTop: '4rem',
+								marginTop: '6rem',
 								marginLeft: '2rem'
 							}}>
 							<div
@@ -980,7 +980,8 @@ export default class Dashboard extends React.Component {
 										padding: '1rem',
 										borderStyle: 'solid',
 										borderColor: '#bababa',
-										borderWidth: '0.05rem'
+										borderWidth: '0.05rem',
+										backgroundColor: '#eeeeee'
 									}}>
 									<Typography
 										variant='body1'
@@ -999,32 +1000,30 @@ export default class Dashboard extends React.Component {
 									}}>
 									<Typography
 										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+										style={{ marginBottom: '0.5rem' }}>
 										Visit your feed
 									</Typography>
 									<Typography
 										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+										style={{ marginBottom: '0.5rem' }}>
 										Subscribe to more genres
 									</Typography>
 									<Typography
 										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+										style={{ marginBottom: '0.5rem' }}>
 										Follow more topics
 									</Typography>
 									<Typography
 										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+										style={{ marginBottom: '0.5rem' }}>
 										Answer more questions
 									</Typography>
 									<Typography
 										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+										style={{ marginBottom: '0.5rem' }}>
 										Ask more questions
 									</Typography>
-									<Typography
-										variant='subtitle2'
-										style={{ marginBottom: '1rem' }}>
+									<Typography variant='subtitle2'>
 										Upvote more good answers
 									</Typography>
 								</div>
