@@ -56,7 +56,7 @@ async function followClick(event, url, followers, login) {
 
 		let res = await rawResponse.json();
 		console.log(res);
-		if (res.status === 'success') return 'unfollowed';
+		if (res.status === 'success') return 'followed';
 	}
 	return;
 }
