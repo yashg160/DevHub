@@ -59,7 +59,12 @@ export default class Tabs extends Component {
 									/>
 								);
 							case 'Answers':
-								return <Answers />;
+								return (
+									<Answers
+										answers={child.props.answers}
+										history={child.props.history}
+									/>
+								);
 							case 'Comments':
 								return <Comments />;
 							case 'Upvotes':
