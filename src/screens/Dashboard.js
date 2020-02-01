@@ -35,8 +35,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
 import utils from '../utils';
-/* import removeValueFromArray from '../utils';
-import checkUserInArray from '../utils'; */
+import theme from '../theme';
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -285,108 +285,827 @@ export default class Dashboard extends React.Component {
 		else if (this.state.error) return <h1>There was an error</h1>;
 
 		return (
-			<div style={{ backgroundColor: '#eeeeee' }}>
-				<AppBar position='fixed'>
-					<Toolbar variant='dense'>
-						<Container maxWidth='lg'>
+			<ThemeProvider theme={theme.theme}>
+				<div>
+					<AppBar position='fixed' style={{ marginBottom: '2rem' }}>
+						<Toolbar variant='regular' color='primary'>
+							<Container maxWidth='lg'>
+								<div
+									style={{
+										display: 'flex',
+										flexGrow: 1,
+										flexDirection: 'row',
+										alignItems: 'center',
+										justifyContent: 'space-between'
+									}}>
+									<Typography
+										variant='h5'
+										style={{ color: '#fff' }}>
+										Reactora
+									</Typography>
+
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'row',
+											alignItems: 'center'
+										}}>
+										<div
+											className={'link-div'}
+											style={{
+												marginRight: '1rem',
+												padding: '0.5rem'
+											}}
+											onClick={event =>
+												this.setState({
+													menuVisible:
+														event.currentTarget
+												})
+											}>
+											<Avatar
+												src={this.state.user.avatar_url}
+												alt={this.state.user.name}
+												style={{
+													height: '2.3rem',
+													width: '2.3rem'
+												}}
+											/>
+										</div>
+
+										<Button
+											variant='contained'
+											color='secondary'
+											onClick={() =>
+												this.setState({
+													modalVisible: true
+												})
+											}
+											style={{
+												borderRadius: '2rem',
+												textTransform: 'none'
+											}}>
+											<Typography
+												variant='body2'
+												color='white'
+												style={{
+													fontWeight: 600
+												}}>
+												Add Question
+											</Typography>
+										</Button>
+									</div>
+								</div>
+							</Container>
+						</Toolbar>
+					</AppBar>
+					<Container
+						maxWidth='lg'
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'center',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							paddingBottom: '4rem'
+						}}>
+						<div
+							className='hidden'
+							style={{
+								flex: 1,
+								marginTop: '4rem',
+								marginRight: '2rem'
+							}}>
+							<div>
+								<Typography variant='h5'>
+									This div will contain some other content
+									such as related questions or feed.
+								</Typography>
+							</div>
+						</div>
+
+						<div
+							style={{
+								flex: 3,
+								maxWidth: '75%',
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								marginTop: '2rem'
+							}}>
+							<InfiniteScroll
+								dataLength={this.state.result.length}
+								next={() => this.fetchResult()}
+								hasMore={this.state.hasMore}
+								loader={
+									<div
+										style={{
+											width: '100%',
+											display: 'flex',
+											justifyContent: 'center',
+											alignItems: 'center'
+										}}>
+										<CircularProgress
+											color='secondary'
+											style={{ margin: '2rem' }}
+										/>
+									</div>
+								}
+								endMessage={
+									<p style={{ textAlign: 'center' }}>
+										<b>Yay! You have seen it all</b>
+									</p>
+								}>
+								<div
+									style={{
+										marginTop: '4rem',
+										backgroundColor: '#fff',
+										border: '0.2rem solid #bababa',
+										borderRadius: '1rem',
+										color: '#8a8a8a',
+										width: '90%',
+										padding: '1rem',
+										marginBottom: '3rem'
+									}}>
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'row',
+											alignItems: 'center'
+										}}>
+										<Avatar
+											src={this.state.user.avatar_url}
+											alt={this.state.user.name}
+											style={{
+												height: '3rem',
+												width: '3rem',
+												marginRight: '1rem'
+											}}
+										/>
+										<Typography variant='body1'>
+											{this.state.user.name}
+										</Typography>
+									</div>
+									<Typography
+										variant='h6'
+										onClick={() =>
+											this.setState({
+												modalVisible: true
+											})
+										}
+										className='question-link'
+										style={{
+											fontWeight: 600,
+											marginTop: '.5rem'
+										}}>
+										What is question today?
+									</Typography>
+								</div>
+								{this.state.result.map((res, i) => (
+									<ExpansionPanel
+										key={i}
+										style={{
+											marginBottom: '2rem',
+											padding: '0.5rem'
+										}}>
+										<ExpansionPanelSummary
+											expandIcon={<ExpandMoreIcon />}
+											aria-controls={`panel${i}-control`}
+											id={`panel${i}-header`}>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column'
+												}}>
+												<Typography variant='subtitle2'>
+													Recommended for you
+												</Typography>
+												<div
+													style={{
+														display: 'flex',
+														flexDirection: 'row',
+														alignItems: 'center',
+														marginTop: '0.3rem',
+														marginBottom: '1rem'
+													}}>
+													{res.genres.map((g, i) => (
+														<Typography
+															key={i}
+															variant='body2'
+															style={{
+																marginRight:
+																	'1rem',
+																color: '#a3a3a3'
+															}}>
+															&#9679; {g}
+														</Typography>
+													))}
+												</div>
+												<Typography
+													className='question-link'
+													variant='h6'
+													style={{
+														textTransform:
+															'capitalize',
+														fontWeight: 700
+													}}
+													onClick={() =>
+														this.props.history.push(
+															`/questions/${res.url}`
+														)
+													}>
+													{res.question}
+												</Typography>
+												<div
+													style={{
+														display: 'flex',
+														flexDirection: 'row',
+														marginTop: '1rem'
+													}}>
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<CreateIcon />
+														}
+														onClick={event => {
+															event.stopPropagation();
+															this.props.history.push(
+																{
+																	pathname: `questions/${res.url}/answer`,
+																	state: {
+																		question: res
+																	}
+																}
+															);
+														}}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Answer
+														</Typography>
+													</Button>
+
+													{utils.checkUserInArray(
+														res.followers_list,
+														this.state.user.login
+													) ? (
+														<Button
+															variant='text'
+															style={{
+																color: '#54e1e3'
+															}}
+															startIcon={
+																<RssFeedIcon />
+															}
+															onClick={e =>
+																utils
+																	.followClick(
+																		e,
+																		res.url,
+																		res.followers_list,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'removed'
+																			) {
+																				this.state.result[
+																					i
+																				].followers_list = utils.removeValueFromArray(
+																					this
+																						.state
+																						.result[
+																						i
+																					]
+																						.followers_list,
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			} else {
+																				this.state.result[
+																					i
+																				].followers_list.push(
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			}
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Unfollow &#183;{' '}
+																{
+																	res
+																		.followers_list
+																		.length
+																}
+															</Typography>
+														</Button>
+													) : (
+														<Button
+															variant='text'
+															style={{
+																color: '#919191'
+															}}
+															startIcon={
+																<RssFeedIcon />
+															}
+															onClick={e =>
+																utils
+																	.followClick(
+																		e,
+																		res.url,
+																		res.followers_list,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'removed'
+																			) {
+																				this.state.result[
+																					i
+																				].followers_list = utils.removeValueFromArray(
+																					this
+																						.state
+																						.result[
+																						i
+																					]
+																						.followers_list,
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			} else {
+																				this.state.result[
+																					i
+																				].followers_list.push(
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			}
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Follow &#183;{' '}
+																{
+																	res
+																		.followers_list
+																		.length
+																}
+															</Typography>
+														</Button>
+													)}
+
+													{utils.checkUserInArray(
+														res.requested,
+														this.state.user.login
+													) ? (
+														<Button
+															variant='text'
+															style={{
+																color: '#54e1e3'
+															}}
+															startIcon={
+																<EmojiPeopleIcon />
+															}
+															onClick={event =>
+																utils
+																	.requestClick(
+																		event,
+																		res.url,
+																		res.requested,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'success'
+																			)
+																				this.state.result[
+																					i
+																				].requested.push(
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Pull Request
+																&#183;{' '}
+																{
+																	res
+																		.requested
+																		.length
+																}
+															</Typography>
+														</Button>
+													) : (
+														<Button
+															variant='text'
+															style={{
+																color: '#919191'
+															}}
+															startIcon={
+																<EmojiPeopleIcon />
+															}
+															onClick={event =>
+																utils
+																	.requestClick(
+																		event,
+																		res.url,
+																		res.requested,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'success'
+																			)
+																				this.state.result[
+																					i
+																				].requested.push(
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Request &#183;{' '}
+																{
+																	res
+																		.requested
+																		.length
+																}
+															</Typography>
+														</Button>
+													)}
+												</div>
+											</div>
+										</ExpansionPanelSummary>
+										<ExpansionPanelDetails>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column',
+													alignItems: 'flex-start'
+												}}>
+												<Typography variant='body1'>
+													{res.answer.author_name}
+												</Typography>
+												<Typography variant='subtitle2'>
+													Updated at{' '}
+													{new Date(
+														res.answer.updated_at
+													).toLocaleDateString(
+														'en-US',
+														{
+															weekday: 'long',
+															year: 'numeric',
+															month: 'long',
+															day: 'numeric'
+														}
+													)}
+												</Typography>
+												<Typography
+													variant='body1'
+													style={{
+														marginTop: '2rem'
+													}}>
+													{res.answer.answer}
+												</Typography>
+												<div
+													style={{
+														display: 'flex',
+														flexDirection: 'row',
+														marginTop: '0.5rem'
+													}}>
+													{utils.checkUserInArray(
+														res.answer.upvoters,
+														this.state.user.login
+													) ? (
+														<Button
+															variant='outlined'
+															style={{
+																color: '#54e1e3'
+															}}
+															startIcon={
+																<ThumbUpIcon />
+															}
+															onClick={() =>
+																this.upvoteAnswerClick(
+																	res.answer
+																		.id,
+																	res.answer
+																		.upvoters,
+																	i
+																)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 700,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Remove &#183;{' '}
+																{
+																	res.answer
+																		.upvoters
+																		.length
+																}
+															</Typography>
+														</Button>
+													) : (
+														<Button
+															variant='outlined'
+															style={{
+																color: '#919191'
+															}}
+															startIcon={
+																<ThumbUpIcon />
+															}
+															onClick={() =>
+																this.upvoteAnswerClick(
+																	res.answer
+																		.id,
+																	res.answer
+																		.upvoters,
+																	i
+																)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 700,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Upvote &#183;{' '}
+																{
+																	res.answer
+																		.upvoters
+																		.length
+																}
+															</Typography>
+														</Button>
+													)}
+												</div>
+											</div>
+										</ExpansionPanelDetails>
+									</ExpansionPanel>
+								))}
+							</InfiniteScroll>
+						</div>
+						<div
+							className='hidden'
+							style={{
+								flex: 1,
+								marginTop: '4rem',
+								marginLeft: '2rem'
+							}}>
 							<div
 								style={{
 									display: 'flex',
-									flexGrow: 1,
-									flexDirection: 'row',
-									justifyContent: 'space-between'
+									flexDirection: 'column',
+									justifyContent: 'center',
+									position: 'fixed'
 								}}>
-								<Typography variant='h5'>Reactora</Typography>
 								<div
 									style={{
-										display: 'flex',
-										flexDirection: 'row'
+										padding: '1rem',
+										borderStyle: 'solid',
+										borderColor: '#bababa',
+										borderWidth: '0.05rem'
 									}}>
-									<Link
-										color='inherit'
-										onClick={() =>
-											this.props.history.push(
-												'/dashboard'
-											)
-										}>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'row',
-												alignItems: 'center',
-												marginRight: '0.5rem',
-												borderRadius: '0.2rem',
-												padding: '0.2rem',
-												color: '#'
-											}}
-											className='link-div'>
-											<DashboardIcon
-												style={{
-													height: '2rem',
-													width: '2rem',
-													marginRight: '0.2rem'
-												}}
-											/>
-											<Typography
-												variant='body1'
-												style={{
-													fontWeight: 600
-												}}>
-												Dashboard
-											</Typography>
-										</div>
-									</Link>
+									<Typography
+										variant='body1'
+										style={{ fontWeight: 600 }}>
+										Tips to improve your feed
+									</Typography>
+								</div>
+								<div
+									style={{
+										padding: '1rem',
+										backgroundColor: '#fff',
+										borderStyle: 'solid',
+										borderColor: '#bababa',
+										borderWidth: '0.05rem',
+										borderTop: 'none'
+									}}>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Visit your feed
+									</Typography>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Subscribe to more genres
+									</Typography>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Follow more topics
+									</Typography>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Answer more questions
+									</Typography>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Ask more questions
+									</Typography>
+									<Typography
+										variant='subtitle2'
+										style={{ marginBottom: '1rem' }}>
+										Upvote more good answers
+									</Typography>
+								</div>
+							</div>
+						</div>
+					</Container>
 
-									<Link
-										color='inherit'
-										onClick={() =>
-											this.props.history.push('/genres')
-										}>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'row',
-												alignItems: 'center',
-												marginLeft: '0.5rem',
-												padding: '0.2rem',
-												borderRadius: '0.2rem'
-											}}
-											className='link-div'>
-											<GroupIcon
-												style={{
-													height: '2rem',
-													width: '2rem',
-													marginRight: '0.2rem'
-												}}
-											/>
-											<Typography
-												variant='body1'
-												style={{
-													fontWeight: 600
-												}}>
-												Genres
-											</Typography>
-										</div>
-									</Link>
+					<Modal
+						aria-labelledby='modal-question'
+						aria-describedby='modal-ask-question'
+						open={this.state.modalVisible}
+						onClose={() => this.setState({ modalVisible: false })}
+						closeAfterTransition
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={this.state.modalVisible}>
+							<div
+								style={{
+									backgroundColor: '#fff',
+									width: '50%'
+								}}>
+								<div
+									style={{
+										backgroundColor: '#e3e3e3',
+										padding: '1rem'
+									}}>
+									<Typography variant='h6'>
+										Add Question
+									</Typography>
 								</div>
 
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center'
-									}}>
+								<div style={{ padding: '1rem' }}>
+									<div>
+										<Typography
+											variant='h6'
+											style={{
+												fontWeight: 700,
+												marginBottom: '0.5rem'
+											}}>
+											Tips on getting good answers quickly
+										</Typography>
+
+										<div style={{ marginTop: '1rem' }}>
+											<Typography
+												variant='body1'
+												style={{ marginTop: '0.5rem' }}>
+												Make sure your question hasn't
+												been asked already
+											</Typography>
+											<Typography
+												variant='body1'
+												style={{ marginTop: '0.5rem' }}>
+												Keep your question short and to
+												the point
+											</Typography>
+											<Typography
+												variant='body1'
+												style={{ marginTop: '0.5rem' }}>
+												Double-check grammar and
+												spelling
+											</Typography>
+										</div>
+									</div>
+
 									<div
-										className={'link-div'}
 										style={{
-											marginRight: '1rem',
-											padding: '0.5rem'
-										}}
-										onClick={event =>
-											this.setState({
-												menuVisible: event.currentTarget
-											})
-										}>
+											display: 'flex',
+											flexDirection: 'row',
+											justifyContent: 'flex-start',
+											marginTop: '1.5rem',
+											marginBottom: '1.5rem',
+											alignItems: 'center'
+										}}>
 										<Avatar
 											src={this.state.user.avatar_url}
 											alt={this.state.user.name}
@@ -395,902 +1114,147 @@ export default class Dashboard extends React.Component {
 												width: '2rem'
 											}}
 										/>
+										<Typography
+											variant='body1'
+											style={{ marginLeft: '1rem' }}>
+											Posting as {this.state.user.name}
+										</Typography>
 									</div>
 
-									<Button
-										variant='contained'
-										onClick={() =>
-											this.setState({
-												modalVisible: true
-											})
-										}
-										style={{ position: 'relative' }}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 600,
-												textTransform: 'capitalize'
-											}}>
-											Add Question
+									<div>
+										<Typography variant='subtitle1'>
+											User Name asked
 										</Typography>
-									</Button>
-								</div>
-							</div>
-						</Container>
-					</Toolbar>
-				</AppBar>
-				<Container
-					maxWidth='lg'
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						justifyContent: 'center',
-						paddingLeft: '4rem',
-						paddingRight: '4rem',
-						paddingBottom: '4rem'
-					}}>
-					<div
-						className='hidden'
-						style={{
-							flex: 1,
-							marginTop: '4rem',
-							marginRight: '2rem'
-						}}>
-						<div>
-							<Typography variant='h5'>
-								This div will contain some other content such as
-								related questions or feed.
-							</Typography>
-						</div>
-					</div>
-
-					<div
-						style={{
-							flex: 3,
-							maxWidth: '75%',
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							justifyContent: 'center',
-							marginTop: '2rem'
-						}}>
-						<InfiniteScroll
-							dataLength={this.state.result.length}
-							next={() => this.fetchResult()}
-							hasMore={this.state.hasMore}
-							loader={
-								<div
-									style={{
-										width: '100%',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center'
-									}}>
-									<CircularProgress
-										color='secondary'
-										style={{ margin: '2rem' }}
-									/>
-								</div>
-							}
-							endMessage={
-								<p style={{ textAlign: 'center' }}>
-									<b>Yay! You have seen it all</b>
-								</p>
-							}>
-							<div
-								style={{
-									marginTop: '4rem',
-									backgroundColor: '#fff',
-									border: '0.2rem solid #bababa',
-									borderRadius: '1rem',
-									color: '#8a8a8a',
-									width: '90%',
-									padding: '1rem',
-									marginBottom: '3rem'
-								}}>
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center'
-									}}>
-									<Avatar
-										src={this.state.user.avatar_url}
-										alt={this.state.user.name}
+										<TextField
+											id='question'
+											label='Your Question'
+											InputProps={{
+												style: {
+													fontSize: 26,
+													fontWeight: 600
+												}
+											}}
+											placeholder={
+												'Start you question with "What," "Why," or "How."'
+											}
+											multiline
+											rowsMax='3'
+											fullWidth
+											value={this.state.newQuestion}
+											onChange={event =>
+												this.setState({
+													newQuestion:
+														event.target.value
+												})
+											}
+											onFocus={() =>
+												this.setState({
+													newQuestionError: false
+												})
+											}
+											error={this.state.newQuestionError}
+											helperText={
+												this.state.newQuestionError
+													? 'Please check your question'
+													: ''
+											}
+										/>
+									</div>
+									<div
 										style={{
-											height: '3rem',
-											width: '3rem',
-											marginRight: '1rem'
-										}}
-									/>
-									<Typography variant='body1'>
-										{this.state.user.name}
-									</Typography>
+											padding: '2rem',
+											display: 'flex',
+											flexDirection: 'row',
+											justifyContent: 'flex-end',
+											alignItems: 'center'
+										}}>
+										<Button
+											variant='text'
+											onClick={() =>
+												this.setState({
+													modalVisible: false
+												})
+											}
+											style={{ marginRight: '0.2rem' }}>
+											Cancel
+										</Button>
+										<Button
+											color='primary'
+											variant='contained'
+											onClick={() =>
+												this.handleAskQuestion()
+											}
+											style={{ marginLeft: '0.2rem' }}>
+											Add question
+										</Button>
+									</div>
 								</div>
-								<Typography
-									variant='h6'
-									onClick={() =>
-										this.setState({ modalVisible: true })
-									}
-									className='question-link'
-									style={{
-										fontWeight: 600,
-										marginTop: '.5rem'
-									}}>
-									What is question today?
-								</Typography>
 							</div>
-							{this.state.result.map((res, i) => (
-								<ExpansionPanel
-									key={i}
-									style={{
-										marginBottom: '2rem',
-										padding: '0.5rem'
-									}}>
-									<ExpansionPanelSummary
-										expandIcon={<ExpandMoreIcon />}
-										aria-controls={`panel${i}-control`}
-										id={`panel${i}-header`}>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'column'
-											}}>
-											<Typography variant='subtitle2'>
-												Recommended for you
-											</Typography>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													alignItems: 'center',
-													marginTop: '0.3rem',
-													marginBottom: '1rem'
-												}}>
-												{res.genres.map((g, i) => (
-													<Typography
-														key={i}
-														variant='body2'
-														style={{
-															marginRight: '1rem',
-															color: '#a3a3a3'
-														}}>
-														&#9679; {g}
-													</Typography>
-												))}
-											</div>
-											<Typography
-												className='question-link'
-												variant='h6'
-												style={{
-													textTransform: 'capitalize',
-													fontWeight: 700
-												}}
-												onClick={() =>
-													this.props.history.push(
-														`/questions/${res.url}`
-													)
-												}>
-												{res.question}
-											</Typography>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													marginTop: '1rem'
-												}}>
-												<Button
-													variant='text'
-													style={{
-														color: '#919191'
-													}}
-													startIcon={<CreateIcon />}
-													onClick={event => {
-														event.stopPropagation();
-														this.props.history.push(
-															{
-																pathname: `questions/${res.url}/answer`,
-																state: {
-																	question: res
-																}
-															}
-														);
-													}}>
-													<Typography
-														variant='body2'
-														style={{
-															fontWeight: 600,
-															textTransform:
-																'capitalize'
-														}}>
-														Answer
-													</Typography>
-												</Button>
-
-												{utils.checkUserInArray(
-													res.followers_list,
-													this.state.user.login
-												) ? (
-													<Button
-														variant='text'
-														style={{
-															color: '#54e1e3'
-														}}
-														startIcon={
-															<RssFeedIcon />
-														}
-														onClick={e =>
-															utils
-																.followClick(
-																	e,
-																	res.url,
-																	res.followers_list,
-																	this.state
-																		.user
-																		.login
-																)
-																.then(
-																	status => {
-																		console.log(
-																			status
-																		);
-																		if (
-																			status ===
-																			'removed'
-																		) {
-																			this.state.result[
-																				i
-																			].followers_list = utils.removeValueFromArray(
-																				this
-																					.state
-																					.result[
-																					i
-																				]
-																					.followers_list,
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		} else {
-																			this.state.result[
-																				i
-																			].followers_list.push(
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		}
-																		this.forceUpdate();
-																	}
-																)
-																.catch(
-																	error => {
-																		console.error(
-																			error
-																		);
-																	}
-																)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 600,
-																textTransform:
-																	'capitalize'
-															}}>
-															Unfollow &#183;{' '}
-															{
-																res
-																	.followers_list
-																	.length
-															}
-														</Typography>
-													</Button>
-												) : (
-													<Button
-														variant='text'
-														style={{
-															color: '#919191'
-														}}
-														startIcon={
-															<RssFeedIcon />
-														}
-														onClick={e =>
-															utils
-																.followClick(
-																	e,
-																	res.url,
-																	res.followers_list,
-																	this.state
-																		.user
-																		.login
-																)
-																.then(
-																	status => {
-																		console.log(
-																			status
-																		);
-																		if (
-																			status ===
-																			'removed'
-																		) {
-																			this.state.result[
-																				i
-																			].followers_list = utils.removeValueFromArray(
-																				this
-																					.state
-																					.result[
-																					i
-																				]
-																					.followers_list,
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		} else {
-																			this.state.result[
-																				i
-																			].followers_list.push(
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		}
-																		this.forceUpdate();
-																	}
-																)
-																.catch(
-																	error => {
-																		console.error(
-																			error
-																		);
-																	}
-																)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 600,
-																textTransform:
-																	'capitalize'
-															}}>
-															Follow &#183;{' '}
-															{
-																res
-																	.followers_list
-																	.length
-															}
-														</Typography>
-													</Button>
-												)}
-
-												{utils.checkUserInArray(
-													res.requested,
-													this.state.user.login
-												) ? (
-													<Button
-														variant='text'
-														style={{
-															color: '#54e1e3'
-														}}
-														startIcon={
-															<EmojiPeopleIcon />
-														}
-														onClick={event =>
-															utils
-																.requestClick(
-																	event,
-																	res.url,
-																	res.requested,
-																	this.state
-																		.user
-																		.login
-																)
-																.then(
-																	status => {
-																		console.log(
-																			status
-																		);
-																		if (
-																			status ===
-																			'success'
-																		)
-																			this.state.result[
-																				i
-																			].requested.push(
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		this.forceUpdate();
-																	}
-																)
-																.catch(
-																	error => {
-																		console.error(
-																			error
-																		);
-																	}
-																)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 600,
-																textTransform:
-																	'capitalize'
-															}}>
-															Pull Request &#183;{' '}
-															{
-																res.requested
-																	.length
-															}
-														</Typography>
-													</Button>
-												) : (
-													<Button
-														variant='text'
-														style={{
-															color: '#919191'
-														}}
-														startIcon={
-															<EmojiPeopleIcon />
-														}
-														onClick={event =>
-															utils
-																.requestClick(
-																	event,
-																	res.url,
-																	res.requested,
-																	this.state
-																		.user
-																		.login
-																)
-																.then(
-																	status => {
-																		console.log(
-																			status
-																		);
-																		if (
-																			status ===
-																			'success'
-																		)
-																			this.state.result[
-																				i
-																			].requested.push(
-																				this
-																					.state
-																					.user
-																					.login
-																			);
-																		this.forceUpdate();
-																	}
-																)
-																.catch(
-																	error => {
-																		console.error(
-																			error
-																		);
-																	}
-																)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 600,
-																textTransform:
-																	'capitalize'
-															}}>
-															Request &#183;{' '}
-															{
-																res.requested
-																	.length
-															}
-														</Typography>
-													</Button>
-												)}
-											</div>
-										</div>
-									</ExpansionPanelSummary>
-									<ExpansionPanelDetails>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'column',
-												alignItems: 'flex-start'
-											}}>
-											<Typography variant='body1'>
-												{res.answer.author_name}
-											</Typography>
-											<Typography variant='subtitle2'>
-												Updated at{' '}
-												{new Date(
-													res.answer.updated_at
-												).toLocaleDateString('en-US', {
-													weekday: 'long',
-													year: 'numeric',
-													month: 'long',
-													day: 'numeric'
-												})}
-											</Typography>
-											<Typography
-												variant='body1'
-												style={{
-													marginTop: '2rem'
-												}}>
-												{res.answer.answer}
-											</Typography>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													marginTop: '0.5rem'
-												}}>
-												{utils.checkUserInArray(
-													res.answer.upvoters,
-													this.state.user.login
-												) ? (
-													<Button
-														variant='outlined'
-														style={{
-															color: '#54e1e3'
-														}}
-														startIcon={
-															<ThumbUpIcon />
-														}
-														onClick={() =>
-															this.upvoteAnswerClick(
-																res.answer.id,
-																res.answer
-																	.upvoters,
-																i
-															)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 700,
-																textTransform:
-																	'capitalize'
-															}}>
-															Remove &#183;{' '}
-															{
-																res.answer
-																	.upvoters
-																	.length
-															}
-														</Typography>
-													</Button>
-												) : (
-													<Button
-														variant='outlined'
-														style={{
-															color: '#919191'
-														}}
-														startIcon={
-															<ThumbUpIcon />
-														}
-														onClick={() =>
-															this.upvoteAnswerClick(
-																res.answer.id,
-																res.answer
-																	.upvoters,
-																i
-															)
-														}>
-														<Typography
-															variant='body2'
-															style={{
-																fontWeight: 700,
-																textTransform:
-																	'capitalize'
-															}}>
-															Upvote &#183;{' '}
-															{
-																res.answer
-																	.upvoters
-																	.length
-															}
-														</Typography>
-													</Button>
-												)}
-											</div>
-										</div>
-									</ExpansionPanelDetails>
-								</ExpansionPanel>
-							))}
-						</InfiniteScroll>
-					</div>
-					<div
-						className='hidden'
-						style={{
-							flex: 1,
-							marginTop: '4rem',
-							marginLeft: '2rem'
-						}}>
-						<div
-							style={{
-								display: 'flex',
-								flexDirection: 'column',
-								justifyContent: 'center',
-								position: 'fixed'
+						</Fade>
+					</Modal>
+					<Menu
+						id='main-menu'
+						anchorEl={this.state.menuVisible}
+						keepMounted
+						open={Boolean(this.state.menuVisible)}
+						onClose={() => this.setState({ menuVisible: null })}>
+						<MenuItem
+							onClick={() => {
+								this.setState({ menuVisible: null });
+								this.props.history.push(
+									`/users/${this.state.user.login}`
+								);
 							}}>
-							<div
-								style={{
-									padding: '1rem',
-									borderStyle: 'solid',
-									borderColor: '#bababa',
-									borderWidth: '0.05rem'
-								}}>
+							Profile
+						</MenuItem>
+						<MenuItem
+							onClick={() =>
+								this.setState({ menuVisible: null })
+							}>
+							Sign Out
+						</MenuItem>
+					</Menu>
+					<Snackbar
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'left'
+						}}
+						open={this.state.showSnackbar}
+						autoHideDuration={5000}
+						onClose={() => this.setState({ showSnackbar: false })}
+						ContentProps={{
+							'aria-describedby': 'messsage-snackbar',
+							style: { backgroundColor: '#fff' }
+						}}
+						message={
+							<span id='message-snackbar' sty>
 								<Typography
 									variant='body1'
-									style={{ fontWeight: 600 }}>
-									Tips to improve your feed
+									style={{ color: '#000' }}>
+									{this.state.messageSnackbar}
 								</Typography>
-							</div>
-							<div
-								style={{
-									padding: '1rem',
-									backgroundColor: '#fff',
-									borderStyle: 'solid',
-									borderColor: '#bababa',
-									borderWidth: '0.05rem',
-									borderTop: 'none'
-								}}>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Visit your feed
-								</Typography>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Subscribe to more genres
-								</Typography>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Follow more topics
-								</Typography>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Answer more questions
-								</Typography>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Ask more questions
-								</Typography>
-								<Typography
-									variant='subtitle2'
-									style={{ marginBottom: '1rem' }}>
-									Upvote more good answers
-								</Typography>
-							</div>
-						</div>
-					</div>
-				</Container>
-
-				<Modal
-					aria-labelledby='modal-question'
-					aria-describedby='modal-ask-question'
-					open={this.state.modalVisible}
-					onClose={() => this.setState({ modalVisible: false })}
-					closeAfterTransition
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-					BackdropComponent={Backdrop}
-					BackdropProps={{ timeout: 500 }}>
-					<Fade in={this.state.modalVisible}>
-						<div
-							style={{
-								backgroundColor: '#fff',
-								width: '50%'
-							}}>
-							<div
-								style={{
-									backgroundColor: '#e3e3e3',
-									padding: '1rem'
-								}}>
-								<Typography variant='h6'>
-									Add Question
-								</Typography>
-							</div>
-
-							<div style={{ padding: '1rem' }}>
-								<div>
-									<Typography
-										variant='h6'
-										style={{
-											fontWeight: 700,
-											marginBottom: '0.5rem'
-										}}>
-										Tips on getting good answers quickly
-									</Typography>
-
-									<div style={{ marginTop: '1rem' }}>
-										<Typography
-											variant='body1'
-											style={{ marginTop: '0.5rem' }}>
-											Make sure your question hasn't been
-											asked already
-										</Typography>
-										<Typography
-											variant='body1'
-											style={{ marginTop: '0.5rem' }}>
-											Keep your question short and to the
-											point
-										</Typography>
-										<Typography
-											variant='body1'
-											style={{ marginTop: '0.5rem' }}>
-											Double-check grammar and spelling
-										</Typography>
-									</div>
-								</div>
-
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'row',
-										justifyContent: 'flex-start',
-										marginTop: '1.5rem',
-										marginBottom: '1.5rem',
-										alignItems: 'center'
-									}}>
-									<Avatar
-										src={this.state.user.avatar_url}
-										alt={this.state.user.name}
-										style={{
-											height: '2rem',
-											width: '2rem'
-										}}
-									/>
-									<Typography
-										variant='body1'
-										style={{ marginLeft: '1rem' }}>
-										Posting as {this.state.user.name}
-									</Typography>
-								</div>
-
-								<div>
-									<Typography variant='subtitle1'>
-										User Name asked
-									</Typography>
-									<TextField
-										id='question'
-										label='Your Question'
-										InputProps={{
-											style: {
-												fontSize: 26,
-												fontWeight: 600
-											}
-										}}
-										placeholder={
-											'Start you question with "What," "Why," or "How."'
-										}
-										multiline
-										rowsMax='3'
-										fullWidth
-										value={this.state.newQuestion}
-										onChange={event =>
-											this.setState({
-												newQuestion: event.target.value
-											})
-										}
-										onFocus={() =>
-											this.setState({
-												newQuestionError: false
-											})
-										}
-										error={this.state.newQuestionError}
-										helperText={
-											this.state.newQuestionError
-												? 'Please check your question'
-												: ''
-										}
-									/>
-								</div>
-								<div
-									style={{
-										padding: '2rem',
-										display: 'flex',
-										flexDirection: 'row',
-										justifyContent: 'flex-end',
-										alignItems: 'center'
-									}}>
-									<Button
-										variant='text'
-										onClick={() =>
-											this.setState({
-												modalVisible: false
-											})
-										}
-										style={{ marginRight: '0.2rem' }}>
-										Cancel
-									</Button>
-									<Button
-										color='primary'
-										variant='contained'
-										onClick={() => this.handleAskQuestion()}
-										style={{ marginLeft: '0.2rem' }}>
-										Add question
-									</Button>
-								</div>
-							</div>
-						</div>
-					</Fade>
-				</Modal>
-				<Menu
-					id='main-menu'
-					anchorEl={this.state.menuVisible}
-					keepMounted
-					open={Boolean(this.state.menuVisible)}
-					onClose={() => this.setState({ menuVisible: null })}>
-					<MenuItem
-						onClick={() => {
-							this.setState({ menuVisible: null });
-							this.props.history.push(
-								`/users/${this.state.user.login}`
-							);
-						}}>
-						Profile
-					</MenuItem>
-					<MenuItem
-						onClick={() => this.setState({ menuVisible: null })}>
-						Sign Out
-					</MenuItem>
-				</Menu>
-				<Snackbar
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'left'
-					}}
-					open={this.state.showSnackbar}
-					autoHideDuration={5000}
-					onClose={() => this.setState({ showSnackbar: false })}
-					ContentProps={{
-						'aria-describedby': 'messsage-snackbar',
-						style: { backgroundColor: '#fff' }
-					}}
-					message={
-						<span id='message-snackbar' sty>
-							<Typography
-								variant='body1'
-								style={{ color: '#000' }}>
-								{this.state.messageSnackbar}
-							</Typography>
-						</span>
-					}
-					transitionDuration={{
-						enter: 300,
-						exit: 300
-					}}
-					style={{
-						backgroundColor: '#fff'
-					}}
-					action={[
-						<IconButton
-							key='close'
-							aria-label='close'
-							color='secondary'
-							onClick={() =>
-								this.setState({ showSnackbar: false })
-							}>
-							<CloseIcon />
-						</IconButton>
-					]}></Snackbar>
-			</div>
+							</span>
+						}
+						transitionDuration={{
+							enter: 300,
+							exit: 300
+						}}
+						style={{
+							backgroundColor: '#fff'
+						}}
+						action={[
+							<IconButton
+								key='close'
+								aria-label='close'
+								color='secondary'
+								onClick={() =>
+									this.setState({ showSnackbar: false })
+								}>
+								<CloseIcon />
+							</IconButton>
+						]}></Snackbar>
+				</div>
+			</ThemeProvider>
 		);
 	}
 }
