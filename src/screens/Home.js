@@ -9,6 +9,9 @@ import Button from '@material-ui/core/Button';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import Backdrop from '@material-ui/core/Backdrop';
 import Link from '@material-ui/core/Link';
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+
+import theme from '../theme';
 
 export default class Home extends React.Component {
 	constructor(props) {
@@ -82,19 +85,13 @@ export default class Home extends React.Component {
 		}
 
 		return (
-			<div
-				style={{
-					backgroundImage: `url(${homeBackground})`,
-					height: '100vh',
-					width: 'auto',
-					display: 'flex',
-					justifyContent: 'center',
-					alignItems: 'center'
-				}}>
+			<ThemeProvider theme={theme.theme}>
 				<div
 					style={{
-						width: '50%',
-						height: '80%',
+						backgroundImage: `url(${homeBackground})`,
+						backgroundSize: 'contain',
+						height: '100vh',
+						width: '100vw',
 						display: 'flex',
 						flexDirection: 'column',
 						justifyContent: 'center',
@@ -106,7 +103,9 @@ export default class Home extends React.Component {
 						style={{
 							marginTop: '16px',
 							marginBottom: '16px',
-							color: '#fff'
+							color: '#fff',
+							textShadow: '0 0 1rem #000',
+							padding: '1rem'
 						}}>
 						Reactora
 					</Typography>
@@ -115,34 +114,37 @@ export default class Home extends React.Component {
 						variant='h5'
 						align='center'
 						style={{
-							color: '#fff'
+							color: '#fff',
+							textShadow: '0 0 0.5rem #000'
 						}}>
 						A place to better understand the world. Ask more. Know
 						more
 					</Typography>
 
-					<Button
-						variant='contained'
-						style={{
-							paddingTop: '16px',
-							paddingBottom: '16px',
-							paddingLeft: '32px',
-							paddingRight: '32px',
-							marginTop: '24px',
-							textTransform: 'none',
-							borderRadius: '24px'
-						}}
-						startIcon={<GitHubIcon fontSize='large' />}
-						onClick={() => this.setState({ loading: true })}>
-						<Link
-							href='https://github.com/login/oauth/authorize?client_id=e97710fdd921e6d456bd'
-							variant='body1'
+					<Link href='https://github.com/login/oauth/authorize?client_id=e97710fdd921e6d456bd'>
+						<Button
+							variant='contained'
+							color='primary'
 							style={{
-								color: '#000'
-							}}>
-							Login with Github
-						</Link>
-					</Button>
+								paddingTop: '16px',
+								paddingBottom: '16px',
+								paddingLeft: '32px',
+								paddingRight: '32px',
+								marginTop: '24px',
+								textTransform: 'none',
+								borderRadius: '3rem',
+								alignSelf: 'center',
+								color: '#fff'
+							}}
+							startIcon={<GitHubIcon fontSize='large' />}
+							onClick={() => this.setState({ loading: true })}>
+							<Typography
+								variant='body1'
+								style={{ color: '#fff' }}>
+								Login with Github
+							</Typography>
+						</Button>
+					</Link>
 
 					<div
 						style={{
@@ -151,7 +153,8 @@ export default class Home extends React.Component {
 							flexDirection: 'row',
 							flexWrap: 'wrap',
 							justifyContent: 'center',
-							alignItems: 'center'
+							alignItems: 'center',
+							textShadow: '0 0 0.5rem #000'
 						}}>
 						<Link
 							href='#'
@@ -198,7 +201,7 @@ export default class Home extends React.Component {
 						</Link>
 					</div>
 				</div>
-			</div>
+			</ThemeProvider>
 		);
 	}
 }
