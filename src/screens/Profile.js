@@ -152,7 +152,10 @@ export default class Profile extends React.Component {
 							</Container>
 						</Toolbar>
 					</AppBar>
-					<Grid container direction='row'>
+					<Grid
+						container
+						direction='row'
+						style={{ marginTop: '5rem' }}>
 						<Grid
 							container
 							direction='column'
@@ -204,7 +207,9 @@ export default class Profile extends React.Component {
 										? this.state.user.location
 										: null}
 								</Typography>
-								<Link to={this.state.user.blog}>
+								<Link
+									href={'https://' + this.state.user.blog}
+									target='_blank'>
 									<Typography variant='body2'>
 										{this.state.user.blog
 											? this.state.user.blog
