@@ -290,73 +290,86 @@ export default class Question extends React.Component {
 							{this.state.question.all_answers.length} Answers
 						</Typography>
 						<hr></hr>
-						{this.state.question.all_answers.map((answer, i) => (
-							<div key={i} style={{ marginTop: '1rem' }}>
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'flex-start'
-									}}>
+						{this.state.question.all_answers.map((answer, i) => {
+							var editButton =
+								answer.author_name === this.state.user.login;
+							return (
+								<div key={i} style={{ marginTop: '1rem' }}>
 									<div
 										style={{
 											display: 'flex',
-											flexDirection: 'row',
-											justifyContent: 'space-between',
-											alignItems: 'center',
-											width: '100%'
+											flexDirection: 'column',
+											alignItems: 'flex-start'
 										}}>
 										<div
 											style={{
 												display: 'flex',
-												flexDirection: 'column'
+												flexDirection: 'row',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												width: '100%'
 											}}>
-											<Typography
-												variant='body1'
-												style={{ fontWeight: 600 }}>
-												{answer.author_name}
-											</Typography>
-											<Typography
-												variant='subtitle2'
-												color='textSecondary'>
-												Updated{' '}
-												{new Date(
-													answer.updated_at
-												).toLocaleDateString('en-US', {
-													weekday: 'long',
-													year: 'numeric',
-													month: 'long',
-													day: 'numeric'
-												})}
-											</Typography>
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column'
+												}}>
+												<Typography
+													variant='body1'
+													style={{ fontWeight: 600 }}>
+													{answer.author_name}
+												</Typography>
+												<Typography
+													variant='subtitle2'
+													color='textSecondary'>
+													Updated{' '}
+													{new Date(
+														answer.updated_at
+													).toLocaleDateString(
+														'en-US',
+														{
+															weekday: 'long',
+															year: 'numeric',
+															month: 'long',
+															day: 'numeric'
+														}
+													)}
+												</Typography>
+											</div>
+
+											<Button
+												variant='text'
+												startIcon={<EditIcon />}
+												style={{
+													display: editButton
+														? null
+														: 'none'
+												}}
+												onClick={() =>
+													this.editAnswerClick(i)
+												}>
+												<Typography
+													variant='body2'
+													style={{
+														fontWeight: 600,
+														textTransform:
+															'capitalize'
+													}}>
+													Edit Answer
+												</Typography>
+											</Button>
 										</div>
 
-										<Button
-											variant='text'
-											startIcon={<EditIcon />}
-											onClick={() =>
-												this.editAnswerClick(i)
-											}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600,
-													textTransform: 'capitalize'
-												}}>
-												Edit Answer
-											</Typography>
-										</Button>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											{answer.answer}
+										</Typography>
 									</div>
-
-									<Typography
-										variant='body1'
-										style={{ marginTop: '0.5rem' }}>
-										{answer.answer}
-									</Typography>
+									<hr />
 								</div>
-								<hr />
-							</div>
-						))}
+							);
+						})}
 					</Container>
 				</div>
 				<Menu
