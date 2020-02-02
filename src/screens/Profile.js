@@ -36,8 +36,29 @@ export default class Profile extends React.Component {
 			requests: null,
 			questionModal: false,
 			newQuestion: '',
-			newQuestionError: false
+			newQuestionError: false,
+			genresModal: false
 		};
+
+		const genres = [
+			'Technology',
+			'Religion',
+			'Philosophy',
+			'Science',
+			'Politics',
+			'Enterpreneurship',
+			'Life',
+			'News',
+			'Startup',
+			'Culture',
+			'Business',
+			'Facts',
+			'Humor',
+			'Travel',
+			'Innovation',
+			'Sports',
+			'Health'
+		];
 	}
 	async getProfileData(userName, token) {
 		let rawResponse = await fetch(serverUrl + `/user/profile/${userName}`, {
@@ -507,6 +528,59 @@ export default class Profile extends React.Component {
 										Add question
 									</Button>
 								</div>
+							</div>
+						</div>
+					</Fade>
+				</Modal>
+
+				<Modal
+					aria-labelledby='modal-genres'
+					aria-describedby='modal-add-genres'
+					open={this.state.genresModal}
+					onClose={() => this.setState({ genresModal: false })}
+					closeAfterTransition
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Fade in={this.state.genresModal}>
+						<div
+							style={{
+								backgroundColor: '#fff',
+								width: '50%'
+							}}>
+							<div
+								style={{
+									backgroundColor: '#e3e3e3',
+									padding: '1rem'
+								}}>
+								<Typography variant='h6'>
+									Add Question
+								</Typography>
+							</div>
+
+							<div style={{ padding: '1rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 700,
+											marginBottom: '0.5rem'
+										}}>
+										Tips on getting good answers quickly
+									</Typography>
+								</div>
+
+								<div
+									style={{
+										display: 'flex',
+										flexGrow: 'wrap',
+										justifyContent: 'center'
+									}}></div>
 							</div>
 						</div>
 					</Fade>
