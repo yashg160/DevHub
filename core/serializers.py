@@ -44,6 +44,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data, current_user):
         new_question = validated_data.get('question', instance.question)
         requested = validated_data.get('requested', [])
+        genres = validated_data.get('genres', [])
         followed = validated_data.get('followed', False)
         unfollowed = validated_data.get('unfollowed', False)
         
@@ -62,7 +63,11 @@ class QuestionSerializer(serializers.ModelSerializer):
                     not instance.requested.filter(username = user1.username).exists()
                     ):
                     instance.requested.add(user)
-
+            for genre in genres :
+                try:
+                    instance.genres.add(Genre.objects.get(name = genre))
+                except:
+                    pass
         instance.question = new_question
         instance.url = new_question.lower().replace(' ', '-').replace('?', '')
         instance.updated_at = datetime.now()

@@ -187,6 +187,9 @@ class QuestionCreateView(APIView):
                 question = data.get('question'),
                 asker = request.user
             )
+            genres = data.get('genres', [])
+            for genre in genres:
+                question.genres.add(Genre.objects.get(name=genre))
             question.save()
             question.followers.add(request.user)
             question.updated_at = timezone.now()
