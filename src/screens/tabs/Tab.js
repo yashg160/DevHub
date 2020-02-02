@@ -27,7 +27,7 @@ export default class Tab extends Component {
 		}
 
 		const baseStyle = {
-			transition: '0.2s'
+			cursor: 'pointer'
 		};
 
 		const itemStyle = {
