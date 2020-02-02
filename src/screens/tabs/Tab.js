@@ -26,6 +26,10 @@ export default class Tab extends Component {
 			className = 'active';
 		}
 
+		const baseStyle = {
+			transition: '0.2s'
+		};
+
 		const itemStyle = {
 			display: 'inline-block',
 			listStyle: 'none',
@@ -34,8 +38,10 @@ export default class Tab extends Component {
 		};
 
 		const activeStyle = {
-			backgroundColor: '#fff',
+			backgroundColor: '#eeeeee',
 			border: 'solid',
+			borderColor: '#ccc',
+			borderRadius: '0.4rem 0.4rem 0 0',
 			borderWidth: '1px 1px 0 1px',
 			fontWeight: 600
 		};
@@ -45,8 +51,8 @@ export default class Tab extends Component {
 				variant='body2'
 				style={
 					className === 'item'
-						? itemStyle
-						: { ...itemStyle, ...activeStyle }
+						? { ...baseStyle, ...itemStyle }
+						: { ...baseStyle, ...itemStyle, ...activeStyle }
 				}
 				onClick={onClick}>
 				{label}
