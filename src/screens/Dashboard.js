@@ -196,72 +196,6 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async upvoteAnswerClick(answerId, upvoters, index) {
-		// First check if user has already upvoted the answer. If he has, then make unvote the answer. Else, make sure that it is upvoted
-		let userUpvoted = false;
-
-		for (let i = 0; i < upvoters.length; i++) {
-			if (upvoters[i] === this.state.user.login) userUpvoted = true;
-		}
-
-		// Get the token from cookies
-		var token = Cookies.get('TOKEN');
-		console.log(token);
-		console.log(userUpvoted);
-		if (userUpvoted) {
-			// User has already upvoted. Remove the upvote
-			let rawResponse = await fetch(
-				serverUrl + `/api/answers/${answerId}`,
-				{
-					method: 'PUT',
-					headers: {
-						Authorization: `Token ${token}`,
-						Accept: 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						remove_upvote: true
-					})
-				}
-			);
-			let res = await rawResponse.json();
-			if (res.status === 'success') {
-				this.state.result[
-					index
-				].answer.upvoters = utils.removeValueFromArray(
-					this.state.result[index].answer.upvoters,
-					this.state.user.login
-				);
-			}
-			console.log(res);
-		} else {
-			// Upvote the answer by this user
-			let rawResponse = await fetch(
-				serverUrl + `/api/answers/${answerId}`,
-				{
-					method: 'PUT',
-					headers: {
-						Authorization: `Token ${token}`,
-						Accept: 'application/json',
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						upvote: true
-					})
-				}
-			);
-
-			let res = await rawResponse.json();
-			if (res.status === 'success')
-				this.state.result[index].answer.upvoters.push(
-					this.state.user.login
-				);
-			console.log(res);
-		}
-		this.forceUpdate();
-		return;
-	}
-
 	componentDidMount() {
 		var userName = Cookies.get('USER_NAME');
 		var token = Cookies.get('TOKEN');
@@ -896,15 +830,52 @@ export default class Dashboard extends React.Component {
 															startIcon={
 																<ThumbUpIcon />
 															}
-															onClick={() =>
-																this.upvoteAnswerClick(
-																	res.answer
-																		.id,
-																	res.answer
-																		.upvoters,
-																	i
-																)
-															}>
+															onClick={() => {
+																utils
+																	.upvoteAnswerClick(
+																		res
+																			.answer
+																			.id,
+																		res
+																			.answer
+																			.upvoters,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			if (
+																				status ===
+																				'removed'
+																			)
+																				this.state.result[
+																					i
+																				].answer.upvoters = utils.removeValueFromArray(
+																					this
+																						.state
+																						.result[
+																						i
+																					]
+																						.answer
+																						.upvoters,
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error =>
+																			console.error(
+																				error
+																			)
+																	);
+															}}>
 															<Typography
 																variant='body2'
 																style={{
@@ -929,15 +900,49 @@ export default class Dashboard extends React.Component {
 															startIcon={
 																<ThumbUpIcon />
 															}
-															onClick={() =>
-																this.upvoteAnswerClick(
-																	res.answer
-																		.id,
-																	res.answer
-																		.upvoters,
-																	i
-																)
-															}>
+															onClick={() => {
+																utils
+																	.upvoteAnswerClick(
+																		res
+																			.answer
+																			.id,
+																		res
+																			.answer
+																			.upvoters,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			if (
+																				status ===
+																				'upvoted'
+																			)
+																				this.state.result[
+																					i
+																				].answer.upvoters.push(
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			console.log(
+																				this
+																					.state
+																					.result
+																			);
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error =>
+																			console.error(
+																				error
+																			)
+																	);
+															}}>
 															<Typography
 																variant='body2'
 																style={{

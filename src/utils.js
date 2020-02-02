@@ -93,9 +93,50 @@ async function requestClick(event, url, requested, login) {
 	}
 }
 
+async function upvoteAnswerClick(answerId, upvoters, login) {
+	// Get the token from cookies
+	var token = Cookies.get('TOKEN');
+	console.log(token);
+	if (checkUserInArray(upvoters, login)) {
+		// User has already upvoted. Remove the upvote
+		let rawResponse = await fetch(serverUrl + `/api/answers/${answerId}`, {
+			method: 'PUT',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				remove_upvote: true
+			})
+		});
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status === 'success') return 'removed';
+		else throw Error();
+	} else {
+		// Upvote the answer by this user
+		let rawResponse = await fetch(serverUrl + `/api/answers/${answerId}`, {
+			method: 'PUT',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				upvote: true
+			})
+		});
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status === 'success') return 'upvoted';
+	}
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
 	followClick,
-	requestClick
+	requestClick,
+	upvoteAnswerClick
 };
