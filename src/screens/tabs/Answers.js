@@ -56,16 +56,23 @@ export default class Answers extends React.Component {
 								borderRadius: '4px',
 								marginBottom: '1rem'
 							}}>
-							<Typography
+							<Link
+								href='#'
+								onClick={() =>
+									this.props.history.push(
+										`/questions/${answer.question}`
+									)
+								}
+								color='textPrimary'
 								variant='h6'
 								style={{
-									fontWeight: 600,
+									fontWeight: 500,
 									textTransform: 'capitalize'
 								}}>
 								{String(answer.question)
 									.split('-')
 									.join(' ')}
-							</Typography>
+							</Link>
 
 							<Typography
 								variant='subtitle2'
@@ -91,9 +98,17 @@ export default class Answers extends React.Component {
 									variant='body1'
 									color='primary'
 									style={{
+										marginLeft: '4px',
+										marginRight: '4px'
+									}}>
+									&#183;
+								</Typography>
+								<Typography
+									variant='body1'
+									color='primary'
+									style={{
 										fontWeight: 600,
-										marginTop: '4px',
-										marginLeft: '4px'
+										marginTop: '4px'
 									}}>
 									{answer.upvoters.length}
 								</Typography>
