@@ -45,24 +45,28 @@ export default class UpvotedAnswers extends React.Component {
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
-							border: '0.05rem solid #bababa',
-							padding: '1rem'
+							border: '1px solid #eeeeee',
+							borderRadius: '4px',
+							padding: '1rem',
+							marginBottom: '1rem'
 						}}>
 						<Typography variant='body1' style={{ fontWeight: 500 }}>
 							{String(answer.answer).length > 250
 								? String(answer.answer).substr(0, 250) + '...'
 								: String(answer.answer)}
+							{
+								<Link
+									href='#'
+									color='primary'
+									onClick={() =>
+										this.props.history.push(
+											`/questions/${answer.question}`
+										)
+									}>
+									Read More
+								</Link>
+							}
 						</Typography>
-						<Link
-							onClick={() =>
-								this.props.history.push(
-									`/questions/${answer.question}`
-								)
-							}>
-							<Typography variant='subtitle2'>
-								View Full Answer
-							</Typography>
-						</Link>
 
 						<Typography
 							variant='body2'
