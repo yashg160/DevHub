@@ -153,7 +153,12 @@ export default class Profile extends React.Component {
 				this.setState({
 					loading: false,
 					snackbarMess: 'Question posted successfully',
-					snackbar: true
+					snackbar: true,
+					questionModal: false,
+					genresModal: false,
+					selectedGenres: [],
+					newQuestion: '',
+					newQuestionError: false
 				});
 			})
 			.catch(error => {
@@ -165,7 +170,8 @@ export default class Profile extends React.Component {
 							snackbar: true,
 							genresModal: false,
 							questionModal: true,
-							loading: false
+							loading: false,
+							newQuestionError: true
 						});
 						break;
 					case 'ERR_POST':
@@ -684,6 +690,7 @@ export default class Profile extends React.Component {
 									}}>
 									{this.genres.map((genre, i) => (
 										<Chip
+											key={i}
 											label={genre}
 											onClick={() => this.genreClick(i)}
 											color={
@@ -739,7 +746,7 @@ export default class Profile extends React.Component {
 					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
 					key={'profile-snackbar'}
 					open={this.state.snackbar}
-					close={() => this.setState({ snackbar: false })}>
+					onClose={() => this.setState({ snackbar: false })}>
 					<SnackbarContent
 						style={{ backgroundColor: '#41b578', color: '#fff' }}
 						message={this.state.snackbarMess}
