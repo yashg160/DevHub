@@ -19,6 +19,10 @@ import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import utils from '../utils';
 
 export default class Profile extends React.Component {
@@ -657,6 +661,25 @@ export default class Profile extends React.Component {
 						</div>
 					</Fade>
 				</Modal>
+				<Snackbar
+					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+					key={'profile-snackbar'}
+					open={this.state.snackbar}
+					close={() => this.setState({ snackbar: false })}>
+					<SnackbarContent
+						style={{ backgroundColor: '#41b578', color: '#fff' }}
+						message={this.state.snackbarMess}
+						action={
+							<IconButton
+								color='secondary'
+								onClick={() =>
+									this.setState({ snackbar: false })
+								}>
+								<CloseIcon />
+							</IconButton>
+						}
+					/>
+				</Snackbar>
 			</ThemeProvider>
 		);
 	}
