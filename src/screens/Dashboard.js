@@ -255,12 +255,12 @@ export default class Dashboard extends React.Component {
 											}>
 											<Avatar
 												src={this.state.user.avatar_url}
-												alt={this.state.user.name}
 												style={{
 													height: '2.3rem',
 													width: '2.3rem'
-												}}
-											/>
+												}}>
+												{this.state.user.name}
+											</Avatar>
 										</div>
 
 										<Button
