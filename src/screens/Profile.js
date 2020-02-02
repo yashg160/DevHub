@@ -3,12 +3,17 @@ import Tabs from './tabs/Tabs';
 import './styles/tabs.css';
 import serverUrl from '../config';
 import Cookies from 'js-cookie';
-
-import Grid from '@material-ui/core/Grid';
+import Backdrop from '@material-ui/core/Backdrop';
+import Container from '@material-ui/core/Container';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
-import Backdrop from '@material-ui/core/Backdrop';
+import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
+import Button from '@material-ui/core/Button';
+import theme from '../theme';
+import { ThemeProvider } from '@material-ui/core/styles/';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -17,6 +22,7 @@ export default class Profile extends React.Component {
 		this.state = {
 			loading: true,
 			error: false,
+			menuVisible: null,
 			user: null,
 			questions: null,
 			answers: null,
@@ -72,107 +78,182 @@ export default class Profile extends React.Component {
 			return <Backdrop open={this.state.loading} color='#fff' />;
 		else if (this.state.error) return <h1>There was an error</h1>;
 		return (
-			<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-				<Grid container direction='row'>
-					<Grid
-						container
-						direction='column'
-						item
-						sm={12}
-						md={12}
-						lg={3}>
-						<Avatar
-							variant='circle'
-							src={this.state.user.avatar_url}
-							alt={this.state.user.name}
-							style={{
-								height: '14rem',
-								width: '14rem',
-								marginBottom: '1rem'
-							}}
-						/>
-						<div style={{ marginBottom: '0.5rem' }}>
-							<Typography
-								variant='h5'
-								style={{ marginTop: '1rem', fontSize: '2rem' }}>
-								{this.state.user.name
-									? this.state.user.name
-									: null}
-							</Typography>
-							<Typography variant='h6'>
-								{this.state.user.login
-									? this.state.user.login
-									: null}
-							</Typography>
-						</div>
+			<ThemeProvider theme={theme.theme}>
+				<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
+					<AppBar position='fixed'>
+						<Toolbar variant='regular' color='primary'>
+							<Container maxWidth='lg'>
+								<div
+									style={{
+										display: 'flex',
+										flexGrow: 1,
+										flexDirection: 'row',
+										alignItems: 'center',
+										justifyContent: 'space-between'
+									}}>
+									<Typography
+										variant='h5'
+										style={{ color: '#fff' }}>
+										Reactora
+									</Typography>
 
-						<div style={{ marginTop: '.5rem' }}>
-							<Typography variant='subtitle1'>
-								{this.state.user.bio
-									? this.state.user.bio
-									: null}
-							</Typography>
-							<Typography variant='subtitle1'>
-								{this.state.user.company
-									? this.state.user.company
-									: null}
-							</Typography>
-							<Typography variant='body2'>
-								{this.state.user.location
-									? this.state.user.location
-									: null}
-							</Typography>
-							<Link to={this.state.user.blog}>
-								<Typography variant='body2'>
-									{this.state.user.blog
-										? this.state.user.blog
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'row',
+											alignItems: 'center'
+										}}>
+										<div
+											className={'link-div'}
+											style={{
+												marginRight: '1rem',
+												padding: '0.5rem'
+											}}
+											onClick={event =>
+												this.setState({
+													menuVisible:
+														event.currentTarget
+												})
+											}>
+											<Avatar
+												src={this.state.user.avatar_url}
+												alt={this.state.user.name}
+												style={{
+													height: '2.3rem',
+													width: '2.3rem'
+												}}
+											/>
+										</div>
+
+										<Button
+											variant='contained'
+											color='secondary'
+											onClick={() =>
+												this.setState({
+													modalVisible: true
+												})
+											}
+											style={{
+												borderRadius: '2rem',
+												textTransform: 'none'
+											}}>
+											<Typography
+												variant='body2'
+												style={{
+													fontWeight: 600
+												}}>
+												Add Question
+											</Typography>
+										</Button>
+									</div>
+								</div>
+							</Container>
+						</Toolbar>
+					</AppBar>
+					<Grid container direction='row'>
+						<Grid
+							container
+							direction='column'
+							item
+							sm={12}
+							md={12}
+							lg={3}>
+							<Avatar
+								variant='circle'
+								src={this.state.user.avatar_url}
+								alt={this.state.user.name}
+								style={{
+									height: '14rem',
+									width: '14rem',
+									marginBottom: '1rem'
+								}}
+							/>
+							<div style={{ marginBottom: '0.5rem' }}>
+								<Typography
+									variant='h5'
+									style={{
+										marginTop: '1rem',
+										fontSize: '2rem'
+									}}>
+									{this.state.user.name
+										? this.state.user.name
 										: null}
 								</Typography>
-							</Link>
-						</div>
+								<Typography variant='h6'>
+									{this.state.user.login
+										? this.state.user.login
+										: null}
+								</Typography>
+							</div>
+
+							<div style={{ marginTop: '.5rem' }}>
+								<Typography variant='subtitle1'>
+									{this.state.user.bio
+										? this.state.user.bio
+										: null}
+								</Typography>
+								<Typography variant='subtitle1'>
+									{this.state.user.company
+										? this.state.user.company
+										: null}
+								</Typography>
+								<Typography variant='body2'>
+									{this.state.user.location
+										? this.state.user.location
+										: null}
+								</Typography>
+								<Link to={this.state.user.blog}>
+									<Typography variant='body2'>
+										{this.state.user.blog
+											? this.state.user.blog
+											: null}
+									</Typography>
+								</Link>
+							</div>
+						</Grid>
+						<Grid item sm={12} md={12} lg={9}>
+							<Tabs>
+								{/* Here come the tabs for each of the things to be showed in the tab view */}
+								<div
+									label='Asked Questions'
+									questions={this.state.questions}
+									history={this.props.history}
+								/>
+								<div
+									label='Answers'
+									answers={this.state.answers}
+									history={this.props.history}>
+									Answers
+								</div>
+								<div
+									label='Comments'
+									comments={this.state.comments}
+									history={this.props.history}>
+									Comments
+								</div>
+								<div
+									label='Upvoted Answers'
+									upvotedAnswers={this.state.upvotedAnswers}
+									history={this.props.history}>
+									Upvoted Answers
+								</div>
+								<div
+									label='Upvoted Comments'
+									upvotedComments={this.state.upvotedComments}
+									history={this.props.history}>
+									Upvoted Comments
+								</div>
+								<div
+									label='Requests'
+									requests={this.state.requests}
+									history={this.props.history}>
+									Requests
+								</div>
+							</Tabs>
+						</Grid>
 					</Grid>
-					<Grid item sm={12} md={12} lg={9}>
-						<Tabs>
-							{/* Here come the tabs for each of the things to be showed in the tab view */}
-							<div
-								label='Asked Questions'
-								questions={this.state.questions}
-								history={this.props.history}
-							/>
-							<div
-								label='Answers'
-								answers={this.state.answers}
-								history={this.props.history}>
-								Answers
-							</div>
-							<div
-								label='Comments'
-								comments={this.state.comments}
-								history={this.props.history}>
-								Comments
-							</div>
-							<div
-								label='Upvoted Answers'
-								upvotedAnswers={this.state.upvotedAnswers}
-								history={this.props.history}>
-								Upvoted Answers
-							</div>
-							<div
-								label='Upvoted Comments'
-								upvotedComments={this.state.upvotedComments}
-								history={this.props.history}>
-								Upvoted Comments
-							</div>
-							<div
-								label='Requests'
-								requests={this.state.requests}
-								history={this.props.history}>
-								Requests
-							</div>
-						</Tabs>
-					</Grid>
-				</Grid>
-			</div>
+				</div>
+			</ThemeProvider>
 		);
 	}
 }
