@@ -232,7 +232,7 @@ export default class Question extends React.Component {
 								marginTop: '0.5rem'
 							}}>
 							<Button
-								variant='text'
+								variant='outlined'
 								color='primary'
 								startIcon={<CreateIcon />}
 								onClick={() =>
@@ -341,21 +341,84 @@ export default class Question extends React.Component {
 								</Button>
 							)}
 
-							<Button
-								variant='text'
-								color='primary'
-								startIcon={<EmojiPeopleIcon />}
-								onClick={() => this.handleRequestClick()}>
-								<Typography
-									variant='body2'
-									style={{
-										fontWeight: 500,
-										fontSize: 18,
-										textTransform: 'capitalize'
+							{utils.checkUserInArray(
+								this.state.question.requested,
+								this.state.user.login
+							) ? (
+								<Button
+									variant='text'
+									color='primary'
+									startIcon={<EmojiPeopleIcon />}
+									onClick={event => {
+										utils
+											.requestClick(
+												event,
+												this.state.question.url,
+												this.state.question.requested,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'removed') {
+													this.state.question.requested = utils.removeValueFromArray(
+														this.state.question
+															.requested,
+														this.state.user.login
+													);
+													this.forceUpdate();
+												} else throw Error();
+											})
+											.catch(error =>
+												console.error(error)
+											);
 									}}>
-									Request
-								</Typography>
-							</Button>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Request &#183;{' '}
+										{this.state.question.requested.length}
+									</Typography>
+								</Button>
+							) : (
+								<Button
+									variant='text'
+									style={{ color: '#919191' }}
+									startIcon={<EmojiPeopleIcon />}
+									onClick={event => {
+										utils
+											.requestClick(
+												event,
+												this.state.question.url,
+												this.state.question.requested,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'success') {
+													this.state.question.requested.push(
+														this.state.user.login
+													);
+													this.forceUpdate();
+												} else throw Error();
+											})
+											.catch(error =>
+												console.error(error)
+											);
+									}}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Request &#183;{' '}
+										{this.state.question.requested.length}
+									</Typography>
+								</Button>
+							)}
 						</div>
 
 						<Typography
