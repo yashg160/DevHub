@@ -1,5 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
+import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
@@ -52,10 +53,10 @@ export default class AskedQuestions extends React.Component {
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
-								border: '0.1rem solid #bababa',
+								border: '1px solid #eeeeee',
+								borderRadius: '4px',
 								padding: '1rem',
-								marginTop: '0.5rem',
-								marginBottom: '.5rem'
+								marginBottom: '1rem'
 							}}>
 							<div
 								style={{
@@ -77,20 +78,22 @@ export default class AskedQuestions extends React.Component {
 									</Typography>
 								))}
 							</div>
-							<Typography
-								className='question-link'
+							<Link
+								href='#'
+								color='textPrimary'
 								variant='h6'
-								style={{
-									textTransform: 'capitalize',
-									fontWeight: 700
-								}}
 								onClick={() =>
 									this.props.history.push(
 										`/questions/${res.url}`
 									)
-								}>
+								}
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
 								{res.question}
-							</Typography>
+							</Link>
+
 							<div
 								style={{
 									display: 'flex',
