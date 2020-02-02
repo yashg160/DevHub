@@ -110,7 +110,81 @@ export default class Profile extends React.Component {
 			});
 	}
 
-	handleAddQuestion() {}
+	async checkQuestion() {
+		if (this.state.newQuestion.length < 1) {
+			throw Error('ERR_CHECK');
+		}
+	}
+
+	async postQuestion(token) {
+		// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
+		let genres = [];
+		this.state.selectedGenres.map(i => genres.push(this.genres[i]));
+		console.log(genres);
+
+		let rawResponse = await fetch(serverUrl + '/api/questions', {
+			method: 'POST',
+			headers: {
+				Authorization: `Token ${token}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				question: this.state.newQuestion,
+				genres: genres
+			})
+		});
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status !== 'success') throw Error('ERR_POST');
+		return res;
+	}
+
+	handleAddQuestion() {
+		var token = Cookies.get('TOKEN');
+		console.log(token);
+		this.checkQuestion()
+			.then(() => {
+				this.postQuestion(token);
+				this.setState({ loading: true });
+			})
+			.then(res => {
+				console.log('postQuestion returned');
+				this.setState({
+					loading: false,
+					snackbarMess: 'Question posted successfully',
+					snackbar: true
+				});
+			})
+			.catch(error => {
+				console.error(error.message);
+				switch (error.message) {
+					case 'ERR_CHECK':
+						this.setState({
+							snackbarMess: 'Please check the question',
+							snackbar: true,
+							genresModal: false,
+							questionModal: true,
+							loading: false
+						});
+						break;
+					case 'ERR_POST':
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+					default:
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+				}
+			});
+	}
 
 	genreClick(index) {
 		if (this.state.selectedGenres.length < 5)
