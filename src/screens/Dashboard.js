@@ -1200,6 +1200,69 @@ export default class Dashboard extends React.Component {
 						open={Boolean(this.state.menuVisible)}
 						onClose={() => this.setState({ menuVisible: null })}>
 						<MenuItem
+							style={{
+								paddingTop: '1rem',
+								paddingBottom: '1rem',
+								paddingLeft: '4rem',
+								paddingRight: '4rem',
+								display: 'flex',
+								flexDirection: 'column'
+							}}
+							onClick={() => {
+								this.setState({ menuVisible: null });
+								this.props.history.push(
+									`/users/${this.state.user.login}`
+								);
+							}}>
+							<Avatar
+								src={this.state.user.avatar_url}
+								alt={this.state.user.name}
+								style={{
+									height: '3rem',
+									width: '3rem',
+									marginBottom: '0.5rem'
+								}}
+							/>
+							<Typography
+								variant='body1'
+								style={{ fontWeight: 600 }}>
+								{this.state.user.name}
+							</Typography>
+						</MenuItem>
+						<MenuItem
+							style={{
+								paddingTop: '1rem',
+								paddingBottom: '1rem',
+								paddingLeft: '4rem',
+								paddingRight: '4rem'
+							}}
+							onClick={() => {
+								this.setState({ menuVisible: null });
+								this.props.history.push(`/dashboard`);
+							}}>
+							Dashboard
+						</MenuItem>
+
+						<MenuItem
+							style={{
+								paddingTop: '1rem',
+								paddingBottom: '1rem',
+								paddingLeft: '4rem',
+								paddingRight: '4rem'
+							}}
+							onClick={() => {
+								this.setState({ menuVisible: null });
+								this.props.history.push(`/genres`);
+							}}>
+							Genres
+						</MenuItem>
+						<MenuItem
+							style={{
+								paddingTop: '1rem',
+								paddingBottom: '1rem',
+								paddingLeft: '4rem',
+								paddingRight: '4rem'
+							}}
 							onClick={() => {
 								this.setState({ menuVisible: null });
 								this.props.history.push(
@@ -1209,6 +1272,12 @@ export default class Dashboard extends React.Component {
 							Profile
 						</MenuItem>
 						<MenuItem
+							style={{
+								paddingTop: '1rem',
+								paddingBottom: '1rem',
+								paddingLeft: '4rem',
+								paddingRight: '4rem'
+							}}
 							onClick={() =>
 								this.setState({ menuVisible: null })
 							}>
