@@ -111,7 +111,7 @@ export default class Question extends React.Component {
 
 		return (
 			<ThemeProvider theme={theme.theme}>
-				<div style={{ backgroundColor: '#f7f7f7' }}>
+				<div>
 					<AppBar position='fixed'>
 						<Toolbar variant='regular' color='primary'>
 							<Container maxWidth='lg'>
