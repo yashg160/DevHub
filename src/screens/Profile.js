@@ -18,6 +18,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
+import Chip from '@material-ui/core/Chip';
+import utils from '../utils';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -37,10 +39,11 @@ export default class Profile extends React.Component {
 			questionModal: false,
 			newQuestion: '',
 			newQuestionError: false,
-			genresModal: false
+			genresModal: false,
+			selectedGenres: []
 		};
 
-		const genres = [
+		this.genres = [
 			'Technology',
 			'Religion',
 			'Philosophy',
@@ -525,7 +528,7 @@ export default class Profile extends React.Component {
 											})
 										}
 										style={{ marginLeft: '0.2rem' }}>
-										Add question
+										Proceed
 									</Button>
 								</div>
 							</div>
@@ -571,16 +574,73 @@ export default class Profile extends React.Component {
 											fontWeight: 700,
 											marginBottom: '0.5rem'
 										}}>
-										Tips on getting good answers quickly
+										Select genres to make you question more
+										discoverable
 									</Typography>
 								</div>
 
 								<div
 									style={{
 										display: 'flex',
-										flexGrow: 'wrap',
-										justifyContent: 'center'
-									}}></div>
+										flexWrap: 'wrap',
+										justifyContent: 'center',
+										alignItems: 'center',
+										marginBottom: '0.5rem'
+									}}>
+									{this.genres.map((genre, i) => (
+										<Chip
+											label={genre}
+											onClick={() => this.genreClick(i)}
+											color={
+												utils.checkUserInArray(
+													this.state.selectedGenres,
+													i
+												)
+													? 'secondary'
+													: 'primary'
+											}
+											style={{
+												padding: '0.5rem',
+												color: '#fff',
+												margin: '0.5rem'
+											}}
+										/>
+									))}
+								</div>
+								<Typography align='center' variant='body1'>
+									Select upto 5 genres
+								</Typography>
+								<div
+									style={{
+										padding: '2rem',
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-end',
+										alignItems: 'center'
+									}}>
+									<Button
+										variant='text'
+										onClick={() =>
+											this.setState({
+												questionModal: false
+											})
+										}
+										style={{ marginRight: '0.2rem' }}>
+										Cancel
+									</Button>
+									<Button
+										color='primary'
+										variant='contained'
+										onClick={() =>
+											this.setState({
+												questionModal: false,
+												genresModal: true
+											})
+										}
+										style={{ marginLeft: '0.2rem' }}>
+										Add question
+									</Button>
+								</div>
 							</div>
 						</div>
 					</Fade>
