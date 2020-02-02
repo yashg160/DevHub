@@ -18,6 +18,7 @@ import Button from '@material-ui/core/Button';
 import { ThemeProvider } from '@material-ui/core/styles';
 import serverUrl from '../config';
 import theme from '../theme';
+import utils from '../utils';
 
 export default class Question extends React.Component {
 	constructor(props) {
@@ -251,22 +252,95 @@ export default class Question extends React.Component {
 									Answer
 								</Typography>
 							</Button>
-							<Button
-								variant='text'
-								color='primary'
-								startIcon={<RssFeedIcon />}
-								onClick={() => this.handleFollowClick()}
-								style={{ marginRight: '1rem' }}>
-								<Typography
-									variant='body2'
+							{utils.checkUserInArray(
+								this.state.question.followers_list,
+								this.state.user.login
+							) ? (
+								<Button
+									variant='text'
+									color='primary'
+									startIcon={<RssFeedIcon />}
+									onClick={event =>
+										utils
+											.followClick(
+												event,
+												this.state.question.url,
+												this.state.question
+													.followers_list,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'removed')
+													this.state.question.followers_list = utils.removeValueFromArray(
+														this.state.question
+															.followers_list,
+														this.state.user.login
+													);
+												this.forceUpdate();
+											})
+											.catch(error =>
+												console.error(error)
+											)
+									}
+									style={{ marginRight: '1rem' }}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Unfollow &#183;{' '}
+										{
+											this.state.question.followers_list
+												.length
+										}
+									</Typography>
+								</Button>
+							) : (
+								<Button
+									variant='text'
 									style={{
-										fontWeight: 500,
-										fontSize: 18,
-										textTransform: 'capitalize'
-									}}>
-									Follow
-								</Typography>
-							</Button>
+										color: '#919191',
+										marginRight: '1rem'
+									}}
+									startIcon={<RssFeedIcon />}
+									onClick={event =>
+										utils
+											.followClick(
+												event,
+												this.state.question.url,
+												this.state.question
+													.followers_list,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'followed')
+													this.state.question.followers_list.push(
+														this.state.user.login
+													);
+												this.forceUpdate();
+											})
+											.catch(error =>
+												console.error(error)
+											)
+									}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Follow &#183;{' '}
+										{
+											this.state.question.followers_list
+												.length
+										}
+									</Typography>
+								</Button>
+							)}
+
 							<Button
 								variant='text'
 								color='primary'
