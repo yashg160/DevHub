@@ -36,7 +36,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import serverUrl from '../config';
 import utils from '../utils';
 import theme from '../theme';
-import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+import { ThemeProvider } from '@material-ui/core/styles/';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
