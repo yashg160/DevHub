@@ -84,7 +84,19 @@ def add_answers(m = 5):
             answer.save()
     print(f'Created {all_questions.count()*m} answers succesfully!')
 
-
+def add_comments(m = 5):
+    all_users = User.objects.all()
+    user_size = all_users.count() - 1
+    all_answers = Answer.objects.all()
+    for answer in tqdm(all_answers):
+        for _ in range(m):
+            Comment.objects.create(
+                answer = answer,
+                author = all_users[randint(0, user_size)],
+                comment = fake.text(max_nb_chars = 150)
+            )
+    print(f'Created {all_answers.count()*m} comments succesfully!')
+    
 if __name__ == "__main__" :
     Token.objects.all().delete()
     Comment.objects.all().delete()
@@ -96,3 +108,4 @@ if __name__ == "__main__" :
     add_users()
     add_questions()
     add_answers()
+    add_comments()
