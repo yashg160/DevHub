@@ -193,7 +193,14 @@ export default class Profile extends React.Component {
 	}
 
 	genreClick(index) {
-		if (this.state.selectedGenres.length < 5)
+		if (utils.checkUserInArray(this.state.selectedGenres, index)) {
+			this.setState({
+				selectedGenres: utils.removeValueFromArray(
+					this.state.selectedGenres,
+					index
+				)
+			});
+		} else if (this.state.selectedGenres.length < 5)
 			this.setState({
 				selectedGenres: [...this.state.selectedGenres, index]
 			});
