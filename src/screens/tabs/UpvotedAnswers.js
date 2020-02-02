@@ -71,7 +71,7 @@ export default class UpvotedAnswers extends React.Component {
 							{String(answer.answer).length > 250
 								? String(answer.answer).substr(0, 250) + '...'
 								: String(answer.answer)}
-							{
+							{String(answer.answer).length > 250 ? (
 								<Link
 									href='#'
 									color='primary'
@@ -82,7 +82,7 @@ export default class UpvotedAnswers extends React.Component {
 									}>
 									Read More
 								</Link>
-							}
+							) : null}
 						</Typography>
 
 						<Typography

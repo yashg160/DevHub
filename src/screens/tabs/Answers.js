@@ -77,13 +77,26 @@ export default class Answers extends React.Component {
 							<Typography
 								variant='subtitle2'
 								color='textSecondary'
-								style={{ marginTop: '1rem' }}>
+								style={{ marginTop: '0.1rem' }}>
 								You Answered:
 							</Typography>
-							<Typography
-								variant='body1'
-								style={{ marginTop: '0.1rem' }}>
-								{answer.answer}
+							<Typography variant='body1'>
+								{String(answer.answer).length > 250
+									? String(answer.answer).substr(0, 250) +
+									  '...'
+									: String(answer.answer)}
+								{String(answer.answer).length > 250 ? (
+									<Link
+										href='#'
+										color='primary'
+										onClick={() =>
+											this.props.history.push(
+												`/questions/${answer.question}`
+											)
+										}>
+										Read More
+									</Link>
+								) : null}
 							</Typography>
 							<div
 								style={{
