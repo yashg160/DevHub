@@ -8,7 +8,6 @@ function checkUserInArray(arr, userName) {
 
 function removeValueFromArray(arr, value) {
 	var filteredArray = arr.filter(val => val !== value);
-	console.log(filteredArray);
 	return filteredArray;
 }
 
@@ -38,7 +37,6 @@ async function followClick(event, url, followers, login) {
 		});
 
 		let res = await rawResponse.json();
-		console.log(res);
 		if (res.status === 'success') return 'removed';
 	} else {
 		// User has followed the question. Add the follow
@@ -55,7 +53,6 @@ async function followClick(event, url, followers, login) {
 		});
 
 		let res = await rawResponse.json();
-		console.log(res);
 		if (res.status === 'success') return 'followed';
 	}
 	return;
@@ -87,7 +84,6 @@ async function requestClick(event, url, requested, login) {
 		});
 
 		let res = await rawResponse.json();
-		console.log(res);
 		if (res.status === 'success') return 'success';
 		else throw Error();
 	}
@@ -96,7 +92,6 @@ async function requestClick(event, url, requested, login) {
 async function upvoteAnswerClick(answerId, upvoters, login) {
 	// Get the token from cookies
 	var token = Cookies.get('TOKEN');
-	console.log(token);
 	if (checkUserInArray(upvoters, login)) {
 		// User has already upvoted. Remove the upvote
 		let rawResponse = await fetch(serverUrl + `/api/answers/${answerId}`, {
@@ -111,7 +106,6 @@ async function upvoteAnswerClick(answerId, upvoters, login) {
 			})
 		});
 		let res = await rawResponse.json();
-		console.log(res);
 		if (res.status === 'success') return 'removed';
 		else throw Error();
 	} else {
@@ -129,7 +123,6 @@ async function upvoteAnswerClick(answerId, upvoters, login) {
 		});
 
 		let res = await rawResponse.json();
-		console.log(res);
 		if (res.status === 'success') return 'upvoted';
 	}
 }
