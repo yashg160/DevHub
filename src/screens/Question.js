@@ -214,9 +214,12 @@ export default class Question extends React.Component {
 							style={{
 								fontWeight: 600,
 								textTransform: 'capitalize',
-								marginTop: '2rem'
+								marginTop: '1rem'
 							}}>
 							{this.state.question.question}
+						</Typography>
+						<Typography variant='body2'>
+							Asked By {this.state.question.asker_name}
 						</Typography>
 
 						<div
@@ -303,24 +306,33 @@ export default class Question extends React.Component {
 											alignItems: 'center',
 											width: '100%'
 										}}>
-										<Typography
-											variant='body1'
-											style={{ fontWeight: 600 }}>
-											{answer.author_name}
-										</Typography>
-										<Button
-											disabled={
-												/* !(
-													answer.author_name ===
-													this.state.user.name
-												) */
-												false
-											}
-											variant='text'
+										<div
 											style={{
-												color: '#919191',
-												marginTop: '0.5rem'
-											}}
+												display: 'flex',
+												flexDirection: 'column'
+											}}>
+											<Typography
+												variant='body1'
+												style={{ fontWeight: 600 }}>
+												{answer.author_name}
+											</Typography>
+											<Typography
+												variant='subtitle2'
+												color='textSecondary'>
+												Updated{' '}
+												{new Date(
+													answer.updated_at
+												).toLocaleDateString('en-US', {
+													weekday: 'long',
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric'
+												})}
+											</Typography>
+										</div>
+
+										<Button
+											variant='text'
 											startIcon={<EditIcon />}
 											onClick={() =>
 												this.editAnswerClick(i)
@@ -337,21 +349,8 @@ export default class Question extends React.Component {
 									</div>
 
 									<Typography
-										variant='subtitle2'
-										style={{ color: '#919191' }}>
-										Updated{' '}
-										{new Date(
-											answer.updated_at
-										).toLocaleDateString('en-US', {
-											weekday: 'long',
-											year: 'numeric',
-											month: 'long',
-											day: 'numeric'
-										})}
-									</Typography>
-									<Typography
 										variant='body1'
-										style={{ marginTop: '2rem' }}>
+										style={{ marginTop: '0.5rem' }}>
 										{answer.answer}
 									</Typography>
 								</div>
