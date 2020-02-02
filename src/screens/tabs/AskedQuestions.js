@@ -50,6 +50,7 @@ export default class AskedQuestions extends React.Component {
 					}>
 					{this.state.questions.map((res, i) => (
 						<div
+							key={i}
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
@@ -88,7 +89,7 @@ export default class AskedQuestions extends React.Component {
 									)
 								}
 								style={{
-									fontWeight: 700,
+									fontWeight: 600,
 									textTransform: 'capitalize'
 								}}>
 								{res.question}
@@ -97,8 +98,7 @@ export default class AskedQuestions extends React.Component {
 							<div
 								style={{
 									display: 'flex',
-									flexDirection: 'row',
-									marginTop: '1rem'
+									flexDirection: 'row'
 								}}>
 								<Button
 									variant='text'
@@ -231,7 +231,7 @@ export default class AskedQuestions extends React.Component {
 							<Typography
 								variant='body1'
 								style={{
-									fontWeight: '600',
+									fontWeight: 600,
 									marginTop: '0.2rem'
 								}}>
 								{res.all_answers.length} Answers

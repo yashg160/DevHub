@@ -56,6 +56,7 @@ export default class Tabs extends Component {
 							case 'Asked Questions':
 								return (
 									<AskedQuestions
+										key={child.props.label}
 										questions={child.props.questions}
 										history={child.props.history}
 									/>
@@ -63,6 +64,7 @@ export default class Tabs extends Component {
 							case 'Answers':
 								return (
 									<Answers
+										key={child.props.label}
 										answers={child.props.answers}
 										history={child.props.history}
 									/>
@@ -70,6 +72,7 @@ export default class Tabs extends Component {
 							case 'Comments':
 								return (
 									<Comments
+										key={child.props.label}
 										comments={child.props.comments}
 										history={child.props.history}
 									/>
@@ -77,6 +80,7 @@ export default class Tabs extends Component {
 							case 'Upvoted Answers':
 								return (
 									<UpvotedAnswers
+										key={child.props.label}
 										upvotedAnswers={
 											child.props.upvotedAnswers
 										}
@@ -86,6 +90,7 @@ export default class Tabs extends Component {
 							case 'Upvoted Comments':
 								return (
 									<UpvotedComments
+										key={child.props.label}
 										upvotedComments={
 											child.props.upvotedComments
 										}
@@ -95,6 +100,7 @@ export default class Tabs extends Component {
 							case 'Requests':
 								return (
 									<Requests
+										key={child.props.label}
 										requests={child.props.requests}
 										history={child.props.history}
 									/>
