@@ -50,6 +50,23 @@ export default class UpvotedAnswers extends React.Component {
 							padding: '1rem',
 							marginBottom: '1rem'
 						}}>
+						<Link
+							href='#'
+							onClick={() =>
+								this.props.history.push(
+									`/questions/${answer.question}`
+								)
+							}
+							color='textPrimary'
+							variant='h6'
+							style={{
+								fontWeight: 500,
+								textTransform: 'capitalize'
+							}}>
+							{String(answer.question)
+								.split('-')
+								.join(' ')}
+						</Link>
 						<Typography variant='body1' style={{ fontWeight: 500 }}>
 							{String(answer.answer).length > 250
 								? String(answer.answer).substr(0, 250) + '...'
