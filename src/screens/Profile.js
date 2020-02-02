@@ -14,6 +14,8 @@ import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -253,6 +255,93 @@ export default class Profile extends React.Component {
 						</Grid>
 					</Grid>
 				</div>
+				<Menu
+					id='main-menu'
+					anchorEl={this.state.menuVisible}
+					keepMounted
+					open={Boolean(this.state.menuVisible)}
+					onClose={() => this.setState({ menuVisible: null })}>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() => {
+							this.setState({ menuVisible: null });
+							this.props.history.push(
+								`/users/${this.state.user.login}`
+							);
+						}}>
+						<Avatar
+							src={this.state.user.avatar_url}
+							alt={this.state.user.name}
+							style={{
+								height: '3rem',
+								width: '3rem',
+								marginBottom: '0.5rem'
+							}}
+						/>
+						<Typography variant='body1' style={{ fontWeight: 600 }}>
+							{this.state.user.name}
+						</Typography>
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem'
+						}}
+						onClick={() => {
+							this.setState({ menuVisible: null });
+							this.props.history.push(`/dashboard`);
+						}}>
+						Dashboard
+					</MenuItem>
+
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem'
+						}}
+						onClick={() => {
+							this.setState({ menuVisible: null });
+							this.props.history.push(`/genres`);
+						}}>
+						Genres
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem'
+						}}
+						onClick={() => {
+							this.setState({ menuVisible: null });
+							this.props.history.push(
+								`/users/${this.state.user.login}`
+							);
+						}}>
+						Profile
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem'
+						}}
+						onClick={() => this.setState({ menuVisible: null })}>
+						Sign Out
+					</MenuItem>
+				</Menu>
 			</ThemeProvider>
 		);
 	}
