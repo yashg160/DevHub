@@ -40,7 +40,9 @@ export default class Profile extends React.Component {
 			newQuestion: '',
 			newQuestionError: false,
 			genresModal: false,
-			selectedGenres: []
+			selectedGenres: [],
+			snackbar: false,
+			snackbarMess: 'There was some error'
 		};
 
 		this.genres = [
@@ -102,6 +104,21 @@ export default class Profile extends React.Component {
 				console.error(error);
 				this.setState({ loading: false, error: true });
 			});
+	}
+
+	handleAddQuestion() {}
+
+	genreClick(index) {
+		if (this.state.selectedGenres.length < 5)
+			this.setState({
+				selectedGenres: [...this.state.selectedGenres, index]
+			});
+		else
+			this.setState({
+				snackbarMess: 'Select only 5 genres',
+				snackbar: true
+			});
+		console.log(this.state.selectedGenres);
 	}
 
 	render() {
@@ -622,7 +639,7 @@ export default class Profile extends React.Component {
 										variant='text'
 										onClick={() =>
 											this.setState({
-												questionModal: false
+												genresModal: false
 											})
 										}
 										style={{ marginRight: '0.2rem' }}>
@@ -631,12 +648,7 @@ export default class Profile extends React.Component {
 									<Button
 										color='primary'
 										variant='contained'
-										onClick={() =>
-											this.setState({
-												questionModal: false,
-												genresModal: true
-											})
-										}
+										onClick={() => this.handleAddQuestion()}
 										style={{ marginLeft: '0.2rem' }}>
 										Add question
 									</Button>
