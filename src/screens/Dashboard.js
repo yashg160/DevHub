@@ -280,7 +280,6 @@ export default class Dashboard extends React.Component {
 											}}>
 											<Typography
 												variant='body2'
-												color='white'
 												style={{
 													fontWeight: 600
 												}}>
