@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Typography from '@material-ui/core/Typography';
 
 export default class Tab extends Component {
 	static propTypes = {
@@ -19,16 +20,37 @@ export default class Tab extends Component {
 			props: { activeTab, label }
 		} = this;
 
-		let className = 'tab-list-item';
+		let className = 'item';
 
 		if (activeTab === label) {
-			className += ' tab-list-active';
+			className = 'active';
 		}
 
+		const itemStyle = {
+			display: 'inline-block',
+			listStyle: 'none',
+			marginBottom: '-1px',
+			padding: '0.5rem 0.75rem'
+		};
+
+		const activeStyle = {
+			backgroundColor: '#fff',
+			border: 'solid',
+			borderWidth: '1px 1px 0 1px',
+			fontWeight: 600
+		};
+
 		return (
-			<li className={className} onClick={onClick}>
+			<Typography
+				variant='body2'
+				style={
+					className === 'item'
+						? itemStyle
+						: { ...itemStyle, ...activeStyle }
+				}
+				onClick={onClick}>
 				{label}
-			</li>
+			</Typography>
 		);
 	}
 }

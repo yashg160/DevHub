@@ -35,7 +35,7 @@ export default class Tabs extends Component {
 
 		return (
 			<div className='tabs'>
-				<ol className='tab-list'>
+				<ol style={{ borderBottom: '1px solid #ccc', paddingLeft: 0 }}>
 					{children.map(child => {
 						const { label } = child.props;
 

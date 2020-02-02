@@ -1,6 +1,5 @@
 import React from 'react';
 import Tabs from './tabs/Tabs';
-import './styles/tabs.css';
 import serverUrl from '../config';
 import Cookies from 'js-cookie';
 import Backdrop from '@material-ui/core/Backdrop';
