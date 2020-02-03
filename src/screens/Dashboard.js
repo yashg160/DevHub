@@ -59,25 +59,22 @@ export default class Dashboard extends React.Component {
 			snackbarMess: 'Snackbar messsage',
 			selectedGenres: []
 		};
-		this.genres = [
-			'Technology',
-			'Religion',
-			'Philosophy',
-			'Science',
-			'Politics',
-			'Enterpreneurship',
-			'Life',
-			'News',
-			'Startup',
-			'Culture',
-			'Business',
-			'Facts',
-			'Humor',
-			'Travel',
-			'Innovation',
-			'Sports',
-			'Health'
-		];
+		this.genres = null;
+	}
+
+	async getGenres(token) {
+		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json'
+			}
+		});
+
+		let content = await rawResponse.json();
+		console.log(content);
+		if (content.status !== 'success') throw Error();
+		return content;
 	}
 
 	async getResults(token, url) {
@@ -124,7 +121,7 @@ export default class Dashboard extends React.Component {
 				this.setState({ loading: false, error: false });
 			})
 			.catch(error => {
-				this.setState({ error: true, loading: false });
+				this.setState({ error: false, loading: false });
 				console.error(error);
 			});
 	}
@@ -171,7 +168,7 @@ export default class Dashboard extends React.Component {
 
 		let res = await rawResponse.json();
 		console.log(res);
-		if (res.status !== 'success') throw Error('ERR_POST');
+		/* if (res.status !== 'success') throw Error('ERR_POST'); */
 		return res;
 	}
 
@@ -252,6 +249,14 @@ export default class Dashboard extends React.Component {
 		var token = Cookies.get('TOKEN');
 		console.log(userName);
 		console.log(token);
+		this.getGenres(token)
+			.then(content => {
+				let genreObject = content.data;
+				var genreArray = Object.keys(genreObject);
+				console.log(genreArray);
+				this.genres = genreArray;
+			})
+			.catch(error => console.error(error));
 
 		this.getUser(userName, token)
 			.then(user => {
@@ -263,6 +268,125 @@ export default class Dashboard extends React.Component {
 				console.error(error);
 				this.setState({ error: true, loading: false });
 			});
+	}
+
+	topAnswer(answer, i) {
+		if (answer == null) {
+			return (
+				<div>
+					<Typography>No anwers yet</Typography>
+				</div>
+			);
+		}
+		return (
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'flex-start'
+				}}>
+				<Typography variant='body1'>{answer.author_name}</Typography>
+				<Typography variant='subtitle2'>
+					Updated at{' '}
+					{new Date(answer.updated_at).toLocaleDateString('en-US', {
+						weekday: 'long',
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})}
+				</Typography>
+				<Typography
+					variant='body1'
+					style={{
+						marginTop: '2rem'
+					}}>
+					{answer.answer}
+				</Typography>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						marginTop: '0.5rem'
+					}}>
+					{utils.checkUserInArray(
+						answer.upvoters,
+						this.state.user.login
+					) ? (
+						<Button
+							variant='outlined'
+							style={{
+								color: '#54e1e3'
+							}}
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'removed')
+											this.state.result[
+												i
+											].answer.upvoters = utils.removeValueFromArray(
+												this.state.result[i].answer
+													.upvoters,
+												this.state.user.login
+											);
+
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
+								Remove &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					) : (
+						<Button
+							variant='outlined'
+							style={{
+								color: '#919191'
+							}}
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'upvoted')
+											this.state.result[
+												i
+											].answer.upvoters.push(
+												this.state.user.login
+											);
+										console.log(this.state.lt);
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
+								Upvote &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					)}
+				</div>
+			</div>
+		);
 	}
 	render() {
 		if (this.state.loading)
@@ -832,185 +956,7 @@ export default class Dashboard extends React.Component {
 											</div>
 										</ExpansionPanelSummary>
 										<ExpansionPanelDetails>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'column',
-													alignItems: 'flex-start'
-												}}>
-												<Typography variant='body1'>
-													{res.answer.author_name}
-												</Typography>
-												<Typography variant='subtitle2'>
-													Updated at{' '}
-													{new Date(
-														res.answer.updated_at
-													).toLocaleDateString(
-														'en-US',
-														{
-															weekday: 'long',
-															year: 'numeric',
-															month: 'long',
-															day: 'numeric'
-														}
-													)}
-												</Typography>
-												<Typography
-													variant='body1'
-													style={{
-														marginTop: '2rem'
-													}}>
-													{res.answer.answer}
-												</Typography>
-												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														marginTop: '0.5rem'
-													}}>
-													{utils.checkUserInArray(
-														res.answer.upvoters,
-														this.state.user.login
-													) ? (
-														<Button
-															variant='outlined'
-															style={{
-																color: '#54e1e3'
-															}}
-															startIcon={
-																<ThumbUpIcon />
-															}
-															onClick={() => {
-																utils
-																	.upvoteAnswerClick(
-																		res
-																			.answer
-																			.id,
-																		res
-																			.answer
-																			.upvoters,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			if (
-																				status ===
-																				'removed'
-																			)
-																				this.state.result[
-																					i
-																				].answer.upvoters = utils.removeValueFromArray(
-																					this
-																						.state
-																						.result[
-																						i
-																					]
-																						.answer
-																						.upvoters,
-																					this
-																						.state
-																						.user
-																						.login
-																				);
-
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error =>
-																			console.error(
-																				error
-																			)
-																	);
-															}}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 700,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Remove &#183;{' '}
-																{
-																	res.answer
-																		.upvoters
-																		.length
-																}
-															</Typography>
-														</Button>
-													) : (
-														<Button
-															variant='outlined'
-															style={{
-																color: '#919191'
-															}}
-															startIcon={
-																<ThumbUpIcon />
-															}
-															onClick={() => {
-																utils
-																	.upvoteAnswerClick(
-																		res
-																			.answer
-																			.id,
-																		res
-																			.answer
-																			.upvoters,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			if (
-																				status ===
-																				'upvoted'
-																			)
-																				this.state.result[
-																					i
-																				].answer.upvoters.push(
-																					this
-																						.state
-																						.user
-																						.login
-																				);
-																			console.log(
-																				this
-																					.state
-																					.result
-																			);
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error =>
-																			console.error(
-																				error
-																			)
-																	);
-															}}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 700,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Upvote &#183;{' '}
-																{
-																	res.answer
-																		.upvoters
-																		.length
-																}
-															</Typography>
-														</Button>
-													)}
-												</div>
-											</div>
+											{this.topAnswer(res.answer, i)}
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
 								))}
