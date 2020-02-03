@@ -4,6 +4,7 @@ from rest_framework import serializers
 from core.models import Genre, Topic, Question, Answer, Comment
 from users.models import CustomUser
 
+
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
@@ -22,7 +23,7 @@ class TopicSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    asker_name = serializers.CharField(source = 'asker.username')
+    asker_name = serializers.CharField(source='asker.username')
     followers_list = serializers.SerializerMethodField()
     all_answers = serializers.SerializerMethodField()
     genres = serializers.SerializerMethodField()
@@ -38,7 +39,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list', 
+        fields = ('question', 'asker_name', 'requested', 'genres', 'followers_list',
                   'topics', 'url', 'created_at', 'updated_at', 'all_answers', )
 
     def update(self, instance, validated_data, current_user):
@@ -47,25 +48,27 @@ class QuestionSerializer(serializers.ModelSerializer):
         genres = validated_data.get('genres', [])
         followed = validated_data.get('followed', False)
         unfollowed = validated_data.get('unfollowed', False)
-        
+
         if followed and (
-            not instance.followers.filter(username= current_user.username).exists()
-            ):
+            not instance.followers.filter(
+                username=current_user.username).exists()
+        ):
             instance.followers.add(current_user)
-        
-        if unfollowed and instance.followers.filter(username= current_user.username).exists():
+
+        if unfollowed and instance.followers.filter(username=current_user.username).exists():
             instance.followers.remove(current_user)
 
-        if current_user == instance.asker :
-            for username in requested :
-                user = CustomUser.objects.get(username = username)
+        if current_user == instance.asker:
+            for username in requested:
+                user = CustomUser.objects.get(username=username)
                 if user != instance.asker and (
-                    not instance.requested.filter(username = user1.username).exists()
-                    ):
+                    not instance.requested.filter(
+                        username=user1.username).exists()
+                ):
                     instance.requested.add(user)
-            for genre in genres :
+            for genre in genres:
                 try:
-                    instance.genres.add(Genre.objects.get(name = genre))
+                    instance.genres.add(Genre.objects.get(name=genre))
                 except:
                     pass
         instance.question = new_question
@@ -89,10 +92,11 @@ class AnswerSerializer(serializers.ModelSerializer):
         return instance.upvoters.all().count()
 
     def get_comment_thread(self, instance):
-        primary_comment = instance.replied_comments.filter(parent_comment = None)
-        if(primary_comment.count() == 0): return []
+        primary_comment = instance.replied_comments.filter(parent_comment=None)
+        if(primary_comment.count() == 0):
+            return []
         return [CommentThreadSerializer(comment).data for comment in primary_comment]
-        
+
     class Meta:
         model = Answer
         fields = ('id', 'question', 'answer', 'upvotes', 'author_name', 'upvoters',
@@ -108,13 +112,14 @@ class AnswerSerializer(serializers.ModelSerializer):
             instance.upvoters.filter(username=current_user.username).exists()
         ):
             instance.upvoters.remove(current_user)
-        
+
         instance.updated_at = datetime.now()
         instance.save()
         return instance
 
+
 class HomePageSerializer(serializers.ModelSerializer):
-    asker_name = serializers.CharField(source = 'asker.username')
+    asker_name = serializers.CharField(source='asker.username')
     followers_list = serializers.SerializerMethodField()
     answer = serializers.SerializerMethodField()
     genres = serializers.SerializerMethodField()
@@ -123,7 +128,10 @@ class HomePageSerializer(serializers.ModelSerializer):
         return([follower.username for follower in instance.followers.all()])
 
     def get_answer(self, instance):
-        return AnswerSerializer(Answer.objects.get(id=instance.answer)).data
+        try:
+            return AnswerSerializer(Answer.objects.get(id=instance.answer)).data
+        except:
+            return None
 
     def get_genres(self, instance):
         return([genre.name for genre in instance.genres.all()])
@@ -136,26 +144,26 @@ class HomePageSerializer(serializers.ModelSerializer):
 
 class CommentThreadSerializer(serializers.ModelSerializer):
     child_comments = serializers.SerializerMethodField()
-    author_name = serializers.CharField(source = 'author.username')
+    author_name = serializers.CharField(source='author.username')
     upvotes = serializers.SerializerMethodField()
-    
+
     def get_child_comments(self, instance):
-        child_comments = Comment.objects.filter(parent_comment = instance)
+        child_comments = Comment.objects.filter(parent_comment=instance)
         if child_comments.count() == 0:
             return []
-        return([CommentThreadSerializer(comment).data for comment in child_comments]) 
+        return([CommentThreadSerializer(comment).data for comment in child_comments])
 
     def get_upvotes(self, instance):
         return instance.upvoters.all().count()
 
     class Meta:
         model = Comment
-        fields = ('answer', 'author_name', 'comment', 'upvotes', 'child_comments', 
+        fields = ('answer', 'author_name', 'comment', 'upvotes', 'child_comments',
                   'created_at', 'updated_at', )
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source = 'author.username')
+    author_name = serializers.CharField(source='author.username')
     upvotes = serializers.SerializerMethodField()
 
     def get_upvotes(self, instance):
@@ -168,14 +176,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data, current_user):
         instance.comment = validated_data.get('comment', instance.comment)
-        
+
         upvote = validated_data.get('upvote', False)
         remove_upvote = validated_data.get('remove_upvote', False)
 
-        if upvote and (not instance.upvoters.get(username = current_user.username).exists()):
+        if upvote and (not instance.upvoters.get(username=current_user.username).exists()):
             instance.comment.upvoters.add(current_user)
-        
-        if remove_upvote and instance.upvoters.get(username = current_user.username).exists():
+
+        if remove_upvote and instance.upvoters.get(username=current_user.username).exists():
             instance.comment.upvoters.remove(current_user)
 
         instance.updated_at = datetime.now()
@@ -194,3 +202,4 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'extra_detail_url', 'profile')
+

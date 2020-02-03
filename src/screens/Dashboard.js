@@ -27,6 +27,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Chip from '@material-ui/core/Chip';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -37,6 +38,19 @@ import { ThemeProvider } from '@material-ui/core/styles/';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+
+export class Comment extends React.Component {
+	render() {
+		return (
+			<div style={{ marginLeft: '0.5rem' }}>
+				<Typography variant='body1' style={{ fontWeight: 600 }}>
+					{this.props.author}
+				</Typography>
+				<Typography variant='body2'>{this.props.comment}</Typography>
+			</div>
+		);
+	}
+}
 
 export default class Dashboard extends React.Component {
 	constructor(props) {
@@ -49,13 +63,46 @@ export default class Dashboard extends React.Component {
 			result: [],
 			hasMore: false,
 			next: null,
-			modalVisible: false,
+			questionModal: false,
+			genresModal: false,
 			menuVisible: null,
 			newQuestion: '',
 			newQuestionError: false,
-			showSnackbar: false,
-			messageSnackbar: 'Snackbar messsage'
+			snackbar: false,
+			snackbarMess: 'Snackbar messsage',
+			selectedGenres: []
 		};
+		this.genres = null;
+	}
+	createCommentList(comments) {
+		let items = comments.map((comment, i) => {
+			return (
+				<div key={i}>
+					<Comment
+						key={comment.answer}
+						comment={comment.comment}
+						author={comment.author_name}
+					/>
+					{comment.child_comments &&
+						this.createCommentList(comment.child_comments)}
+				</div>
+			);
+		});
+		return items;
+	}
+	async getGenres(token) {
+		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json'
+			}
+		});
+
+		let content = await rawResponse.json();
+		console.log(content);
+		if (content.status !== 'success') throw Error();
+		return content;
 	}
 
 	async getResults(token, url) {
@@ -102,7 +149,7 @@ export default class Dashboard extends React.Component {
 				this.setState({ loading: false, error: false });
 			})
 			.catch(error => {
-				this.setState({ error: true, loading: false });
+				this.setState({ error: false, loading: false });
 				console.error(error);
 			});
 	}
@@ -124,12 +171,17 @@ export default class Dashboard extends React.Component {
 	}
 
 	async checkQuestion() {
-		const { newQuestion } = this.state;
-
-		if (newQuestion === '') throw Error('ERR_QUESTION');
+		if (this.state.newQuestion.length < 1) {
+			throw Error('ERR_CHECK');
+		}
 	}
 
 	async postQuestion(token) {
+		// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
+		let genres = [];
+		this.state.selectedGenres.map(i => genres.push(this.genres[i]));
+		console.log(genres);
+
 		let rawResponse = await fetch(serverUrl + '/api/questions', {
 			method: 'POST',
 			headers: {
@@ -137,60 +189,87 @@ export default class Dashboard extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				question: this.state.newQuestion
+				question: this.state.newQuestion,
+				genres: genres
 			})
 		});
 
 		let res = await rawResponse.json();
-		console.group(res);
-		if (res.status !== 'success') throw Error('ERR_SERVER');
+		console.log(res);
+		/* if (res.status !== 'success') throw Error('ERR_POST'); */
 		return res;
 	}
 
-	handleAskQuestion() {
+	handleAddQuestion() {
 		var token = Cookies.get('TOKEN');
 		console.log(token);
-
-		/*
-            In this method we handle the posting of a new question. First task is to check the string for any error.
-            If there is an error, throw the error and catch it later in th catch callback
-        */
-		this.setState({
-			loading: true,
-			newQuestionError: false,
-			showSnackbar: false
-		});
-
 		this.checkQuestion()
-			.then(() => this.postQuestion(token))
+			.then(() => {
+				this.postQuestion(token);
+				this.setState({ loading: true });
+			})
 			.then(res => {
+				console.log('postQuestion returned');
 				this.setState({
 					loading: false,
-					newQuestionError: false,
-					showSnackbar: true,
-					messageSnackbar: 'Question posted successfully.',
-					modalVisible: false,
-					newQuestion: ''
+					snackbarMess: 'Question posted successfully',
+					snackbar: true,
+					questionModal: false,
+					genresModal: false,
+					selectedGenres: [],
+					newQuestion: '',
+					newQuestionError: false
 				});
 			})
 			.catch(error => {
-				console.error(error);
-				if (error.message === 'ERR_SERVER') {
-					this.setState({
-						loading: false,
-						newQuestionError: false,
-						showSnackbar: true,
-						messageSnackbar: 'An error occurred. Try again.'
-					});
-				} else if (error.message === 'ERR_QUESTION') {
-					this.setState({
-						loading: false,
-						newQuestionError: true,
-						showSnackbar: false,
-						messageSnackbar: 'An error occurred. Try again.'
-					});
+				console.error(error.message);
+				switch (error.message) {
+					case 'ERR_CHECK':
+						this.setState({
+							snackbarMess: 'Please check the question',
+							snackbar: true,
+							genresModal: false,
+							questionModal: true,
+							loading: false,
+							newQuestionError: true
+						});
+						break;
+					case 'ERR_POST':
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+					default:
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
 				}
 			});
+	}
+
+	genreClick(index) {
+		if (utils.checkUserInArray(this.state.selectedGenres, index)) {
+			this.setState({
+				selectedGenres: utils.removeValueFromArray(
+					this.state.selectedGenres,
+					index
+				)
+			});
+		} else if (this.state.selectedGenres.length < 5)
+			this.setState({
+				selectedGenres: [...this.state.selectedGenres, index]
+			});
+		else
+			this.setState({
+				snackbarMess: 'Select only 5 genres',
+				snackbar: true
+			});
+		console.log(this.state.selectedGenres);
 	}
 
 	componentDidMount() {
@@ -198,6 +277,14 @@ export default class Dashboard extends React.Component {
 		var token = Cookies.get('TOKEN');
 		console.log(userName);
 		console.log(token);
+		this.getGenres(token)
+			.then(content => {
+				let genreObject = content.data;
+				var genreArray = Object.keys(genreObject);
+				console.log(genreArray);
+				this.genres = genreArray;
+			})
+			.catch(error => console.error(error));
 
 		this.getUser(userName, token)
 			.then(user => {
@@ -210,6 +297,126 @@ export default class Dashboard extends React.Component {
 				this.setState({ error: true, loading: false });
 			});
 	}
+
+	topAnswer(answer, i) {
+		if (answer == null) {
+			return (
+				<div>
+					<Typography>No anwers yet</Typography>
+				</div>
+			);
+		}
+		return (
+			<div
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'flex-start'
+				}}>
+				<Typography variant='body1'>{answer.author_name}</Typography>
+				<Typography variant='subtitle2'>
+					Updated at{' '}
+					{new Date(answer.updated_at).toLocaleDateString('en-US', {
+						weekday: 'long',
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})}
+				</Typography>
+				<Typography
+					variant='body1'
+					style={{
+						marginTop: '2rem'
+					}}>
+					{answer.answer}
+				</Typography>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						marginTop: '0.5rem'
+					}}>
+					{utils.checkUserInArray(
+						answer.upvoters,
+						this.state.user.login
+					) ? (
+						<Button
+							variant='outlined'
+							style={{
+								color: '#54e1e3'
+							}}
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'removed')
+											this.state.result[
+												i
+											].answer.upvoters = utils.removeValueFromArray(
+												this.state.result[i].answer
+													.upvoters,
+												this.state.user.login
+											);
+
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
+								Remove &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					) : (
+						<Button
+							variant='outlined'
+							style={{
+								color: '#919191'
+							}}
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'upvoted')
+											this.state.result[
+												i
+											].answer.upvoters.push(
+												this.state.user.login
+											);
+										console.log(this.state.lt);
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
+								Upvote &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		if (this.state.loading)
 			return <Backdrop color='#fff' open={this.state.loading} />;
@@ -268,7 +475,7 @@ export default class Dashboard extends React.Component {
 											color='secondary'
 											onClick={() =>
 												this.setState({
-													modalVisible: true
+													questionModal: true
 												})
 											}
 											style={{
@@ -382,7 +589,7 @@ export default class Dashboard extends React.Component {
 										color='textSecondary'
 										onClick={() =>
 											this.setState({
-												modalVisible: true
+												questionModal: true
 											})
 										}
 										className='question-link'
@@ -781,181 +988,12 @@ export default class Dashboard extends React.Component {
 											<div
 												style={{
 													display: 'flex',
-													flexDirection: 'column',
-													alignItems: 'flex-start'
+													flexDirection: 'column'
 												}}>
-												<Typography variant='body1'>
-													{res.answer.author_name}
-												</Typography>
-												<Typography variant='subtitle2'>
-													Updated at{' '}
-													{new Date(
-														res.answer.updated_at
-													).toLocaleDateString(
-														'en-US',
-														{
-															weekday: 'long',
-															year: 'numeric',
-															month: 'long',
-															day: 'numeric'
-														}
-													)}
-												</Typography>
-												<Typography
-													variant='body1'
-													style={{
-														marginTop: '2rem'
-													}}>
-													{res.answer.answer}
-												</Typography>
-												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														marginTop: '0.5rem'
-													}}>
-													{utils.checkUserInArray(
-														res.answer.upvoters,
-														this.state.user.login
-													) ? (
-														<Button
-															variant='outlined'
-															style={{
-																color: '#54e1e3'
-															}}
-															startIcon={
-																<ThumbUpIcon />
-															}
-															onClick={() => {
-																utils
-																	.upvoteAnswerClick(
-																		res
-																			.answer
-																			.id,
-																		res
-																			.answer
-																			.upvoters,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			if (
-																				status ===
-																				'removed'
-																			)
-																				this.state.result[
-																					i
-																				].answer.upvoters = utils.removeValueFromArray(
-																					this
-																						.state
-																						.result[
-																						i
-																					]
-																						.answer
-																						.upvoters,
-																					this
-																						.state
-																						.user
-																						.login
-																				);
-
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error =>
-																			console.error(
-																				error
-																			)
-																	);
-															}}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 700,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Remove &#183;{' '}
-																{
-																	res.answer
-																		.upvoters
-																		.length
-																}
-															</Typography>
-														</Button>
-													) : (
-														<Button
-															variant='outlined'
-															style={{
-																color: '#919191'
-															}}
-															startIcon={
-																<ThumbUpIcon />
-															}
-															onClick={() => {
-																utils
-																	.upvoteAnswerClick(
-																		res
-																			.answer
-																			.id,
-																		res
-																			.answer
-																			.upvoters,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			if (
-																				status ===
-																				'upvoted'
-																			)
-																				this.state.result[
-																					i
-																				].answer.upvoters.push(
-																					this
-																						.state
-																						.user
-																						.login
-																				);
-																			console.log(
-																				this
-																					.state
-																					.result
-																			);
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error =>
-																			console.error(
-																				error
-																			)
-																	);
-															}}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 700,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Upvote &#183;{' '}
-																{
-																	res.answer
-																		.upvoters
-																		.length
-																}
-															</Typography>
-														</Button>
-													)}
-												</div>
+												{this.topAnswer(res.answer, i)}
+												{this.createCommentList(
+													res.answer.comment_thread
+												)}
 											</div>
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
@@ -1035,8 +1073,8 @@ export default class Dashboard extends React.Component {
 					<Modal
 						aria-labelledby='modal-question'
 						aria-describedby='modal-ask-question'
-						open={this.state.modalVisible}
-						onClose={() => this.setState({ modalVisible: false })}
+						open={this.state.questionModal}
+						onClose={() => this.setState({ questionModal: false })}
 						closeAfterTransition
 						style={{
 							display: 'flex',
@@ -1046,7 +1084,7 @@ export default class Dashboard extends React.Component {
 						}}
 						BackdropComponent={Backdrop}
 						BackdropProps={{ timeout: 500 }}>
-						<Fade in={this.state.modalVisible}>
+						<Fade in={this.state.questionModal}>
 							<div
 								style={{
 									backgroundColor: '#fff',
@@ -1170,7 +1208,7 @@ export default class Dashboard extends React.Component {
 											variant='text'
 											onClick={() =>
 												this.setState({
-													modalVisible: false
+													questionModal: false
 												})
 											}
 											style={{ marginRight: '0.2rem' }}>
@@ -1180,7 +1218,120 @@ export default class Dashboard extends React.Component {
 											color='primary'
 											variant='contained'
 											onClick={() =>
-												this.handleAskQuestion()
+												this.setState({
+													genresModal: true,
+													questionModal: false
+												})
+											}
+											style={{ marginLeft: '0.2rem' }}>
+											Proceed
+										</Button>
+									</div>
+								</div>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='modal-genres'
+						aria-describedby='modal-add-genres'
+						open={this.state.genresModal}
+						onClose={() => this.setState({ genresModal: false })}
+						closeAfterTransition
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={this.state.genresModal}>
+							<div
+								style={{
+									backgroundColor: '#fff',
+									width: '50%'
+								}}>
+								<div
+									style={{
+										backgroundColor: '#e3e3e3',
+										padding: '1rem'
+									}}>
+									<Typography variant='h6'>
+										Add Question
+									</Typography>
+								</div>
+
+								<div style={{ padding: '1rem' }}>
+									<div>
+										<Typography
+											variant='h6'
+											style={{
+												fontWeight: 700,
+												marginBottom: '0.5rem'
+											}}>
+											Select genres to make you question
+											more discoverable
+										</Typography>
+									</div>
+
+									<div
+										style={{
+											display: 'flex',
+											flexWrap: 'wrap',
+											justifyContent: 'center',
+											alignItems: 'center',
+											marginBottom: '0.5rem'
+										}}>
+										{this.genres.map((genre, i) => (
+											<Chip
+												key={i}
+												label={genre}
+												onClick={() =>
+													this.genreClick(i)
+												}
+												color={
+													utils.checkUserInArray(
+														this.state
+															.selectedGenres,
+														i
+													)
+														? 'secondary'
+														: 'primary'
+												}
+												style={{
+													padding: '0.5rem',
+													color: '#fff',
+													margin: '0.5rem'
+												}}
+											/>
+										))}
+									</div>
+									<Typography align='center' variant='body1'>
+										Select upto 5 genres
+									</Typography>
+									<div
+										style={{
+											padding: '2rem',
+											display: 'flex',
+											flexDirection: 'row',
+											justifyContent: 'flex-end',
+											alignItems: 'center'
+										}}>
+										<Button
+											variant='text'
+											onClick={() =>
+												this.setState({
+													genresModal: false
+												})
+											}
+											style={{ marginRight: '0.2rem' }}>
+											Cancel
+										</Button>
+										<Button
+											color='primary'
+											variant='contained'
+											onClick={() =>
+												this.handleAddQuestion()
 											}
 											style={{ marginLeft: '0.2rem' }}>
 											Add question
@@ -1286,21 +1437,19 @@ export default class Dashboard extends React.Component {
 							vertical: 'bottom',
 							horizontal: 'left'
 						}}
-						open={this.state.showSnackbar}
+						open={this.state.snackbar}
 						autoHideDuration={5000}
-						onClose={() => this.setState({ showSnackbar: false })}
+						onClose={() => this.setState({ snackbar: false })}
 						ContentProps={{
 							'aria-describedby': 'messsage-snackbar',
 							style: { backgroundColor: '#fff' }
 						}}
 						message={
-							<span id='message-snackbar' sty>
-								<Typography
-									variant='body1'
-									style={{ color: '#000' }}>
-									{this.state.messageSnackbar}
-								</Typography>
-							</span>
+							<Typography
+								variant='body1'
+								style={{ color: '#000' }}>
+								{this.state.snackbarMess}
+							</Typography>
 						}
 						transitionDuration={{
 							enter: 300,
@@ -1315,7 +1464,7 @@ export default class Dashboard extends React.Component {
 								aria-label='close'
 								color='secondary'
 								onClick={() =>
-									this.setState({ showSnackbar: false })
+									this.setState({ snackbar: false })
 								}>
 								<CloseIcon />
 							</IconButton>

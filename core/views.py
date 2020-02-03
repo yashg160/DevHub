@@ -180,29 +180,23 @@ class QuestionCreateView(APIView):
     def post(self, request):
         data = request.data
         if not data.get('question') :
-            return Response({'status' : 'error', 'message' : 'Missing question in request body'})
-        if Question.objects.filter(question = data.get('question')).exists() :
+            return Response({'status': 'error', 'message': 'Missing question in request body'})
+        question_url = data.get('question').question.lower().replace(' ', '-').replace('?', '')
+        if Question.objects.filter(url = question_url).exists() :
             return Response({'status' : 'error', 'message' : 'Question already exists'})
-        try:
-            question = Question.objects.create(
-                question = data.get('question'),
-                asker = request.user
-            )
-            genres = data.get('genres', [])
-            for genre in genres:
-                question.genres.add(Genre.objects.get(name=genre))
-            question.save()
-            question.followers.add(request.user)
-            question.updated_at = timezone.now()
-            question.url = question.question.lower().replace(' ', '-').replace('?', '')
-            question.save()
+        question = Question.objects.create(
+            question = data.get('question'),
+            asker = request.user
+        )
+        genres = data.get('genres', [])
+        for genre in genres:
+            question.genres.add(Genre.objects.get(name=genre))
+        question.save()
+        question.followers.add(request.user)
+        question.updated_at = timezone.now()
+        question.url = question_url
+        question.save()
 
-        except:
-            return Response({
-                'status' : 'error', 
-                'message' : "An error occurred! We'll look into this"
-            })
-            # return Response({'status' : 'error', 'message' : str(e)})
         return Response({
             'status' : 'success',
             'message' : 'Question added succesfully'
@@ -224,12 +218,12 @@ class AnswerCreateView(APIView):
             )
             answer.updated_at = timezone.now()
             answer.save()
-        except:
-            return Response({
-                'status' : 'error', 
-                'message' : "An error occurred! We'll look into this"
-            })
-            # return Response({'status' : 'error', 'message' : str(e)})
+        except Exception as e:
+            # return Response({
+            #     'status' : 'error', 
+            #     'message' : "An error occurred! We'll look into this"
+            # })
+            return Response({'status' : 'error', 'message' : str(e)})
 
         return Response({
             'status' : 'success',

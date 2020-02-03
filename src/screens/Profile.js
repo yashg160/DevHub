@@ -15,6 +15,15 @@ import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
+import TextField from '@material-ui/core/TextField';
+import Chip from '@material-ui/core/Chip';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import utils from '../utils';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -30,8 +39,35 @@ export default class Profile extends React.Component {
 			comments: null,
 			upvotedAnswers: null,
 			upvotedComments: null,
-			requests: null
+			requests: null,
+			questionModal: false,
+			newQuestion: '',
+			newQuestionError: false,
+			genresModal: false,
+			selectedGenres: [],
+			snackbar: false,
+			snackbarMess: 'There was some error'
 		};
+
+		this.genres = [
+			'Technology',
+			'Religion',
+			'Philosophy',
+			'Science',
+			'Politics',
+			'Enterpreneurship',
+			'Life',
+			'News',
+			'Startup',
+			'Culture',
+			'Business',
+			'Facts',
+			'Humor',
+			'Travel',
+			'Innovation',
+			'Sports',
+			'Health'
+		];
 	}
 	async getProfileData(userName, token) {
 		let rawResponse = await fetch(serverUrl + `/user/profile/${userName}`, {
@@ -72,6 +108,108 @@ export default class Profile extends React.Component {
 				console.error(error);
 				this.setState({ loading: false, error: true });
 			});
+	}
+
+	async checkQuestion() {
+		if (this.state.newQuestion.length < 1) {
+			throw Error('ERR_CHECK');
+		}
+	}
+
+	async postQuestion(token) {
+		// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
+		let genres = [];
+		this.state.selectedGenres.map(i => genres.push(this.genres[i]));
+		console.log(genres);
+
+		let rawResponse = await fetch(serverUrl + '/api/questions', {
+			method: 'POST',
+			headers: {
+				Authorization: `Token ${token}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				question: this.state.newQuestion,
+				genres: genres
+			})
+		});
+
+		let res = await rawResponse.json();
+		console.log(res);
+		if (res.status !== 'success') throw Error('ERR_POST');
+		return res;
+	}
+
+	handleAddQuestion() {
+		var token = Cookies.get('TOKEN');
+		console.log(token);
+		this.checkQuestion()
+			.then(() => {
+				this.postQuestion(token);
+				this.setState({ loading: true });
+			})
+			.then(res => {
+				console.log('postQuestion returned');
+				this.setState({
+					loading: false,
+					snackbarMess: 'Question posted successfully',
+					snackbar: true,
+					questionModal: false,
+					genresModal: false,
+					selectedGenres: [],
+					newQuestion: '',
+					newQuestionError: false
+				});
+			})
+			.catch(error => {
+				console.error(error.message);
+				switch (error.message) {
+					case 'ERR_CHECK':
+						this.setState({
+							snackbarMess: 'Please check the question',
+							snackbar: true,
+							genresModal: false,
+							questionModal: true,
+							loading: false,
+							newQuestionError: true
+						});
+						break;
+					case 'ERR_POST':
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+					default:
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+				}
+			});
+	}
+
+	genreClick(index) {
+		if (utils.checkUserInArray(this.state.selectedGenres, index)) {
+			this.setState({
+				selectedGenres: utils.removeValueFromArray(
+					this.state.selectedGenres,
+					index
+				)
+			});
+		} else if (this.state.selectedGenres.length < 5)
+			this.setState({
+				selectedGenres: [...this.state.selectedGenres, index]
+			});
+		else
+			this.setState({
+				snackbarMess: 'Select only 5 genres',
+				snackbar: true
+			});
+		console.log(this.state.selectedGenres);
 	}
 
 	render() {
@@ -131,7 +269,7 @@ export default class Profile extends React.Component {
 											color='secondary'
 											onClick={() =>
 												this.setState({
-													modalVisible: true
+													questionModal: true
 												})
 											}
 											style={{
@@ -346,6 +484,290 @@ export default class Profile extends React.Component {
 						Sign Out
 					</MenuItem>
 				</Menu>
+				<Modal
+					aria-labelledby='modal-question'
+					aria-describedby='modal-ask-question'
+					open={this.state.questionModal}
+					onClose={() => this.setState({ questionModal: false })}
+					closeAfterTransition
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Fade in={this.state.questionModal}>
+						<div
+							style={{
+								backgroundColor: '#fff',
+								width: '50%'
+							}}>
+							<div
+								style={{
+									backgroundColor: '#e3e3e3',
+									padding: '1rem'
+								}}>
+								<Typography variant='h6'>
+									Add Question
+								</Typography>
+							</div>
+
+							<div style={{ padding: '1rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 700,
+											marginBottom: '0.5rem'
+										}}>
+										Tips on getting good answers quickly
+									</Typography>
+
+									<div style={{ marginTop: '1rem' }}>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Make sure your question hasn't been
+											asked already
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Keep your question short and to the
+											point
+										</Typography>
+										<Typography
+											variant='body1'
+											style={{ marginTop: '0.5rem' }}>
+											Double-check grammar and spelling
+										</Typography>
+									</div>
+								</div>
+
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-start',
+										marginTop: '1.5rem',
+										marginBottom: '1.5rem',
+										alignItems: 'center'
+									}}>
+									<Avatar
+										src={this.state.user.avatar_url}
+										alt={this.state.user.name}
+										style={{
+											height: '2rem',
+											width: '2rem'
+										}}
+									/>
+									<Typography
+										variant='body1'
+										style={{ marginLeft: '1rem' }}>
+										Posting as {this.state.user.name}
+									</Typography>
+								</div>
+
+								<div>
+									<Typography variant='subtitle1'>
+										User Name asked
+									</Typography>
+									<TextField
+										id='question'
+										label='Your Question'
+										InputProps={{
+											style: {
+												fontSize: 26,
+												fontWeight: 600
+											}
+										}}
+										placeholder={
+											'Start you question with "What," "Why," or "How."'
+										}
+										multiline
+										rowsMax='3'
+										fullWidth
+										value={this.state.newQuestion}
+										onChange={event =>
+											this.setState({
+												newQuestion: event.target.value
+											})
+										}
+										onFocus={() =>
+											this.setState({
+												newQuestionError: false
+											})
+										}
+										error={this.state.newQuestionError}
+										helperText={
+											this.state.newQuestionError
+												? 'Please check your question'
+												: ''
+										}
+									/>
+								</div>
+								<div
+									style={{
+										padding: '2rem',
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-end',
+										alignItems: 'center'
+									}}>
+									<Button
+										variant='text'
+										onClick={() =>
+											this.setState({
+												questionModal: false
+											})
+										}
+										style={{ marginRight: '0.2rem' }}>
+										Cancel
+									</Button>
+									<Button
+										color='primary'
+										variant='contained'
+										onClick={() =>
+											this.setState({
+												questionModal: false,
+												genresModal: true
+											})
+										}
+										style={{ marginLeft: '0.2rem' }}>
+										Proceed
+									</Button>
+								</div>
+							</div>
+						</div>
+					</Fade>
+				</Modal>
+
+				<Modal
+					aria-labelledby='modal-genres'
+					aria-describedby='modal-add-genres'
+					open={this.state.genresModal}
+					onClose={() => this.setState({ genresModal: false })}
+					closeAfterTransition
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center'
+					}}
+					BackdropComponent={Backdrop}
+					BackdropProps={{ timeout: 500 }}>
+					<Fade in={this.state.genresModal}>
+						<div
+							style={{
+								backgroundColor: '#fff',
+								width: '50%'
+							}}>
+							<div
+								style={{
+									backgroundColor: '#e3e3e3',
+									padding: '1rem'
+								}}>
+								<Typography variant='h6'>
+									Add Question
+								</Typography>
+							</div>
+
+							<div style={{ padding: '1rem' }}>
+								<div>
+									<Typography
+										variant='h6'
+										style={{
+											fontWeight: 700,
+											marginBottom: '0.5rem'
+										}}>
+										Select genres to make you question more
+										discoverable
+									</Typography>
+								</div>
+
+								<div
+									style={{
+										display: 'flex',
+										flexWrap: 'wrap',
+										justifyContent: 'center',
+										alignItems: 'center',
+										marginBottom: '0.5rem'
+									}}>
+									{this.genres.map((genre, i) => (
+										<Chip
+											key={i}
+											label={genre}
+											onClick={() => this.genreClick(i)}
+											color={
+												utils.checkUserInArray(
+													this.state.selectedGenres,
+													i
+												)
+													? 'secondary'
+													: 'primary'
+											}
+											style={{
+												padding: '0.5rem',
+												color: '#fff',
+												margin: '0.5rem'
+											}}
+										/>
+									))}
+								</div>
+								<Typography align='center' variant='body1'>
+									Select upto 5 genres
+								</Typography>
+								<div
+									style={{
+										padding: '2rem',
+										display: 'flex',
+										flexDirection: 'row',
+										justifyContent: 'flex-end',
+										alignItems: 'center'
+									}}>
+									<Button
+										variant='text'
+										onClick={() =>
+											this.setState({
+												genresModal: false
+											})
+										}
+										style={{ marginRight: '0.2rem' }}>
+										Cancel
+									</Button>
+									<Button
+										color='primary'
+										variant='contained'
+										onClick={() => this.handleAddQuestion()}
+										style={{ marginLeft: '0.2rem' }}>
+										Add question
+									</Button>
+								</div>
+							</div>
+						</div>
+					</Fade>
+				</Modal>
+				<Snackbar
+					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+					key={'profile-snackbar'}
+					open={this.state.snackbar}
+					onClose={() => this.setState({ snackbar: false })}>
+					<SnackbarContent
+						style={{ backgroundColor: '#41b578', color: '#fff' }}
+						message={this.state.snackbarMess}
+						action={
+							<IconButton
+								color='secondary'
+								onClick={() =>
+									this.setState({ snackbar: false })
+								}>
+								<CloseIcon />
+							</IconButton>
+						}
+					/>
+				</Snackbar>
 			</ThemeProvider>
 		);
 	}
