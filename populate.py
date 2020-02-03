@@ -84,7 +84,7 @@ def add_answers(m = 5):
             answer.save()
     print(f'Created {all_questions.count()*m} answers succesfully!')
 
-def add_comments(m = 5):
+def add_comments(m = 2):
     all_users = User.objects.all()
     user_size = all_users.count() - 1
     all_answers = Answer.objects.all()
@@ -97,6 +97,20 @@ def add_comments(m = 5):
             )
     print(f'Created {all_answers.count()*m} comments succesfully!')
     
+def add_child_comments(m = 2):
+    all_users = User.objects.all()
+    user_size = all_users.count() - 1
+    all_comments = Comment.objects.all()
+    for parent_comment in tqdm(all_comments):
+        for _ in range(m):
+            Comment.objects.create(
+                answer = parent_comment.answer,
+                parent_comment = parent_comment,
+                author = all_users[randint(0, user_size)],
+                comment = fake.text(max_nb_chars = 150)
+            )
+    print(f'Created {all_comments.count()*m} child comments succesfully!')
+
 if __name__ == "__main__" :
     Token.objects.all().delete()
     Comment.objects.all().delete()
@@ -109,3 +123,4 @@ if __name__ == "__main__" :
     add_questions()
     add_answers()
     add_comments()
+    add_child_comments()

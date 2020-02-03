@@ -189,3 +189,17 @@ class CommentSerializer(serializers.ModelSerializer):
         instance.updated_at = datetime.now()
         instance.save()
         return instance
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    profile = serializers.SerializerMethodField()
+
+    def get_profile(self, instance):
+        return {
+            'full_name' : instance.first_name + ' ' + instance.last_name,
+            'bio' : instance.profile.bio,
+            'company' : instance.profile.company
+        }
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'extra_detail_url', 'profile')
+
