@@ -15,6 +15,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
 
@@ -265,6 +267,37 @@ export default class Genres extends React.Component {
 						</Button>
 					</div>
 				</Container>
+				<Menu
+					id='main-menu'
+					anchorEl={this.state.menuVisible}
+					keepMounted
+					open={Boolean(this.state.menuVisible)}
+					onClose={() => this.setState({ menuVisible: null })}>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() => this.setState({ menuVisible: null })}>
+						<Avatar
+							src={this.state.user.avatar_url}
+							alt={this.state.user.name}
+							style={{
+								height: '3rem',
+								width: '3rem',
+								marginBottom: '0.5rem'
+							}}
+						/>
+						<Typography variant='body2'>Logged in as</Typography>
+						<Typography variant='body1' style={{ fontWeight: 600 }}>
+							{this.state.user.name}
+						</Typography>
+					</MenuItem>
+				</Menu>
 				<Snackbar
 					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
 					key={'profile-snackbar'}
