@@ -1,11 +1,13 @@
 from rest_framework import permissions
 from rest_framework.authtoken.models import Token
+from core.utils.pagination import SmallResultSetPagination
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from users.models import CustomUser
 from core.serializers import (
     QuestionSerializer, AnswerSerializer, CommentSerializer, GenreSerializer,
-    TopicSerializer
+    TopicSerializer, CustomUserSerializer
 )
 from django.contrib.auth import get_user_model
 import requests
@@ -99,3 +101,12 @@ def get_user_home(request, username):
             'followed_topics' : followed_topics
         }
     })
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def AllUserView(request):
+    paginator = SmallResultSetPagination()
+    all_users = get_user_model().objects.all()
+    result = CustomUserSerializer(all_users, many=True).data
+    result_page = paginator.paginate_queryset(result, request)
+    return paginator.get_paginated_response(result_page)
