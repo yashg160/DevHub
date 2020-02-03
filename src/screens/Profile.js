@@ -427,6 +427,7 @@ export default class Profile extends React.Component {
 								marginBottom: '0.5rem'
 							}}
 						/>
+						<Typography variant='body2'>Logged in as</Typography>
 						<Typography variant='body1' style={{ fontWeight: 600 }}>
 							{this.state.user.name}
 						</Typography>
