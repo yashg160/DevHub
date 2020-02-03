@@ -24,7 +24,7 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CloseIcon from '@material-ui/icons/Close';
-import utils from '../utils';
+import IconButton from '@material-ui/core/IconButton';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
 
@@ -38,7 +38,9 @@ export default class Genres extends React.Component {
 			error: false,
 			redirect: false,
 			content: null,
-			genreTouched: false
+			genreTouched: false,
+			snackbar: false,
+			snackbarMess: ''
 		};
 	}
 
@@ -64,7 +66,7 @@ export default class Genres extends React.Component {
 			method: 'GET',
 			headers: {
 				Authorization: `Token ${token}`,
-				Accept: '*/*'
+				Accept: 'application/json'
 			}
 		});
 
@@ -98,8 +100,7 @@ export default class Genres extends React.Component {
 		} else {
 			this.state.content[i][1] = true;
 		}
-		this.state.genreTouched = true;
-		this.forceUpdate();
+		this.setState({ genreTouched: true });
 	}
 
 	async subscribeToGenres(token, subscribedGenres) {
@@ -131,6 +132,7 @@ export default class Genres extends React.Component {
 		let genres = [];
 		this.state.content.map(g => {
 			if (g[1]) genres.push(g[0]);
+			return null;
 		});
 		var subscribedGenres = genres.join(',');
 		console.log('Subscribed to genres: ', subscribedGenres);
@@ -142,7 +144,13 @@ export default class Genres extends React.Component {
 			})
 			.catch(error => {
 				console.error(error);
-				this.setState({ loading: false, error: true, redirect: false });
+				this.setState({
+					loading: false,
+					error: true,
+					redirect: false,
+					snackbar: true,
+					snackbarMess: 'An error occurred. Please try again'
+				});
 			});
 	}
 
@@ -267,6 +275,26 @@ export default class Genres extends React.Component {
 						</Button>
 					</div>
 				</Container>
+				<Snackbar
+					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+					key={'profile-snackbar'}
+					open={this.state.snackbar}
+					autoHideDuration={5000}
+					onClose={() => this.setState({ snackbar: false })}>
+					<SnackbarContent
+						style={{ backgroundColor: '#41b578', color: '#fff' }}
+						message={this.state.snackbarMess}
+						action={
+							<IconButton
+								color='secondary'
+								onClick={() =>
+									this.setState({ snackbar: false })
+								}>
+								<CloseIcon />
+							</IconButton>
+						}
+					/>
+				</Snackbar>
 			</ThemeProvider>
 		);
 	}
