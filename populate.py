@@ -101,11 +101,11 @@ def add_child_comments(m = 2):
     all_users = User.objects.all()
     user_size = all_users.count() - 1
     all_comments = Comment.objects.all()
-    for answer in tqdm(all_comments):
+    for parent_comment in tqdm(all_comments):
         for _ in range(m):
             Comment.objects.create(
-                answer = all_comments[i].answer,
-                parent_comment = all_comments[i].id,
+                answer = parent_comment.answer,
+                parent_comment = parent_comment,
                 author = all_users[randint(0, user_size)],
                 comment = fake.text(max_nb_chars = 150)
             )
