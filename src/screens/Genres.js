@@ -282,7 +282,11 @@ export default class Genres extends React.Component {
 							display: 'flex',
 							flexDirection: 'column'
 						}}
-						onClick={() => this.setState({ menuVisible: null })}>
+						onClick={() =>
+							this.props.history.push(
+								`/users/${this.state.user.login}`
+							)
+						}>
 						<Avatar
 							src={this.state.user.avatar_url}
 							alt={this.state.user.name}
@@ -296,6 +300,62 @@ export default class Genres extends React.Component {
 						<Typography variant='body1' style={{ fontWeight: 600 }}>
 							{this.state.user.name}
 						</Typography>
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() =>
+							this.props.history.push({ pathname: '/dashboard' })
+						}>
+						<Typography variant='body1'>Dashboard</Typography>
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() =>
+							this.props.history.push({ pathname: '/genres' })
+						}>
+						<Typography variant='body1'>Genres</Typography>
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() =>
+							this.props.history.push({
+								pathname: `/users/${this.state.user.login}`
+							})
+						}>
+						<Typography variant='body1'>Profile</Typography>
+					</MenuItem>
+					<MenuItem
+						style={{
+							paddingTop: '1rem',
+							paddingBottom: '1rem',
+							paddingLeft: '4rem',
+							paddingRight: '4rem',
+							display: 'flex',
+							flexDirection: 'column'
+						}}
+						onClick={() => this.setState({ menuVisible: null })}>
+						<Typography variant='body1'>Sign Out</Typography>
 					</MenuItem>
 				</Menu>
 				<Snackbar
