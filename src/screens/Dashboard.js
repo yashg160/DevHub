@@ -27,6 +27,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Chip from '@material-ui/core/Chip';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -49,13 +50,34 @@ export default class Dashboard extends React.Component {
 			result: [],
 			hasMore: false,
 			next: null,
-			modalVisible: false,
+			questionModal: false,
+			genresModal: false,
 			menuVisible: null,
 			newQuestion: '',
 			newQuestionError: false,
-			showSnackbar: false,
-			messageSnackbar: 'Snackbar messsage'
+			snackbar: false,
+			snackbarMess: 'Snackbar messsage',
+			selectedGenres: []
 		};
+		this.genres = [
+			'Technology',
+			'Religion',
+			'Philosophy',
+			'Science',
+			'Politics',
+			'Enterpreneurship',
+			'Life',
+			'News',
+			'Startup',
+			'Culture',
+			'Business',
+			'Facts',
+			'Humor',
+			'Travel',
+			'Innovation',
+			'Sports',
+			'Health'
+		];
 	}
 
 	async getResults(token, url) {
@@ -158,7 +180,7 @@ export default class Dashboard extends React.Component {
 		this.setState({
 			loading: true,
 			newQuestionError: false,
-			showSnackbar: false
+			snackbar: false
 		});
 
 		this.checkQuestion()
@@ -167,9 +189,9 @@ export default class Dashboard extends React.Component {
 				this.setState({
 					loading: false,
 					newQuestionError: false,
-					showSnackbar: true,
-					messageSnackbar: 'Question posted successfully.',
-					modalVisible: false,
+					snackbar: true,
+					snackbarMess: 'Question posted successfully.',
+					questionModal: false,
 					newQuestion: ''
 				});
 			})
@@ -179,15 +201,15 @@ export default class Dashboard extends React.Component {
 					this.setState({
 						loading: false,
 						newQuestionError: false,
-						showSnackbar: true,
-						messageSnackbar: 'An error occurred. Try again.'
+						snackbar: true,
+						snackbarMess: 'An error occurred. Try again.'
 					});
 				} else if (error.message === 'ERR_QUESTION') {
 					this.setState({
 						loading: false,
 						newQuestionError: true,
-						showSnackbar: false,
-						messageSnackbar: 'An error occurred. Try again.'
+						snackbar: false,
+						snackbarMess: 'An error occurred. Try again.'
 					});
 				}
 			});
@@ -268,7 +290,7 @@ export default class Dashboard extends React.Component {
 											color='secondary'
 											onClick={() =>
 												this.setState({
-													modalVisible: true
+													questionModal: true
 												})
 											}
 											style={{
@@ -382,7 +404,7 @@ export default class Dashboard extends React.Component {
 										color='textSecondary'
 										onClick={() =>
 											this.setState({
-												modalVisible: true
+												questionModal: true
 											})
 										}
 										className='question-link'
@@ -1035,8 +1057,8 @@ export default class Dashboard extends React.Component {
 					<Modal
 						aria-labelledby='modal-question'
 						aria-describedby='modal-ask-question'
-						open={this.state.modalVisible}
-						onClose={() => this.setState({ modalVisible: false })}
+						open={this.state.questionModal}
+						onClose={() => this.setState({ questionModal: false })}
 						closeAfterTransition
 						style={{
 							display: 'flex',
@@ -1046,7 +1068,7 @@ export default class Dashboard extends React.Component {
 						}}
 						BackdropComponent={Backdrop}
 						BackdropProps={{ timeout: 500 }}>
-						<Fade in={this.state.modalVisible}>
+						<Fade in={this.state.questionModal}>
 							<div
 								style={{
 									backgroundColor: '#fff',
@@ -1170,7 +1192,7 @@ export default class Dashboard extends React.Component {
 											variant='text'
 											onClick={() =>
 												this.setState({
-													modalVisible: false
+													questionModal: false
 												})
 											}
 											style={{ marginRight: '0.2rem' }}>
@@ -1180,7 +1202,120 @@ export default class Dashboard extends React.Component {
 											color='primary'
 											variant='contained'
 											onClick={() =>
-												this.handleAskQuestion()
+												this.setState({
+													genresModal: true,
+													questionModal: false
+												})
+											}
+											style={{ marginLeft: '0.2rem' }}>
+											Proceed
+										</Button>
+									</div>
+								</div>
+							</div>
+						</Fade>
+					</Modal>
+					<Modal
+						aria-labelledby='modal-genres'
+						aria-describedby='modal-add-genres'
+						open={this.state.genresModal}
+						onClose={() => this.setState({ genresModal: false })}
+						closeAfterTransition
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							justifyContent: 'center',
+							alignItems: 'center'
+						}}
+						BackdropComponent={Backdrop}
+						BackdropProps={{ timeout: 500 }}>
+						<Fade in={this.state.genresModal}>
+							<div
+								style={{
+									backgroundColor: '#fff',
+									width: '50%'
+								}}>
+								<div
+									style={{
+										backgroundColor: '#e3e3e3',
+										padding: '1rem'
+									}}>
+									<Typography variant='h6'>
+										Add Question
+									</Typography>
+								</div>
+
+								<div style={{ padding: '1rem' }}>
+									<div>
+										<Typography
+											variant='h6'
+											style={{
+												fontWeight: 700,
+												marginBottom: '0.5rem'
+											}}>
+											Select genres to make you question
+											more discoverable
+										</Typography>
+									</div>
+
+									<div
+										style={{
+											display: 'flex',
+											flexWrap: 'wrap',
+											justifyContent: 'center',
+											alignItems: 'center',
+											marginBottom: '0.5rem'
+										}}>
+										{this.genres.map((genre, i) => (
+											<Chip
+												key={i}
+												label={genre}
+												onClick={() =>
+													this.genreClick(i)
+												}
+												color={
+													utils.checkUserInArray(
+														this.state
+															.selectedGenres,
+														i
+													)
+														? 'secondary'
+														: 'primary'
+												}
+												style={{
+													padding: '0.5rem',
+													color: '#fff',
+													margin: '0.5rem'
+												}}
+											/>
+										))}
+									</div>
+									<Typography align='center' variant='body1'>
+										Select upto 5 genres
+									</Typography>
+									<div
+										style={{
+											padding: '2rem',
+											display: 'flex',
+											flexDirection: 'row',
+											justifyContent: 'flex-end',
+											alignItems: 'center'
+										}}>
+										<Button
+											variant='text'
+											onClick={() =>
+												this.setState({
+													genresModal: false
+												})
+											}
+											style={{ marginRight: '0.2rem' }}>
+											Cancel
+										</Button>
+										<Button
+											color='primary'
+											variant='contained'
+											onClick={() =>
+												this.handleAddQuestion()
 											}
 											style={{ marginLeft: '0.2rem' }}>
 											Add question
@@ -1286,9 +1421,9 @@ export default class Dashboard extends React.Component {
 							vertical: 'bottom',
 							horizontal: 'left'
 						}}
-						open={this.state.showSnackbar}
+						open={this.state.snackbar}
 						autoHideDuration={5000}
-						onClose={() => this.setState({ showSnackbar: false })}
+						onClose={() => this.setState({ snackbar: false })}
 						ContentProps={{
 							'aria-describedby': 'messsage-snackbar',
 							style: { backgroundColor: '#fff' }
@@ -1298,7 +1433,7 @@ export default class Dashboard extends React.Component {
 								<Typography
 									variant='body1'
 									style={{ color: '#000' }}>
-									{this.state.messageSnackbar}
+									{this.state.snackbarMess}
 								</Typography>
 							</span>
 						}
@@ -1315,7 +1450,7 @@ export default class Dashboard extends React.Component {
 								aria-label='close'
 								color='secondary'
 								onClick={() =>
-									this.setState({ showSnackbar: false })
+									this.setState({ snackbar: false })
 								}>
 								<CloseIcon />
 							</IconButton>
