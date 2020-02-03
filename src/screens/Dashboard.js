@@ -146,12 +146,17 @@ export default class Dashboard extends React.Component {
 	}
 
 	async checkQuestion() {
-		const { newQuestion } = this.state;
-
-		if (newQuestion === '') throw Error('ERR_QUESTION');
+		if (this.state.newQuestion.length < 1) {
+			throw Error('ERR_CHECK');
+		}
 	}
 
 	async postQuestion(token) {
+		// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
+		let genres = [];
+		this.state.selectedGenres.map(i => genres.push(this.genres[i]));
+		console.log(genres);
+
 		let rawResponse = await fetch(serverUrl + '/api/questions', {
 			method: 'POST',
 			headers: {
@@ -159,60 +164,87 @@ export default class Dashboard extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				question: this.state.newQuestion
+				question: this.state.newQuestion,
+				genres: genres
 			})
 		});
 
 		let res = await rawResponse.json();
-		console.group(res);
-		if (res.status !== 'success') throw Error('ERR_SERVER');
+		console.log(res);
+		if (res.status !== 'success') throw Error('ERR_POST');
 		return res;
 	}
 
-	handleAskQuestion() {
+	handleAddQuestion() {
 		var token = Cookies.get('TOKEN');
 		console.log(token);
-
-		/*
-            In this method we handle the posting of a new question. First task is to check the string for any error.
-            If there is an error, throw the error and catch it later in th catch callback
-        */
-		this.setState({
-			loading: true,
-			newQuestionError: false,
-			snackbar: false
-		});
-
 		this.checkQuestion()
-			.then(() => this.postQuestion(token))
+			.then(() => {
+				this.postQuestion(token);
+				this.setState({ loading: true });
+			})
 			.then(res => {
+				console.log('postQuestion returned');
 				this.setState({
 					loading: false,
-					newQuestionError: false,
+					snackbarMess: 'Question posted successfully',
 					snackbar: true,
-					snackbarMess: 'Question posted successfully.',
 					questionModal: false,
-					newQuestion: ''
+					genresModal: false,
+					selectedGenres: [],
+					newQuestion: '',
+					newQuestionError: false
 				});
 			})
 			.catch(error => {
-				console.error(error);
-				if (error.message === 'ERR_SERVER') {
-					this.setState({
-						loading: false,
-						newQuestionError: false,
-						snackbar: true,
-						snackbarMess: 'An error occurred. Try again.'
-					});
-				} else if (error.message === 'ERR_QUESTION') {
-					this.setState({
-						loading: false,
-						newQuestionError: true,
-						snackbar: false,
-						snackbarMess: 'An error occurred. Try again.'
-					});
+				console.error(error.message);
+				switch (error.message) {
+					case 'ERR_CHECK':
+						this.setState({
+							snackbarMess: 'Please check the question',
+							snackbar: true,
+							genresModal: false,
+							questionModal: true,
+							loading: false,
+							newQuestionError: true
+						});
+						break;
+					case 'ERR_POST':
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+					default:
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
 				}
 			});
+	}
+
+	genreClick(index) {
+		if (utils.checkUserInArray(this.state.selectedGenres, index)) {
+			this.setState({
+				selectedGenres: utils.removeValueFromArray(
+					this.state.selectedGenres,
+					index
+				)
+			});
+		} else if (this.state.selectedGenres.length < 5)
+			this.setState({
+				selectedGenres: [...this.state.selectedGenres, index]
+			});
+		else
+			this.setState({
+				snackbarMess: 'Select only 5 genres',
+				snackbar: true
+			});
+		console.log(this.state.selectedGenres);
 	}
 
 	componentDidMount() {
@@ -1429,13 +1461,11 @@ export default class Dashboard extends React.Component {
 							style: { backgroundColor: '#fff' }
 						}}
 						message={
-							<span id='message-snackbar' sty>
-								<Typography
-									variant='body1'
-									style={{ color: '#000' }}>
-									{this.state.snackbarMess}
-								</Typography>
-							</span>
+							<Typography
+								variant='body1'
+								style={{ color: '#000' }}>
+								{this.state.snackbarMess}
+							</Typography>
 						}
 						transitionDuration={{
 							enter: 300,
