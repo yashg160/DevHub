@@ -39,6 +39,19 @@ import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
+export class Comment extends React.Component {
+	render() {
+		return (
+			<div style={{ marginLeft: '0.5rem' }}>
+				<Typography variant='body1' style={{ fontWeight: 600 }}>
+					{this.props.author}
+				</Typography>
+				<Typography variant='body2'>{this.props.comment}</Typography>
+			</div>
+		);
+	}
+}
+
 export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
@@ -61,7 +74,22 @@ export default class Dashboard extends React.Component {
 		};
 		this.genres = null;
 	}
-
+	createCommentList(comments) {
+		let items = comments.map(comment => {
+			return (
+				<div>
+					<Comment
+						key={comment.answer}
+						comment={comment.comment}
+						author={comment.author_name}
+					/>
+					{comment.child_comments &&
+						this.createCommentList(comment.child_comments)}
+				</div>
+			);
+		});
+		return items;
+	}
 	async getGenres(token) {
 		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
 			method: 'GET',
@@ -388,6 +416,7 @@ export default class Dashboard extends React.Component {
 			</div>
 		);
 	}
+
 	render() {
 		if (this.state.loading)
 			return <Backdrop color='#fff' open={this.state.loading} />;
@@ -956,7 +985,16 @@ export default class Dashboard extends React.Component {
 											</div>
 										</ExpansionPanelSummary>
 										<ExpansionPanelDetails>
-											{this.topAnswer(res.answer, i)}
+											<div
+												style={{
+													display: 'flex',
+													flexDirection: 'column'
+												}}>
+												{this.topAnswer(res.answer, i)}
+												{this.createCommentList(
+													res.answer.comment_thread
+												)}
+											</div>
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
 								))}
