@@ -76,6 +76,7 @@ def subscribe_genres(request):
     })
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 def HomePageView(request):
     paginator = SmallResultSetPagination()
     subscribed_genres = request.user.subscribed_genres
