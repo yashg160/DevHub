@@ -4,22 +4,12 @@ import { Redirect } from 'react-router-dom';
 import Backdrop from '@material-ui/core/Backdrop';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import Link from '@material-ui/core/Link';
-
-import GroupIcon from '@material-ui/icons/Group';
-
 import Typography from '@material-ui/core/Typography';
-
 import Chip from '@material-ui/core/Chip';
-
 import serverUrl from '../config';
-
 import Cookies from 'js-cookie';
-
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
-
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -243,7 +233,7 @@ export default class Genres extends React.Component {
 									padding: '1rem',
 									color: '#fff'
 								}}
-								color={g[1] ? 'primary' : 'secondary'}
+								color={g[1] ? 'secondary' : 'primary'}
 								clickable
 								onClick={() => this.handleGenreClick(i)}
 							/>
