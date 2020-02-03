@@ -16,20 +16,47 @@ import Chip from '@material-ui/core/Chip';
 import serverUrl from '../config';
 
 import Cookies from 'js-cookie';
-import { Container } from '@material-ui/core';
+
+import Container from '@material-ui/core/Container';
+import Avatar from '@material-ui/core/Avatar';
+
 import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import CloseIcon from '@material-ui/icons/Close';
+import utils from '../utils';
+import theme from '../theme';
+import { ThemeProvider } from '@material-ui/core/styles/';
 
 export default class Genres extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			user: null,
 			loading: true,
 			error: false,
 			redirect: false,
 			content: null,
 			genreTouched: false
 		};
+	}
+
+	async getUser(userName, token) {
+		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		});
+
+		let res = await rawResponse.json();
+		console.log(res);
+		this.setState({ user: res.data });
+		if (res.status !== 'success') throw Error('ERR_USER_FETCH');
+		return;
 	}
 
 	async getGenres(token) {
@@ -49,9 +76,11 @@ export default class Genres extends React.Component {
 
 	componentDidMount() {
 		const token = Cookies.get('TOKEN');
+		const userName = Cookies.get('USER_NAME');
 		console.log(token);
 
-		this.getGenres(token)
+		this.getUser(userName, token)
+			.then(() => this.getGenres(token))
 			.then(content => {
 				var result = Object.entries(content.data);
 				this.setState({ content: result, loading: false });
@@ -129,100 +158,73 @@ export default class Genres extends React.Component {
 				/>
 			);
 		return (
-			<div>
+			<ThemeProvider theme={theme.theme}>
 				<AppBar position='fixed'>
-					<Toolbar variant='dense'>
+					<Toolbar variant='regular' color='primary'>
 						<Container maxWidth='lg'>
 							<div
 								style={{
 									display: 'flex',
 									flexGrow: 1,
 									flexDirection: 'row',
+									alignItems: 'center',
 									justifyContent: 'space-between'
 								}}>
-								<Typography variant='h5' style={{ flex: 1 }}>
+								<Typography
+									variant='h5'
+									style={{ color: '#fff' }}>
 									Reactora
 								</Typography>
-								<div style={{ flex: 2 }}>
-									<div
-										style={{
-											display: 'flex',
-											flexDirection: 'row'
-										}}>
-										<Link
-											style={{
-												color: '#fff',
-												marginRight: '2rem'
-											}}
-											onClick={() =>
-												this.props.history.push(
-													'/dashboard'
-												)
-											}>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													alignItems: 'center',
-													justifyContent: 'center'
-												}}>
-												<DashboardIcon />
-												<Typography
-													variant='body1'
-													style={{
-														fontWeight: 600,
-														marginLeft: '0.5rem'
-													}}>
-													Dashboard
-												</Typography>
-											</div>
-										</Link>
 
-										<Link
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'row',
+										alignItems: 'center'
+									}}>
+									<div
+										className={'link-div'}
+										style={{
+											marginRight: '1rem',
+											padding: '0.5rem'
+										}}
+										onClick={event =>
+											this.setState({
+												menuVisible: event.currentTarget
+											})
+										}>
+										<Avatar
+											src={this.state.user.avatar_url}
 											style={{
-												color: '#f01818',
-												marginLeft: '2rem'
-											}}
-											onClick={() =>
-												this.props.history.push(
-													'/genres'
-												)
-											}>
-											<div
-												style={{
-													display: 'flex',
-													flexDirection: 'row',
-													alignItems: 'center'
-												}}>
-												<GroupIcon />
-												<Typography
-													variant='body1'
-													style={{
-														fontWeight: 600,
-														marginLeft: '0.5rem'
-													}}>
-													Genres
-												</Typography>
-											</div>
-										</Link>
+												height: '2.3rem',
+												width: '2.3rem'
+											}}>
+											{this.state.user.name}
+										</Avatar>
 									</div>
 								</div>
 							</div>
 						</Container>
 					</Toolbar>
 				</AppBar>
-				<Container maxWidth='md' style={{}}>
-					<Typography variant='h3' align='center'>
+				<Container maxWidth='md' style={{ marginTop: '6rem' }}>
+					<Typography variant='h4' align='center'>
 						Your Genres
 					</Typography>
-
+					<Typography
+						variant='h6'
+						align='center'
+						style={{ fontWeight: 500 }}>
+						Select some things you want to read about
+					</Typography>
 					<div
 						style={{
 							maxWidth: '100%',
 							display: 'flex',
 							flexWrap: 'wrap',
 							alignItems: 'center',
-							justifyContent: 'center'
+							justifyContent: 'center',
+							marginTop: '2rem'
 						}}>
 						{this.state.content.map((g, i) => (
 							<Chip
@@ -230,7 +232,8 @@ export default class Genres extends React.Component {
 								key={i}
 								style={{
 									margin: '0.5rem',
-									padding: '1rem'
+									padding: '1rem',
+									color: '#fff'
 								}}
 								color={g[1] ? 'primary' : 'secondary'}
 								clickable
@@ -243,18 +246,28 @@ export default class Genres extends React.Component {
 						style={{
 							display: 'flex',
 							justifyContent: 'center',
-							alignItems: 'center'
+							alignItems: 'center',
+							marginTop: '1.5rem'
 						}}>
 						<Button
 							variant='contained'
 							color='primary'
 							disabled={!this.state.genreTouched}
-							onClick={() => this.handleSubscribeClick()}>
-							SUBSCRIBE
+							onClick={() => this.handleSubscribeClick()}
+							style={{
+								borderRadius: '1.5rem',
+								color: '#fff',
+								paddingLeft: '2rem',
+								paddingRight: '2rem',
+								paddingTop: '0.5rem',
+								paddingBottom: '0.5rem',
+								textTransform: 'none'
+							}}>
+							Subscribe
 						</Button>
 					</div>
 				</Container>
-			</div>
+			</ThemeProvider>
 		);
 	}
 }
