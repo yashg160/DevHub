@@ -75,9 +75,9 @@ export default class Dashboard extends React.Component {
 		this.genres = null;
 	}
 	createCommentList(comments) {
-		let items = comments.map(comment => {
+		let items = comments.map((comment, i) => {
 			return (
-				<div>
+				<div key={i}>
 					<Comment
 						key={comment.answer}
 						comment={comment.comment}
