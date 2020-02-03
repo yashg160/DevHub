@@ -181,7 +181,7 @@ class QuestionCreateView(APIView):
         data = request.data
         if not data.get('question') :
             return Response({'status': 'error', 'message': 'Missing question in request body'})
-        question_url = data.get('question').question.lower().replace(' ', '-').replace('?', '')
+        question_url = data.get('question').lower().replace(' ', '-').replace('?', '')
         if Question.objects.filter(url = question_url).exists() :
             return Response({'status' : 'error', 'message' : 'Question already exists'})
         question = Question.objects.create(
