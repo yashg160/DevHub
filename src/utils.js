@@ -64,29 +64,23 @@ async function requestClick(event, url, requested, login) {
 	// First get the token from cookies
 	const token = Cookies.get('TOKEN');
 
-	// Check if the user has already requested the answer. If yes, then remove the request on click. Else, add a request.
-	const userRequested = checkUserInArray(requested, login);
+	// New request.
+	let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
+		method: 'PUT',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			requested: [login]
+		})
+	});
 
-	if (userRequested) {
-		// User has already requested an answer. Remove the request ???
-	} else {
-		// New request.
-		let rawResponse = await fetch(serverUrl + `/api/questions/${url}`, {
-			method: 'PUT',
-			headers: {
-				Authorization: `Token ${token}`,
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				requested: [login]
-			})
-		});
+	let res = await rawResponse.json();
+	if (res.status === 'success') return 'success';
+	else throw Error();
 
-		let res = await rawResponse.json();
-		if (res.status === 'success') return 'success';
-		else throw Error();
-	}
 }
 
 async function upvoteAnswerClick(answerId, upvoters, login) {
