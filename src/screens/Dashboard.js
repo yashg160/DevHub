@@ -865,44 +865,10 @@ export default class Dashboard extends React.Component {
 																startIcon={
 																	<EmojiPeopleIcon />
 																}
-																onClick={event =>
-																	utils
-																		.requestClick(
-																			event,
-																			res.url,
-																			res.requested,
-																			this
-																				.state
-																				.user
-																				.login
-																		)
-																		.then(
-																			status => {
-																				console.log(
-																					status
-																				);
-																				if (
-																					status ===
-																					'success'
-																				)
-																					this.state.result[
-																						i
-																					].requested.push(
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				this.forceUpdate();
-																			}
-																		)
-																		.catch(
-																			error => {
-																				console.error(
-																					error
-																				);
-																			}
-																		)
+																onClick={(e) => {
+																	e.stopPropagation();
+																	this.setState({ snackbar: true, snackbarMess: 'Already requested answer' });
+																}
 																}>
 																<Typography
 																	variant='body2'
@@ -911,7 +877,7 @@ export default class Dashboard extends React.Component {
 																		textTransform:
 																			'capitalize'
 																	}}>
-																	Pull Request
+																	Request
 																&#183;{' '}
 																	{
 																		res
@@ -935,16 +901,10 @@ export default class Dashboard extends React.Component {
 																			event,
 																			res.url,
 																			res.requested,
-																			this
-																				.state
-																				.user
-																				.login
+																			this.state.user.login
 																		)
 																		.then(
 																			status => {
-																				console.log(
-																					status
-																				);
 																				if (
 																					status ===
 																					'success'
