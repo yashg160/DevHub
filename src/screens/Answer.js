@@ -19,7 +19,7 @@ import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 
 import serverUrl from '../config';
-
+import Navbar from '../components/Navbar';
 import Avatar from '@material-ui/core/Avatar';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -29,12 +29,14 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
+import utils from '../utils';
 
 export default class Answer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			loading: true,
+			user: null,
 			error: false,
 			toQuestion: false,
 			questionUrl: this.props.match.params.questionUrl,
@@ -166,20 +168,22 @@ export default class Answer extends React.Component {
 					}
 				}
 				this.setState({
-					loading: false,
-					error: false,
 					question: res.data,
 					answerValue: answerValue === null ? '' : answerValue,
 					editAnswer: this.props.location.state.editAnswer,
 					answerId: this.props.location.state.answerId
 				});
-				console.log(this.props);
-				console.log(this.state);
 			})
 			.catch(error => {
 				console.error(error);
 				this.setState({ error: true, loading: false });
 			});
+
+		utils.getUser().then((user) => {
+			console.log(user);
+			this.setState({ user, loading: false, error: false });
+		})
+			.catch((error) => console.error(error));
 	}
 
 	render() {
@@ -193,97 +197,13 @@ export default class Answer extends React.Component {
 			);
 		else
 			return (
-				<div style={{ backgroundColor: '#f7f7f7' }}>
-					<AppBar position='fixed'>
-						<Toolbar variant='dense'>
-							<Container maxWidth='lg'>
-								<div
-									style={{
-										display: 'flex',
-										flexGrow: 1,
-										flexDirection: 'row',
-										justifyContent: 'space-between'
-									}}>
-									<Typography
-										variant='h5'
-										style={{ flex: 1 }}>
-										DevHub
-									</Typography>
-									<div style={{ flex: 2 }}>
-										<div
-											style={{
-												display: 'flex',
-												flexDirection: 'row'
-											}}>
-											<Link
-												style={{
-													color: '#fff',
-													marginRight: '2rem'
-												}}
-												onClick={() =>
-													this.props.history.push(
-														'/dashboard'
-													)
-												}>
-												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														alignItems: 'center',
-														justifyContent: 'center'
-													}}>
-													<DashboardIcon />
-													<Typography
-														variant='body1'
-														style={{
-															fontWeight: 600,
-															marginLeft: '0.5rem'
-														}}>
-														Dashboard
-													</Typography>
-												</div>
-											</Link>
-
-											<Link
-												style={{
-													color: '#fff',
-													marginLeft: '2rem'
-												}}
-												onClick={() =>
-													this.props.history.push(
-														'/genres'
-													)
-												}>
-												<div
-													style={{
-														display: 'flex',
-														flexDirection: 'row',
-														alignItems: 'center'
-													}}>
-													<GroupIcon />
-													<Typography
-														variant='body1'
-														style={{
-															fontWeight: 600,
-															marginLeft: '0.5rem'
-														}}>
-														Genres
-													</Typography>
-												</div>
-											</Link>
-										</div>
-									</div>
-								</div>
-							</Container>
-						</Toolbar>
-					</AppBar>
+				<ThemeProvider theme={theme.theme}>
+					<Navbar screenName='answer' handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add question button pressed')} user={this.state.user} />
 
 					<Container
 						maxWidth='md'
 						style={{
-							marginTop: '3rem',
-							paddingTop: '2rem',
-							paddingBottom: '2rem',
+							marginTop: '6rem',
 							height: `${window.innerHeight}px`
 						}}>
 						<div
@@ -311,7 +231,7 @@ export default class Answer extends React.Component {
 							style={{
 								fontWeight: 600,
 								textTransform: 'capitalize',
-								marginTop: '2rem'
+								marginTop: '0.5rem'
 							}}>
 							{this.state.question.question}
 						</Typography>
@@ -344,7 +264,7 @@ export default class Answer extends React.Component {
 							color='primary'
 							endIcon={<SendIcon />}
 							onClick={() => this.handleSubmitPress()}
-							style={{ marginTop: '1rem' }}>
+							style={{ marginTop: '1rem', color: '#fff' }}>
 							<Typography
 								variant='body1'
 								style={{
@@ -356,7 +276,7 @@ export default class Answer extends React.Component {
 							</Typography>
 						</Button>
 					</Container>
-				</div>
+				</ThemeProvider>
 			);
 	}
 }
