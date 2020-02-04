@@ -18,7 +18,7 @@ export default class AskedQuestions extends React.Component {
 		console.log(props);
 	}
 
-	componentDidMount() {}
+	componentDidMount() { }
 	render() {
 		return (
 			<div>
@@ -125,20 +125,28 @@ export default class AskedQuestions extends React.Component {
 									</Typography>
 								</Button>
 
-								{utils.checkUserInArray(res.followers_list) ? (
+								{utils.checkUserInArray(res.followers_list, this.props.userName) ? (
 									<Button
 										variant='text'
-										style={{
-											color: '#54e1e3'
-										}}
+										color='primary'
 										startIcon={<RssFeedIcon />}
 										onClick={e =>
-											this.followClick(
+											utils.followClick(
 												e,
 												res.url,
 												res.followers_list,
-												i
-											)
+												this.props.userName
+											).then((status) => {
+												if (status === 'removed') {
+													var newFollowers = utils.removeValueFromArray(res.followers_list, this.props.userName);
+													this.state.questions[i].followers_list = newFollowers;
+													this.forceUpdate();
+												}
+												else {
+													this.state.questions[i].followers_list.push(this.props.userName);
+													this.forceUpdate();
+												}
+											}).catch((error) => console.error(error))
 										}>
 										<Typography
 											variant='body2'
@@ -151,31 +159,41 @@ export default class AskedQuestions extends React.Component {
 										</Typography>
 									</Button>
 								) : (
-									<Button
-										variant='text'
-										style={{
-											color: '#919191'
-										}}
-										startIcon={<RssFeedIcon />}
-										onClick={e =>
-											this.followClick(
-												e,
-												res.url,
-												res.followers_list,
-												i
-											)
-										}>
-										<Typography
-											variant='body2'
+										<Button
+											variant='text'
 											style={{
-												fontWeight: 600,
-												textTransform: 'capitalize'
-											}}>
-											Follow &#183;{' '}
-											{res.followers_list.length}
-										</Typography>
-									</Button>
-								)}
+												color: '#919191'
+											}}
+											startIcon={<RssFeedIcon />}
+											onClick={e =>
+												utils.followClick(
+													e,
+													res.url,
+													res.followers_list,
+													this.props.userName
+												).then((status) => {
+													if (status === 'removed') {
+														var newFollowers = utils.removeValueFromArray(res.followers_list, this.props.userName);
+														this.state.questions[i].followers_list = newFollowers;
+														this.forceUpdate();
+													}
+													else {
+														this.state.questions[i].followers_list.push(this.props.userName);
+														this.forceUpdate();
+													}
+												}).catch((error) => console.error(error))
+											}>
+											<Typography
+												variant='body2'
+												style={{
+													fontWeight: 600,
+													textTransform: 'capitalize'
+												}}>
+												Follow &#183;{' '}
+												{res.followers_list.length}
+											</Typography>
+										</Button>
+									)}
 								{utils.checkUserInArray(res.requested) ? (
 									<Button
 										variant='text'
@@ -202,31 +220,31 @@ export default class AskedQuestions extends React.Component {
 										</Typography>
 									</Button>
 								) : (
-									<Button
-										variant='text'
-										style={{
-											color: '#919191'
-										}}
-										startIcon={<EmojiPeopleIcon />}
-										onClick={event =>
-											this.requestClick(
-												event,
-												res.url,
-												res.requested,
-												i
-											)
-										}>
-										<Typography
-											variant='body2'
+										<Button
+											variant='text'
 											style={{
-												fontWeight: 600,
-												textTransform: 'capitalize'
-											}}>
-											Request &#183;{' '}
-											{res.requested.length}
-										</Typography>
-									</Button>
-								)}
+												color: '#919191'
+											}}
+											startIcon={<EmojiPeopleIcon />}
+											onClick={event =>
+												this.requestClick(
+													event,
+													res.url,
+													res.requested,
+													i
+												)
+											}>
+											<Typography
+												variant='body2'
+												style={{
+													fontWeight: 600,
+													textTransform: 'capitalize'
+												}}>
+												Request &#183;{' '}
+												{res.requested.length}
+											</Typography>
+										</Button>
+									)}
 							</div>
 							<Typography
 								variant='body1'
