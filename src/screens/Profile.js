@@ -362,6 +362,7 @@ export default class Profile extends React.Component {
 									label='Asked Questions'
 									questions={this.state.questions}
 									history={this.props.history}
+									userName={this.state.user.login}
 								/>
 								<div
 									label='Answers'

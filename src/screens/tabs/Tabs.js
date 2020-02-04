@@ -59,6 +59,7 @@ export default class Tabs extends Component {
 										key={child.props.label}
 										questions={child.props.questions}
 										history={child.props.history}
+										userName={child.props.userName}
 									/>
 								);
 							case 'Answers':
