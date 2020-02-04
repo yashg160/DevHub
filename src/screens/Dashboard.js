@@ -42,7 +42,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 export class Comment extends React.Component {
 	render() {
 		return (
-			<div style={{ marginLeft: '0.5rem' }}>
+			<div>
 				<Typography variant='body1' style={{ fontWeight: 600 }}>
 					{this.props.author}
 				</Typography>
@@ -74,17 +74,17 @@ export default class Dashboard extends React.Component {
 		};
 		this.genres = null;
 	}
-	createCommentList(comments) {
+	createCommentList(comments, isChild, depth) {
 		let items = comments.map((comment, i) => {
 			return (
-				<div key={i}>
+				<div key={i} style={{ marginLeft: isChild ? `${depth * 1}rem` : '0' }}>
 					<Comment
 						key={comment.answer}
 						comment={comment.comment}
 						author={comment.author_name}
 					/>
 					{comment.child_comments &&
-						this.createCommentList(comment.child_comments)}
+						this.createCommentList(comment.child_comments, true, depth + 1)}
 				</div>
 			);
 		});
@@ -414,8 +414,8 @@ export default class Dashboard extends React.Component {
 						)}
 				</div>
 				{answer.comment_thread ? this.createCommentList(
-					answer.comment_thread
-				) : null}
+					answer.comment_thread, false, 1
+				) : <Typography variant='body1'>No comments yet</Typography>}
 			</div>
 		);
 	}
