@@ -340,79 +340,82 @@ export default class Dashboard extends React.Component {
 						answer.upvoters,
 						this.state.user.login
 					) ? (
-						<Button
-							variant='outlined'
-							style={{
-								color: '#54e1e3'
-							}}
-							startIcon={<ThumbUpIcon />}
-							onClick={() => {
-								utils
-									.upvoteAnswerClick(
-										answer.id,
-										answer.upvoters,
-										this.state.user.login
-									)
-									.then(status => {
-										if (status === 'removed')
-											this.state.result[
-												i
-											].answer.upvoters = utils.removeValueFromArray(
-												this.state.result[i].answer
-													.upvoters,
-												this.state.user.login
-											);
+							<Button
+								variant='outlined'
+								style={{
+									color: '#54e1e3'
+								}}
+								startIcon={<ThumbUpIcon />}
+								onClick={() => {
+									utils
+										.upvoteAnswerClick(
+											answer.id,
+											answer.upvoters,
+											this.state.user.login
+										)
+										.then(status => {
+											if (status === 'removed')
+												this.state.result[
+													i
+												].answer.upvoters = utils.removeValueFromArray(
+													this.state.result[i].answer
+														.upvoters,
+													this.state.user.login
+												);
 
-										this.forceUpdate();
-									})
-									.catch(error => console.error(error));
-							}}>
-							<Typography
-								variant='body2'
-								style={{
-									fontWeight: 700,
-									textTransform: 'capitalize'
+											this.forceUpdate();
+										})
+										.catch(error => console.error(error));
 								}}>
-								Remove &#183; {answer.upvoters.length}
-							</Typography>
-						</Button>
-					) : (
-						<Button
-							variant='outlined'
-							style={{
-								color: '#919191'
-							}}
-							startIcon={<ThumbUpIcon />}
-							onClick={() => {
-								utils
-									.upvoteAnswerClick(
-										answer.id,
-										answer.upvoters,
-										this.state.user.login
-									)
-									.then(status => {
-										if (status === 'upvoted')
-											this.state.result[
-												i
-											].answer.upvoters.push(
-												this.state.user.login
-											);
-										console.log(this.state.lt);
-										this.forceUpdate();
-									})
-									.catch(error => console.error(error));
-							}}>
-							<Typography
-								variant='body2'
+								<Typography
+									variant='body2'
+									style={{
+										fontWeight: 700,
+										textTransform: 'capitalize'
+									}}>
+									Remove &#183; {answer.upvoters.length}
+								</Typography>
+							</Button>
+						) : (
+							<Button
+								variant='outlined'
 								style={{
-									fontWeight: 700,
-									textTransform: 'capitalize'
+									color: '#919191'
+								}}
+								startIcon={<ThumbUpIcon />}
+								onClick={() => {
+									utils
+										.upvoteAnswerClick(
+											answer.id,
+											answer.upvoters,
+											this.state.user.login
+										)
+										.then(status => {
+											if (status === 'upvoted')
+												this.state.result[
+													i
+												].answer.upvoters.push(
+													this.state.user.login
+												);
+											console.log(this.state.lt);
+											this.forceUpdate();
+										})
+										.catch(error => console.error(error));
 								}}>
-								Upvote &#183; {answer.upvoters.length}
-							</Typography>
-						</Button>
-					)}
+								<Typography
+									variant='body2'
+									style={{
+										fontWeight: 700,
+										textTransform: 'capitalize'
+									}}>
+									Upvote &#183; {answer.upvoters.length}
+								</Typography>
+							</Button>
+						)}
 				</div>
+				{answer.comment_thread ? this.createCommentList(
+					answer.comment_thread
+				) : null}
 			</div>
 		);
 	}
@@ -695,292 +698,292 @@ export default class Dashboard extends React.Component {
 														res.followers_list,
 														this.state.user.login
 													) ? (
-														<Button
-															variant='text'
-															color='primary'
-															startIcon={
-																<RssFeedIcon />
-															}
-															onClick={e =>
-																utils
-																	.followClick(
-																		e,
-																		res.url,
-																		res.followers_list,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			console.log(
-																				status
-																			);
-																			if (
-																				status ===
-																				'removed'
-																			) {
-																				this.state.result[
-																					i
-																				].followers_list = utils.removeValueFromArray(
-																					this
-																						.state
-																						.result[
-																						i
-																					]
-																						.followers_list,
-																					this
-																						.state
-																						.user
-																						.login
+															<Button
+																variant='text'
+																color='primary'
+																startIcon={
+																	<RssFeedIcon />
+																}
+																onClick={e =>
+																	utils
+																		.followClick(
+																			e,
+																			res.url,
+																			res.followers_list,
+																			this
+																				.state
+																				.user
+																				.login
+																		)
+																		.then(
+																			status => {
+																				console.log(
+																					status
 																				);
-																			} else {
-																				this.state.result[
-																					i
-																				].followers_list.push(
-																					this
-																						.state
-																						.user
-																						.login
+																				if (
+																					status ===
+																					'removed'
+																				) {
+																					this.state.result[
+																						i
+																					].followers_list = utils.removeValueFromArray(
+																						this
+																							.state
+																							.result[
+																							i
+																						]
+																							.followers_list,
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				} else {
+																					this.state.result[
+																						i
+																					].followers_list.push(
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				}
+																				this.forceUpdate();
+																			}
+																		)
+																		.catch(
+																			error => {
+																				console.error(
+																					error
 																				);
 																			}
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error => {
-																			console.error(
-																				error
-																			);
-																		}
-																	)
-															}>
-															<Typography
-																variant='body2'
+																		)
+																}>
+																<Typography
+																	variant='body2'
+																	style={{
+																		fontWeight: 600,
+																		textTransform:
+																			'capitalize'
+																	}}>
+																	Unfollow &#183;{' '}
+																	{
+																		res
+																			.followers_list
+																			.length
+																	}
+																</Typography>
+															</Button>
+														) : (
+															<Button
+																variant='text'
 																style={{
-																	fontWeight: 600,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Unfollow &#183;{' '}
-																{
-																	res
-																		.followers_list
-																		.length
+																	color: '#919191'
+																}}
+																startIcon={
+																	<RssFeedIcon />
 																}
-															</Typography>
-														</Button>
-													) : (
-														<Button
-															variant='text'
-															style={{
-																color: '#919191'
-															}}
-															startIcon={
-																<RssFeedIcon />
-															}
-															onClick={e =>
-																utils
-																	.followClick(
-																		e,
-																		res.url,
-																		res.followers_list,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			console.log(
-																				status
-																			);
-																			if (
-																				status ===
-																				'removed'
-																			) {
-																				this.state.result[
-																					i
-																				].followers_list = utils.removeValueFromArray(
-																					this
-																						.state
-																						.result[
-																						i
-																					]
-																						.followers_list,
-																					this
-																						.state
-																						.user
-																						.login
+																onClick={e =>
+																	utils
+																		.followClick(
+																			e,
+																			res.url,
+																			res.followers_list,
+																			this
+																				.state
+																				.user
+																				.login
+																		)
+																		.then(
+																			status => {
+																				console.log(
+																					status
 																				);
-																			} else {
-																				this.state.result[
-																					i
-																				].followers_list.push(
-																					this
-																						.state
-																						.user
-																						.login
+																				if (
+																					status ===
+																					'removed'
+																				) {
+																					this.state.result[
+																						i
+																					].followers_list = utils.removeValueFromArray(
+																						this
+																							.state
+																							.result[
+																							i
+																						]
+																							.followers_list,
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				} else {
+																					this.state.result[
+																						i
+																					].followers_list.push(
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				}
+																				this.forceUpdate();
+																			}
+																		)
+																		.catch(
+																			error => {
+																				console.error(
+																					error
 																				);
 																			}
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error => {
-																			console.error(
-																				error
-																			);
-																		}
-																	)
-															}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 600,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Follow &#183;{' '}
-																{
-																	res
-																		.followers_list
-																		.length
-																}
-															</Typography>
-														</Button>
-													)}
+																		)
+																}>
+																<Typography
+																	variant='body2'
+																	style={{
+																		fontWeight: 600,
+																		textTransform:
+																			'capitalize'
+																	}}>
+																	Follow &#183;{' '}
+																	{
+																		res
+																			.followers_list
+																			.length
+																	}
+																</Typography>
+															</Button>
+														)}
 
 													{utils.checkUserInArray(
 														res.requested,
 														this.state.user.login
 													) ? (
-														<Button
-															variant='text'
-															color='primary'
-															startIcon={
-																<EmojiPeopleIcon />
-															}
-															onClick={event =>
-																utils
-																	.requestClick(
-																		event,
-																		res.url,
-																		res.requested,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			console.log(
-																				status
-																			);
-																			if (
-																				status ===
-																				'success'
-																			)
-																				this.state.result[
-																					i
-																				].requested.push(
-																					this
-																						.state
-																						.user
-																						.login
+															<Button
+																variant='text'
+																color='primary'
+																startIcon={
+																	<EmojiPeopleIcon />
+																}
+																onClick={event =>
+																	utils
+																		.requestClick(
+																			event,
+																			res.url,
+																			res.requested,
+																			this
+																				.state
+																				.user
+																				.login
+																		)
+																		.then(
+																			status => {
+																				console.log(
+																					status
 																				);
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error => {
-																			console.error(
-																				error
-																			);
-																		}
-																	)
-															}>
-															<Typography
-																variant='body2'
-																style={{
-																	fontWeight: 600,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Pull Request
+																				if (
+																					status ===
+																					'success'
+																				)
+																					this.state.result[
+																						i
+																					].requested.push(
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				this.forceUpdate();
+																			}
+																		)
+																		.catch(
+																			error => {
+																				console.error(
+																					error
+																				);
+																			}
+																		)
+																}>
+																<Typography
+																	variant='body2'
+																	style={{
+																		fontWeight: 600,
+																		textTransform:
+																			'capitalize'
+																	}}>
+																	Pull Request
 																&#183;{' '}
-																{
-																	res
-																		.requested
-																		.length
-																}
-															</Typography>
-														</Button>
-													) : (
-														<Button
-															variant='text'
-															style={{
-																color: '#919191'
-															}}
-															startIcon={
-																<EmojiPeopleIcon />
-															}
-															onClick={event =>
-																utils
-																	.requestClick(
-																		event,
-																		res.url,
-																		res.requested,
-																		this
-																			.state
-																			.user
-																			.login
-																	)
-																	.then(
-																		status => {
-																			console.log(
-																				status
-																			);
-																			if (
-																				status ===
-																				'success'
-																			)
-																				this.state.result[
-																					i
-																				].requested.push(
-																					this
-																						.state
-																						.user
-																						.login
-																				);
-																			this.forceUpdate();
-																		}
-																	)
-																	.catch(
-																		error => {
-																			console.error(
-																				error
-																			);
-																		}
-																	)
-															}>
-															<Typography
-																variant='body2'
+																	{
+																		res
+																			.requested
+																			.length
+																	}
+																</Typography>
+															</Button>
+														) : (
+															<Button
+																variant='text'
 																style={{
-																	fontWeight: 600,
-																	textTransform:
-																		'capitalize'
-																}}>
-																Request &#183;{' '}
-																{
-																	res
-																		.requested
-																		.length
+																	color: '#919191'
+																}}
+																startIcon={
+																	<EmojiPeopleIcon />
 																}
-															</Typography>
-														</Button>
-													)}
+																onClick={event =>
+																	utils
+																		.requestClick(
+																			event,
+																			res.url,
+																			res.requested,
+																			this
+																				.state
+																				.user
+																				.login
+																		)
+																		.then(
+																			status => {
+																				console.log(
+																					status
+																				);
+																				if (
+																					status ===
+																					'success'
+																				)
+																					this.state.result[
+																						i
+																					].requested.push(
+																						this
+																							.state
+																							.user
+																							.login
+																					);
+																				this.forceUpdate();
+																			}
+																		)
+																		.catch(
+																			error => {
+																				console.error(
+																					error
+																				);
+																			}
+																		)
+																}>
+																<Typography
+																	variant='body2'
+																	style={{
+																		fontWeight: 600,
+																		textTransform:
+																			'capitalize'
+																	}}>
+																	Request &#183;{' '}
+																	{
+																		res
+																			.requested
+																			.length
+																	}
+																</Typography>
+															</Button>
+														)}
 												</div>
 											</div>
 										</ExpansionPanelSummary>
@@ -991,9 +994,6 @@ export default class Dashboard extends React.Component {
 													flexDirection: 'column'
 												}}>
 												{this.topAnswer(res.answer, i)}
-												{this.createCommentList(
-													res.answer.comment_thread
-												)}
 											</div>
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
