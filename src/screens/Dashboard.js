@@ -42,11 +42,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 export class Comment extends React.Component {
 	render() {
 		return (
-			<div>
-				<Typography variant='body1' style={{ fontWeight: 600 }}>
+			<div style={{ marginBottom: this.props.isChild ? '0.1rem' : '0.4rem' }}>
+				<Typography variant='body2' style={{ fontWeight: 600 }}>
 					{this.props.author}
 				</Typography>
-				<Typography variant='body2'>{this.props.comment}</Typography>
+				<Typography variant='subtitle2' color='textSecondary'>
+					{new Date(this.props.date).toLocaleDateString('en-US', {
+						weekday: 'long',
+						year: 'numeric',
+						month: 'long',
+						day: 'numeric'
+					})}
+				</Typography>
+				<Typography variant='subtitle2' style={{ marginTop: '0.1rem' }}>{this.props.comment}</Typography>
 			</div>
 		);
 	}
@@ -77,11 +85,13 @@ export default class Dashboard extends React.Component {
 	createCommentList(comments, isChild, depth) {
 		let items = comments.map((comment, i) => {
 			return (
-				<div key={i} style={{ marginLeft: isChild ? `${depth * 1}rem` : '0' }}>
+				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
 					<Comment
 						key={comment.answer}
 						comment={comment.comment}
 						author={comment.author_name}
+						date={comment.created_at}
+						isChild
 					/>
 					{comment.child_comments &&
 						this.createCommentList(comment.child_comments, true, depth + 1)}
@@ -398,9 +408,12 @@ export default class Dashboard extends React.Component {
 							</Button>
 						)}
 				</div>
-				{answer.comment_thread ? this.createCommentList(
-					answer.comment_thread, false, 0
-				) : <Typography variant='body1'>No comments yet</Typography>}
+				<div style={{ marginTop: '2rem' }}>
+					<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
+					{answer.comment_thread ? this.createCommentList(
+						answer.comment_thread, false, 0
+					) : <Typography variant='body1'>No comments yet</Typography>}
+				</div>
 			</div>
 		);
 	}
