@@ -127,7 +127,7 @@ export default class Question extends React.Component {
 									<Typography
 										variant='h5'
 										style={{ color: '#fff' }}>
-										Reactora
+										DevHub
 									</Typography>
 
 									<div
@@ -256,169 +256,169 @@ export default class Question extends React.Component {
 								this.state.question.followers_list,
 								this.state.user.login
 							) ? (
-								<Button
-									variant='text'
-									color='primary'
-									startIcon={<RssFeedIcon />}
-									onClick={event =>
-										utils
-											.followClick(
-												event,
-												this.state.question.url,
-												this.state.question
-													.followers_list,
-												this.state.user.login
-											)
-											.then(status => {
-												if (status === 'removed')
-													this.state.question.followers_list = utils.removeValueFromArray(
-														this.state.question
-															.followers_list,
-														this.state.user.login
-													);
-												this.forceUpdate();
-											})
-											.catch(error =>
-												console.error(error)
-											)
-									}
-									style={{ marginRight: '1rem' }}>
-									<Typography
-										variant='body2'
-										style={{
-											fontWeight: 500,
-											fontSize: 18,
-											textTransform: 'capitalize'
-										}}>
-										Unfollow &#183;{' '}
-										{
-											this.state.question.followers_list
-												.length
+									<Button
+										variant='text'
+										color='primary'
+										startIcon={<RssFeedIcon />}
+										onClick={event =>
+											utils
+												.followClick(
+													event,
+													this.state.question.url,
+													this.state.question
+														.followers_list,
+													this.state.user.login
+												)
+												.then(status => {
+													if (status === 'removed')
+														this.state.question.followers_list = utils.removeValueFromArray(
+															this.state.question
+																.followers_list,
+															this.state.user.login
+														);
+													this.forceUpdate();
+												})
+												.catch(error =>
+													console.error(error)
+												)
 										}
-									</Typography>
-								</Button>
-							) : (
-								<Button
-									variant='text'
-									style={{
-										color: '#919191',
-										marginRight: '1rem'
-									}}
-									startIcon={<RssFeedIcon />}
-									onClick={event =>
-										utils
-											.followClick(
-												event,
-												this.state.question.url,
-												this.state.question
-													.followers_list,
-												this.state.user.login
-											)
-											.then(status => {
-												if (status === 'followed')
-													this.state.question.followers_list.push(
-														this.state.user.login
-													);
-												this.forceUpdate();
-											})
-											.catch(error =>
-												console.error(error)
-											)
-									}>
-									<Typography
-										variant='body2'
+										style={{ marginRight: '1rem' }}>
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 500,
+												fontSize: 18,
+												textTransform: 'capitalize'
+											}}>
+											Unfollow &#183;{' '}
+											{
+												this.state.question.followers_list
+													.length
+											}
+										</Typography>
+									</Button>
+								) : (
+									<Button
+										variant='text'
 										style={{
-											fontWeight: 500,
-											fontSize: 18,
-											textTransform: 'capitalize'
-										}}>
-										Follow &#183;{' '}
-										{
-											this.state.question.followers_list
-												.length
-										}
-									</Typography>
-								</Button>
-							)}
+											color: '#919191',
+											marginRight: '1rem'
+										}}
+										startIcon={<RssFeedIcon />}
+										onClick={event =>
+											utils
+												.followClick(
+													event,
+													this.state.question.url,
+													this.state.question
+														.followers_list,
+													this.state.user.login
+												)
+												.then(status => {
+													if (status === 'followed')
+														this.state.question.followers_list.push(
+															this.state.user.login
+														);
+													this.forceUpdate();
+												})
+												.catch(error =>
+													console.error(error)
+												)
+										}>
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 500,
+												fontSize: 18,
+												textTransform: 'capitalize'
+											}}>
+											Follow &#183;{' '}
+											{
+												this.state.question.followers_list
+													.length
+											}
+										</Typography>
+									</Button>
+								)}
 
 							{utils.checkUserInArray(
 								this.state.question.requested,
 								this.state.user.login
 							) ? (
-								<Button
-									variant='text'
-									color='primary'
-									startIcon={<EmojiPeopleIcon />}
-									onClick={event => {
-										utils
-											.requestClick(
-												event,
-												this.state.question.url,
-												this.state.question.requested,
-												this.state.user.login
-											)
-											.then(status => {
-												if (status === 'removed') {
-													this.state.question.requested = utils.removeValueFromArray(
-														this.state.question
-															.requested,
-														this.state.user.login
-													);
-													this.forceUpdate();
-												} else throw Error();
-											})
-											.catch(error =>
-												console.error(error)
-											);
-									}}>
-									<Typography
-										variant='body2'
-										style={{
-											fontWeight: 500,
-											fontSize: 18,
-											textTransform: 'capitalize'
+									<Button
+										variant='text'
+										color='primary'
+										startIcon={<EmojiPeopleIcon />}
+										onClick={event => {
+											utils
+												.requestClick(
+													event,
+													this.state.question.url,
+													this.state.question.requested,
+													this.state.user.login
+												)
+												.then(status => {
+													if (status === 'removed') {
+														this.state.question.requested = utils.removeValueFromArray(
+															this.state.question
+																.requested,
+															this.state.user.login
+														);
+														this.forceUpdate();
+													} else throw Error();
+												})
+												.catch(error =>
+													console.error(error)
+												);
 										}}>
-										Request &#183;{' '}
-										{this.state.question.requested.length}
-									</Typography>
-								</Button>
-							) : (
-								<Button
-									variant='text'
-									style={{ color: '#919191' }}
-									startIcon={<EmojiPeopleIcon />}
-									onClick={event => {
-										utils
-											.requestClick(
-												event,
-												this.state.question.url,
-												this.state.question.requested,
-												this.state.user.login
-											)
-											.then(status => {
-												if (status === 'success') {
-													this.state.question.requested.push(
-														this.state.user.login
-													);
-													this.forceUpdate();
-												} else throw Error();
-											})
-											.catch(error =>
-												console.error(error)
-											);
-									}}>
-									<Typography
-										variant='body2'
-										style={{
-											fontWeight: 500,
-											fontSize: 18,
-											textTransform: 'capitalize'
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 500,
+												fontSize: 18,
+												textTransform: 'capitalize'
+											}}>
+											Request &#183;{' '}
+											{this.state.question.requested.length}
+										</Typography>
+									</Button>
+								) : (
+									<Button
+										variant='text'
+										style={{ color: '#919191' }}
+										startIcon={<EmojiPeopleIcon />}
+										onClick={event => {
+											utils
+												.requestClick(
+													event,
+													this.state.question.url,
+													this.state.question.requested,
+													this.state.user.login
+												)
+												.then(status => {
+													if (status === 'success') {
+														this.state.question.requested.push(
+															this.state.user.login
+														);
+														this.forceUpdate();
+													} else throw Error();
+												})
+												.catch(error =>
+													console.error(error)
+												);
 										}}>
-										Request &#183;{' '}
-										{this.state.question.requested.length}
-									</Typography>
-								</Button>
-							)}
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 500,
+												fontSize: 18,
+												textTransform: 'capitalize'
+											}}>
+											Request &#183;{' '}
+											{this.state.question.requested.length}
+										</Typography>
+									</Button>
+								)}
 						</div>
 
 						<Typography

@@ -173,7 +173,7 @@ export default class Genres extends React.Component {
 								<Typography
 									variant='h5'
 									style={{ color: '#fff' }}>
-									Reactora
+									DevHub
 								</Typography>
 
 								<div

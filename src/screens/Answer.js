@@ -197,7 +197,7 @@ export default class Answer extends React.Component {
 									<Typography
 										variant='h5'
 										style={{ flex: 1 }}>
-										Reactora
+										DevHub
 									</Typography>
 									<div style={{ flex: 2 }}>
 										<div

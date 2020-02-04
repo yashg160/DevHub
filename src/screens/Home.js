@@ -107,7 +107,7 @@ export default class Home extends React.Component {
 							textShadow: '0 0 1rem #000',
 							padding: '1rem'
 						}}>
-						Reactora
+						DevHub
 					</Typography>
 
 					<Typography
@@ -117,7 +117,7 @@ export default class Home extends React.Component {
 							color: '#fff',
 							textShadow: '0 0 0.5rem #000'
 						}}>
-						A place to better understand the world. Ask more. Know
+						A place to better understand coding. Ask more. Know
 						more
 					</Typography>
 

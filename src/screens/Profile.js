@@ -233,7 +233,7 @@ export default class Profile extends React.Component {
 									<Typography
 										variant='h5'
 										style={{ color: '#fff' }}>
-										Reactora
+										DevHub
 									</Typography>
 
 									<div
