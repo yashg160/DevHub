@@ -24,6 +24,7 @@ import SnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import utils from '../utils';
+import Navbar from '../components/Navbar';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -219,76 +220,7 @@ export default class Profile extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-					<AppBar position='fixed'>
-						<Toolbar variant='regular' color='primary'>
-							<Container maxWidth='lg'>
-								<div
-									style={{
-										display: 'flex',
-										flexGrow: 1,
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between'
-									}}>
-									<Typography
-										variant='h5'
-										style={{ color: '#fff' }}>
-										DevHub
-									</Typography>
-
-									<div
-										style={{
-											display: 'flex',
-											flexDirection: 'row',
-											alignItems: 'center'
-										}}>
-										<div
-											className={'link-div'}
-											style={{
-												marginRight: '1rem',
-												padding: '0.5rem'
-											}}
-											onClick={event =>
-												this.setState({
-													menuVisible:
-														event.currentTarget
-												})
-											}>
-											<Avatar
-												src={this.state.user.avatar_url}
-												alt={this.state.user.name}
-												style={{
-													height: '2.3rem',
-													width: '2.3rem'
-												}}
-											/>
-										</div>
-
-										<Button
-											variant='contained'
-											color='secondary'
-											onClick={() =>
-												this.setState({
-													questionModal: true
-												})
-											}
-											style={{
-												borderRadius: '2rem',
-												textTransform: 'none'
-											}}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600
-												}}>
-												Add Question
-											</Typography>
-										</Button>
-									</div>
-								</div>
-							</Container>
-						</Toolbar>
-					</AppBar>
+					<Navbar showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
 					<Grid
 						container
 						direction='row'
