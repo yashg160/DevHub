@@ -154,21 +154,6 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async getUser(userName, token) {
-		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Token ${token}`,
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			}
-		});
-
-		let res = await rawResponse.json();
-
-		if (res.status !== 'success') throw Error('ERR_USER_FETCH');
-		return res.data;
-	}
 
 	async checkQuestion() {
 		if (this.state.newQuestion.length < 1) {
@@ -286,10 +271,10 @@ export default class Dashboard extends React.Component {
 			})
 			.catch(error => console.error(error));
 
-		this.getUser(userName, token)
+		utils.getUser()
 			.then(user => {
 				this.fetchResult();
-				console.group(user);
+				console.log(user);
 				this.setState({ user });
 			})
 			.catch(error => {
