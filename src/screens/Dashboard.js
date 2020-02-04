@@ -28,7 +28,7 @@ import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Chip from '@material-ui/core/Chip';
-
+import Navbar from '../components/Navbar';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
@@ -413,76 +413,7 @@ export default class Dashboard extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div>
-					<AppBar position='fixed'>
-						<Toolbar variant='regular' color='primary'>
-							<Container maxWidth='lg'>
-								<div
-									style={{
-										display: 'flex',
-										flexGrow: 1,
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between'
-									}}>
-									<Typography
-										variant='h5'
-										style={{ color: '#fff' }}>
-										DevHub
-									</Typography>
-
-									<div
-										style={{
-											display: 'flex',
-											flexDirection: 'row',
-											alignItems: 'center'
-										}}>
-										<div
-											className={'link-div'}
-											style={{
-												marginRight: '1rem',
-												padding: '0.5rem'
-											}}
-											onClick={event =>
-												this.setState({
-													menuVisible:
-														event.currentTarget
-												})
-											}>
-											<Avatar
-												src={this.state.user.avatar_url}
-												style={{
-													height: '2.3rem',
-													width: '2.3rem'
-												}}>
-												{this.state.user.name}
-											</Avatar>
-										</div>
-
-										<Button
-											variant='contained'
-											color='secondary'
-											onClick={() =>
-												this.setState({
-													questionModal: true
-												})
-											}
-											style={{
-												borderRadius: '2rem',
-												textTransform: 'none'
-											}}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600
-												}}>
-												Add Question
-											</Typography>
-										</Button>
-									</div>
-								</div>
-							</Container>
-						</Toolbar>
-					</AppBar>
+					<Navbar screenName='dashboard' handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
 					<Container
 						maxWidth='lg'
 						style={{
