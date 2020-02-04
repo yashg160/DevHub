@@ -20,6 +20,7 @@ export default class AskedQuestions extends React.Component {
 
 	componentDidMount() { }
 	render() {
+		var showProfileSnackbar = this.props.showProfileSnackbar;
 		return (
 			<div>
 				<InfiniteScroll
@@ -194,28 +195,19 @@ export default class AskedQuestions extends React.Component {
 											</Typography>
 										</Button>
 									)}
-								{utils.checkUserInArray(res.requested) ? (
+								{utils.checkUserInArray(res.requested, this.props.userName) ? (
 									<Button
 										variant='text'
-										style={{
-											color: '#54e1e3'
-										}}
+										color='primary'
 										startIcon={<EmojiPeopleIcon />}
-										onClick={event =>
-											this.requestClick(
-												event,
-												res.url,
-												res.requested,
-												i
-											)
-										}>
+										onClick={() => showProfileSnackbar('Answer already requested')}>
 										<Typography
 											variant='body2'
 											style={{
 												fontWeight: 600,
 												textTransform: 'capitalize'
 											}}>
-											Pull Request &#183;{' '}
+											Request &#183;{' '}
 											{res.requested.length}
 										</Typography>
 									</Button>
@@ -227,12 +219,22 @@ export default class AskedQuestions extends React.Component {
 											}}
 											startIcon={<EmojiPeopleIcon />}
 											onClick={event =>
-												this.requestClick(
+												utils.requestClick(
 													event,
 													res.url,
 													res.requested,
-													i
-												)
+													this.props.userName
+												).then((status) => {
+													if (status === 'success') {
+														this.state.questions[i].requested.push(this.props.userName);
+														showProfileSnackbar('Request successfully posted');
+														this.forceUpdate();
+													}
+													else throw Error('ERR_REQUEST');
+												}).catch((error) => {
+													console.error(error);
+													showProfileSnackbar('Answer request could not be posted');
+												})
 											}>
 											<Typography
 												variant='body2'

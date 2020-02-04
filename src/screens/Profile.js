@@ -363,6 +363,7 @@ export default class Profile extends React.Component {
 									questions={this.state.questions}
 									history={this.props.history}
 									userName={this.state.user.login}
+									showProfileSnackbar={(snackbarMess) => this.setState({ snackbar: true, snackbarMess })}
 								/>
 								<div
 									label='Answers'
@@ -754,6 +755,7 @@ export default class Profile extends React.Component {
 				<Snackbar
 					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
 					key={'profile-snackbar'}
+					autoHideDuration={5000}
 					open={this.state.snackbar}
 					onClose={() => this.setState({ snackbar: false })}>
 					<SnackbarContent
