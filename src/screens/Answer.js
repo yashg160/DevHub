@@ -20,6 +20,16 @@ import Link from '@material-ui/core/Link';
 
 import serverUrl from '../config';
 
+import Avatar from '@material-ui/core/Avatar';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import theme from '../theme';
+import { ThemeProvider } from '@material-ui/core/styles/';
+
 export default class Answer extends React.Component {
 	constructor(props) {
 		super(props);

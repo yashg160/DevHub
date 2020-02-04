@@ -1,9 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 
 import Backdrop from '@material-ui/core/Backdrop';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
 import serverUrl from '../config';
@@ -159,54 +158,7 @@ export default class Genres extends React.Component {
 			);
 		return (
 			<ThemeProvider theme={theme.theme}>
-				<AppBar position='fixed'>
-					<Toolbar variant='regular' color='primary'>
-						<Container maxWidth='lg'>
-							<div
-								style={{
-									display: 'flex',
-									flexGrow: 1,
-									flexDirection: 'row',
-									alignItems: 'center',
-									justifyContent: 'space-between'
-								}}>
-								<Typography
-									variant='h5'
-									style={{ color: '#fff' }}>
-									DevHub
-								</Typography>
-
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'row',
-										alignItems: 'center'
-									}}>
-									<div
-										className={'link-div'}
-										style={{
-											marginRight: '1rem',
-											padding: '0.5rem'
-										}}
-										onClick={event =>
-											this.setState({
-												menuVisible: event.currentTarget
-											})
-										}>
-										<Avatar
-											src={this.state.user.avatar_url}
-											style={{
-												height: '2.3rem',
-												width: '2.3rem'
-											}}>
-											{this.state.user.name}
-										</Avatar>
-									</div>
-								</div>
-							</div>
-						</Container>
-					</Toolbar>
-				</AppBar>
+				<Navbar screenName='genres' handleAvatarClick={(event) => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add Question Clicked')} user={this.state.user} />
 				<Container maxWidth='md' style={{ marginTop: '6rem' }}>
 					<Typography variant='h4' align='center'>
 						Your Genres
