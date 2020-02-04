@@ -120,10 +120,32 @@ async function upvoteAnswerClick(answerId, upvoters, login) {
 		if (res.status === 'success') return 'upvoted';
 	}
 }
+
+async function getUser() {
+	const userName = Cookies.get('USER_NAME');
+	const token = Cookies.get('TOKEN');
+
+	let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	});
+
+	let res = await rawResponse.json();
+
+	if (res.status !== 'success') throw Error('ERR_USER_FETCH');
+	console.log(res);
+	return res.data;
+
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
 	followClick,
 	requestClick,
-	upvoteAnswerClick
+	upvoteAnswerClick,
+	getUser
 };
