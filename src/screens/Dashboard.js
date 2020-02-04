@@ -414,7 +414,7 @@ export default class Dashboard extends React.Component {
 						)}
 				</div>
 				{answer.comment_thread ? this.createCommentList(
-					answer.comment_thread, false, 1
+					answer.comment_thread, false, 0
 				) : <Typography variant='body1'>No comments yet</Typography>}
 			</div>
 		);
