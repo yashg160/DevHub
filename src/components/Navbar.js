@@ -18,7 +18,7 @@ export default class Navbar extends React.Component {
     }
 
     render() {
-        var { handleAvatarClick, handleAddQuestionClick } = this.props;
+        var { handleAvatarClick, handleAddQuestionClick, showAddQuestion } = this.props;
         return (
             <AppBar position='fixed'>
                 <Toolbar variant='regular' color='primary'>
@@ -61,25 +61,27 @@ export default class Navbar extends React.Component {
                                         {this.state.user.name}
                                     </Avatar>
                                 </div>
-                                <Button
-                                    style={{ display: this.props.screenName === 'genres' ? 'none' : 'initial' }}
-                                    variant='contained'
-                                    color='secondary'
-                                    onClick={() =>
-                                        handleAddQuestionClick()
-                                    }
-                                    style={{
-                                        borderRadius: '2rem',
-                                        textTransform: 'none'
-                                    }}>
-                                    <Typography
-                                        variant='body2'
+                                {
+                                    showAddQuestion ? <Button
+                                        variant='contained'
+                                        color='secondary'
+                                        onClick={() =>
+                                            handleAddQuestionClick()
+                                        }
                                         style={{
-                                            fontWeight: 600
+                                            borderRadius: '2rem',
+                                            textTransform: 'none'
                                         }}>
-                                        Add Question
+                                        <Typography
+                                            variant='body2'
+                                            style={{
+                                                fontWeight: 600
+                                            }}>
+                                            Add Question
                                     </Typography>
-                                </Button>
+                                    </Button> : null
+                                }
+
                             </div>
                         </div>
                     </Container>
@@ -90,7 +92,7 @@ export default class Navbar extends React.Component {
 }
 // Define the props types and their values. 
 Navbar.propTypes = {
-    screenName: PropTypes.string,
+    showAddQuestion: PropTypes.bool.isRequired,
     handleAvatarClick: PropTypes.func,
     handleAddQuestionClick: PropTypes.func,
     user: PropTypes.object

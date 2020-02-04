@@ -198,7 +198,7 @@ export default class Answer extends React.Component {
 		else
 			return (
 				<ThemeProvider theme={theme.theme}>
-					<Navbar screenName='answer' handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add question button pressed')} user={this.state.user} />
+					<Navbar showAddQuestion={false} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add question button pressed')} user={this.state.user} />
 
 					<Container
 						maxWidth='md'

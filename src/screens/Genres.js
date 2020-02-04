@@ -158,7 +158,7 @@ export default class Genres extends React.Component {
 			);
 		return (
 			<ThemeProvider theme={theme.theme}>
-				<Navbar screenName='genres' handleAvatarClick={(event) => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add Question Clicked')} user={this.state.user} />
+				<Navbar showAddQuestion={false} handleAvatarClick={(event) => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add Question Clicked')} user={this.state.user} />
 				<Container maxWidth='md' style={{ marginTop: '6rem' }}>
 					<Typography variant='h4' align='center'>
 						Your Genres
