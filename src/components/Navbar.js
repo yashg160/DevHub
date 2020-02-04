@@ -4,19 +4,18 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import '../screens/styles/dashboard.css';
 
-// Define the props types and their values. 
-Navbar.propTypes = {
-    screenName: PropTypes.string,
-    handleAvatarClick: PropTypes.func,
-    handleAddQuestionClick: PropTypes.func
-}
+export default class Navbar extends React.Component {
 
-// Screen Name controls whether the add question button is rendered or not. On genres screen, the button is not rendered.
-
-export default class Navbar extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: this.props.user
+        }
+    }
 
     render() {
         var { handleAvatarClick, handleAddQuestionClick } = this.props;
@@ -50,7 +49,7 @@ export default class Navbar extends React.PureComponent {
                                         marginRight: '1rem',
                                         padding: '0.5rem'
                                     }}
-                                    onClick={event =>
+                                    onClick={(event) =>
                                         handleAvatarClick(event)
                                     }>
                                     <Avatar
@@ -89,3 +88,12 @@ export default class Navbar extends React.PureComponent {
         )
     }
 }
+// Define the props types and their values. 
+Navbar.propTypes = {
+    screenName: PropTypes.string,
+    handleAvatarClick: PropTypes.func,
+    handleAddQuestionClick: PropTypes.func,
+    user: PropTypes.object
+}
+
+// Screen Name controls whether the add question button is rendered or not. On genres screen, the button is not rendered.
