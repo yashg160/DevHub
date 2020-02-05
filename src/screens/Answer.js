@@ -122,9 +122,19 @@ export default class Answer extends React.Component {
 				.then(() => this.putAnswer(token))
 				.then(res => {
 					console.log(res);
+					this.setState({
+						loading: false,
+						error: false,
+						toQuestion: true
+					});
 				})
 				.catch(error => {
 					console.log(error);
+					this.setState({
+						loading: false,
+						error: true,
+						toQuestion: false
+					});
 				});
 		} else {
 			this.checkAnswer()
