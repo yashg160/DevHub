@@ -337,9 +337,7 @@ export default class Dashboard extends React.Component {
 					) ? (
 							<Button
 								variant='outlined'
-								style={{
-									color: '#54e1e3'
-								}}
+								color='primary'
 								startIcon={<ThumbUpIcon />}
 								onClick={() => {
 									utils
@@ -409,10 +407,14 @@ export default class Dashboard extends React.Component {
 						)}
 				</div>
 				<div style={{ marginTop: '2rem' }}>
-					<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
-					{answer.comment_thread ? this.createCommentList(
-						answer.comment_thread, false, 0
-					) : <Typography variant='body1'>No comments yet</Typography>}
+
+					{answer.comment_thread.length > 0 ?
+						<div>
+							<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
+							{this.createCommentList(answer.comment_thread, false, 0)}
+						</div>
+						:
+						<Typography variant='body1'>No comments yet</Typography>}
 				</div>
 			</div>
 		);
@@ -1047,9 +1049,6 @@ export default class Dashboard extends React.Component {
 									</div>
 
 									<div>
-										<Typography variant='subtitle1'>
-											User Name asked
-										</Typography>
 										<TextField
 											id='question'
 											label='Your Question'
