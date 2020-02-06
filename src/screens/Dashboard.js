@@ -279,8 +279,19 @@ export default class Dashboard extends React.Component {
 	}
 
 	handleCommentClick(event, i) {
-
-		console.log('Post comment method to be implemented');
+		console.log(event, i);
+		event.stopPropagation();
+		this.setState({ postingComment: true });
+		utils.postComment(this.state.comment, this.state.result[i].answer.id, null).then((status) => {
+			if (status === 'success')
+				this.setState({ snackbarMess: 'Comment posted successfully', snackbar: true, postingComment: false, comment: '' });
+			else
+				this.setState({ snackbarMess: 'Failed to post comment', snackbar: true, postingComment: false });
+		})
+			.catch((error) => {
+				console.error(error);
+				this.setState({ snackbarMess: 'Failed to post comment', snackbar: true, postingComment: false });
+			});
 	}
 
 	topAnswer(answer, i) {
@@ -409,7 +420,7 @@ export default class Dashboard extends React.Component {
 
 					</div><div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 						<Avatar src={this.state.user.avatar_url} alt={this.state.user.name} />
-						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline />
+						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline onChange={event => this.setState({ comment: event.target.value })} />
 					</div>
 					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
 						<Button variant='text' disabled={this.state.postingComment} style={{ textTransform: 'none', marginRight: '0.5rem' }} onClick={(event) => {
@@ -418,7 +429,7 @@ export default class Dashboard extends React.Component {
 						}}>
 							Cancel
 						</Button>
-						<Button variant='contained' disabled={this.state.postingComment} color='primary' style={{ color: '#fff', textTransform: 'none', marginLeft: '0.5rem' }} onClick={event => this.handleCommentClick(event)}>
+						<Button variant='contained' disabled={this.state.postingComment} color='primary' style={{ color: '#fff', textTransform: 'none', marginLeft: '0.5rem' }} onClick={event => this.handleCommentClick(event, i)}>
 							Comment
 						</Button>
 					</div>
