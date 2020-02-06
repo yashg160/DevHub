@@ -3,8 +3,6 @@ import './styles/dashboard.css';
 
 import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 
