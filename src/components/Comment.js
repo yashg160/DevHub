@@ -7,7 +7,8 @@ export default class Comment extends React.Component {
         super(props);
         this.state = {
             answerIndex: this.props.answerIndex,
-            depth: this.props.depth
+            depth: this.props.depth,
+            commentId: this.props.commentId
         }
     }
     render() {

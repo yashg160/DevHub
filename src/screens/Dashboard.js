@@ -72,6 +72,7 @@ export default class Dashboard extends React.Component {
 						isChild
 						answerIndex={i}
 						depth={depth}
+						commentId={comment.id}
 					/>
 					{comment.child_comments &&
 						this.createCommentList(comment.child_comments, true, depth + 1)}
