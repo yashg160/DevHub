@@ -141,11 +141,46 @@ async function getUser() {
 	return res.data;
 
 }
+
+async function postComment(comment, answerId, parentComment = null) {
+	const token = Cookies.get('TOKEN');
+	console.log('Posting comment. TOKEN: ', token);
+	let body;
+	if (parentComment) {
+		body = JSON.stringify({
+			comment: comment,
+			answer: answerId,
+			parent_comment: parentComment
+		})
+	}
+	else {
+		body = JSON.stringify({
+			comment: comment,
+			answer: answerId
+		})
+	}
+	console.log('Comment request body: ', body);
+	let rawResponse = await fetch(serverUrl + '/api/comments', {
+		method: 'POST',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: body
+	});
+	let res = await rawResponse.json();
+	console.log(res);
+
+	if (res.status === 'success') return 'success';
+	else return 'failed';
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
 	followClick,
 	requestClick,
 	upvoteAnswerClick,
-	getUser
+	getUser,
+	postComment
 };
