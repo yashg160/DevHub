@@ -29,6 +29,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Chip from '@material-ui/core/Chip';
 import Navbar from '../components/Navbar';
+import Comment from '../components/Comment';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import serverUrl from '../config';
@@ -38,27 +39,6 @@ import { ThemeProvider } from '@material-ui/core/styles/';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-
-export class Comment extends React.Component {
-	render() {
-		return (
-			<div style={{ marginBottom: this.props.isChild ? '0.1rem' : '0.4rem' }}>
-				<Typography variant='body2' style={{ fontWeight: 600 }}>
-					{this.props.author}
-				</Typography>
-				<Typography variant='subtitle2' color='textSecondary'>
-					{new Date(this.props.date).toLocaleDateString('en-US', {
-						weekday: 'long',
-						year: 'numeric',
-						month: 'long',
-						day: 'numeric'
-					})}
-				</Typography>
-				<Typography variant='subtitle2' style={{ marginTop: '0.1rem' }}>{this.props.comment}</Typography>
-			</div>
-		);
-	}
-}
 
 export default class Dashboard extends React.Component {
 	constructor(props) {
@@ -82,7 +62,7 @@ export default class Dashboard extends React.Component {
 		};
 		this.genres = null;
 	}
-	createCommentList(comments, isChild, depth) {
+	createCommentList(comments, isChild, depth, i) {
 		let items = comments.map((comment, i) => {
 			return (
 				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
@@ -92,6 +72,8 @@ export default class Dashboard extends React.Component {
 						author={comment.author_name}
 						date={comment.created_at}
 						isChild
+						answerIndex={i}
+						depth={depth}
 					/>
 					{comment.child_comments &&
 						this.createCommentList(comment.child_comments, true, depth + 1)}
@@ -411,7 +393,7 @@ export default class Dashboard extends React.Component {
 					{answer.comment_thread.length > 0 ?
 						<div>
 							<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
-							{this.createCommentList(answer.comment_thread, false, 0)}
+							{this.createCommentList(answer.comment_thread, false, 0, i)}
 						</div>
 						:
 						<Typography variant='body1'>No comments yet</Typography>}
