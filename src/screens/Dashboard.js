@@ -38,6 +38,7 @@ import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
+
 export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
@@ -56,9 +57,12 @@ export default class Dashboard extends React.Component {
 			newQuestionError: false,
 			snackbar: false,
 			snackbarMess: 'Snackbar messsage',
-			selectedGenres: []
+			selectedGenres: [],
+			postingComment: false,
+			comment: ''
 		};
 		this.genres = null;
+		this.editorRef = null;
 	}
 	createCommentList(comments, isChild, depth, i) {
 		let items = comments.map((comment, i) => {
@@ -274,6 +278,11 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
+	handleCommentClick(event, i) {
+
+		console.log('Post comment method to be implemented');
+	}
+
 	topAnswer(answer, i) {
 		if (answer == null) {
 			return (
@@ -389,13 +398,37 @@ export default class Dashboard extends React.Component {
 				</div>
 				<div style={{ marginTop: '2rem' }}>
 
+					{
+						answer.comment_thread.length > 0 ?
+							<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
+							:
+							<Typography variant='body1'>No comments yet</Typography>
+					}
+
+					<div style={{ display: 'flex', flexDirection: 'column' }}>
+
+					</div><div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+						<Avatar src={this.state.user.avatar_url} alt={this.state.user.name} />
+						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline />
+					</div>
+					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+						<Button variant='text' disabled={this.state.postingComment} style={{ textTransform: 'none', marginRight: '0.5rem' }} onClick={(event) => {
+							event.stopPropagation();
+							this.setState({ comment: '' });
+						}}>
+							Cancel
+						</Button>
+						<Button variant='contained' disabled={this.state.postingComment} color='primary' style={{ color: '#fff', textTransform: 'none', marginLeft: '0.5rem' }} onClick={event => this.handleCommentClick(event)}>
+							Comment
+						</Button>
+					</div>
+
 					{answer.comment_thread.length > 0 ?
 						<div>
-							<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
 							{this.createCommentList(answer.comment_thread, false, 0, i)}
 						</div>
 						:
-						<Typography variant='body1'>No comments yet</Typography>}
+						null}
 				</div>
 			</div>
 		);
