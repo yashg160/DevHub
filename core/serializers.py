@@ -158,7 +158,7 @@ class CommentThreadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('answer', 'author_name', 'comment', 'upvotes', 'child_comments',
+        fields = ('id', 'answer', 'author_name', 'comment', 'upvotes', 'child_comments',
                   'created_at', 'updated_at', )
 
 
