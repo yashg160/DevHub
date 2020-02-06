@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-
+import Buttons from './Buttons';
 
 export default class Comment extends React.Component {
     constructor(props) {
@@ -25,6 +25,10 @@ export default class Comment extends React.Component {
                     })}
                 </Typography>
                 <Typography variant='subtitle2' style={{ marginTop: '0.1rem' }}>{this.props.comment}</Typography>
+                <div style={{ display: 'flex', flexDirection: 'row', width: '25%', justifyContent: 'space-between', textTransform: 'capitalize' }}>
+                    <Buttons.UpvoteComment />
+                    <Buttons.ReplyComment />
+                </div>
             </div>
         );
     }
