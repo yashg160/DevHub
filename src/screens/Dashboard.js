@@ -37,8 +37,7 @@ import { ThemeProvider } from '@material-ui/core/styles/';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Editor from '@stfy/react-editor.js';
-
+import { Link } from '@material-ui/core';
 
 
 export default class Dashboard extends React.Component {
@@ -348,7 +347,7 @@ export default class Dashboard extends React.Component {
 					alignItems: 'flex-start'
 				}}>
 				<Typography variant='body1'>{answer.author_name}</Typography>
-				<Typography variant='subtitle2'>
+				<Typography variant='subtitle2' color='textSecondary'>
 					Updated at{' '}
 					{new Date(answer.updated_at).toLocaleDateString('en-US', {
 						weekday: 'long',
@@ -357,11 +356,19 @@ export default class Dashboard extends React.Component {
 						day: 'numeric'
 					})}
 				</Typography>
-				<div style={{ pointerEvents: 'none', padding: 0 }}>
-					<Editor
-						data={finalAnswer}
-						excludeDefaultTools={['header', 'link', 'bold', 'italic']}
-					/>
+				<div>
+					{
+						finalAnswer.blocks.length > 1 ?
+							<div style={{ marginTop: '0.5rem' }}>
+								<Typography variant='body1'>
+									{String(finalAnswer.blocks[0].data.text).substr(0, 200) + '...'}
+								</Typography>
+								<Link href='#' color='primary' variant='body1' onClick={() => this.props.history.push({ pathname: `/questions/${answer.question}` })}>Read More</Link>
+							</div>
+
+							:
+							<Typography variant='body1' style={{ marginTop: '0.5rem' }}>{String(finalAnswer.blocks[0].data.text)}</Typography>
+					}
 				</div>
 				<div
 					style={{
@@ -943,7 +950,10 @@ export default class Dashboard extends React.Component {
 													display: 'flex',
 													flexDirection: 'column'
 												}}>
-												{this.currentAnswer = i}
+												<div style={{ display: 'none' }}>
+													{this.currentAnswer = i}
+												</div>
+
 												{this.topAnswer(res.answer, i)}
 											</div>
 										</ExpansionPanelDetails>
