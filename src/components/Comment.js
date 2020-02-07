@@ -2,7 +2,6 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Buttons from './Buttons';
 import utils from '../utils';
-import Cookies from 'js-cookie';
 
 export default class Comment extends React.Component {
     constructor(props) {
