@@ -213,6 +213,27 @@ async function updateComment(comment, upvote, removeUpvote, commentId) {
 	if (res.status === 'success') return 'success';
 	else return 'failed';
 }
+
+async function getAllUsers(next) {
+	const token = Cookies.get('TOKEN');
+	let url = null;
+	if (next) url = next;
+	else url = serverUrl + '/all_users';
+
+	let rawResponse = await fetch(url, {
+		method: 'GET',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	});
+
+	let res = await rawResponse.json();
+	console.log(res);
+	if (rawResponse.status === 200) return res;
+	else throw Error('ERR_GET_USERS');
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
@@ -221,5 +242,6 @@ export default {
 	upvoteAnswerClick,
 	getUser,
 	postComment,
-	updateComment
+	updateComment,
+	getAllUsers
 };
