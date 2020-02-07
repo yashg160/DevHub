@@ -35,6 +35,16 @@ export default class Home extends React.Component {
 	}
 
 	componentDidMount() {
+		try {
+			let upvotedComments = JSON.parse(localStorage.getItem('UPVOTED_COMMENTS'));
+			console.log(upvotedComments);
+		}
+		catch (error) {
+			console.error(error);
+			localStorage.setItem('UPVOTED_COMMENTS', JSON.stringify([]));
+		}
+
+
 		if (window.location.href.includes('code')) {
 			var code = window.location.href.split('?code=')[1];
 			console.log(code);
