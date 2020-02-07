@@ -267,6 +267,12 @@ export default class Answer extends React.Component {
 								onData={(data) => this.setState({ answerValue: JSON.stringify(data) })}
 								onReady={() => console.log('Ready to type!!')}
 								onChange={() => console.log(this.state.answerValue)}
+								tools={{
+									inlineCode: {
+										class: InlineCode
+									},
+									link: LinkTool,
+								}}
 							/>
 						</div>
 
