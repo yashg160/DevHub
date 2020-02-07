@@ -230,7 +230,6 @@ async function getAllUsers(next) {
 	});
 
 	let res = await rawResponse.json();
-	console.log(res);
 	if (rawResponse.status === 200) return res;
 	else throw Error('ERR_GET_USERS');
 }
