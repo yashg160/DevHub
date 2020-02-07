@@ -30,6 +30,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
 import utils from '../utils';
+import Editor from '@stfy/react-editor.js';
+import CodeTool from '@editorjs/code';
+import List from '@editorjs/list';
+import LinkTool from '@editorjs/link';
+import Header from '@editorjs/header';
+import InlineCode from '@editorjs/inline-code';
 
 export default class Answer extends React.Component {
 	constructor(props) {
@@ -172,14 +178,14 @@ export default class Answer extends React.Component {
 							res.data.all_answers[i].id ===
 							this.props.location.state.answerId
 						) {
-							answerValue = res.data.all_answers[i].answer;
+							answerValue = JSON.parse(res.data.all_answers[i].answer);
 							break;
 						}
 					}
 				}
 				this.setState({
 					question: res.data,
-					answerValue: answerValue === null ? '' : answerValue,
+					answerValue: answerValue === null ? JSON.stringify({}) : answerValue,
 					editAnswer: this.props.location.state.editAnswer,
 					answerId: this.props.location.state.answerId
 				});
@@ -205,6 +211,7 @@ export default class Answer extends React.Component {
 					to={{ pathname: `/questions/${this.state.questionUrl}` }}
 				/>
 			);
+		else if (this.state.error) return <h1>There was an error</h1>
 		else
 			return (
 				<ThemeProvider theme={theme.theme}>
@@ -250,25 +257,19 @@ export default class Answer extends React.Component {
 							style={{ fontWeight: 500, marginTop: '1rem' }}>
 							Write an answer
 						</Typography>
-						<TextField
-							id='answer-field'
-							multiline
-							fullWidth
-							InputProps={{
-								style: {
-									marginTop: '1rem',
-									fontWeight: 500,
-									fontSize: 20
-								}
-							}}
-							value={this.state.answerValue}
-							onChange={event =>
-								this.setState({
-									answerValue: event.target.value
-								})
-							}
-							variant='filled'
-						/>
+						<div style={{
+							border: '1px solid #eeeeee',
+							borderRadius: '8px'
+						}}>
+							<Editor
+								autofocus
+								data={JSON.parse(this.state.answerValue)}
+								onData={(data) => this.setState({ answerValue: JSON.stringify(data) })}
+								onReady={() => console.log('Ready to type!!')}
+								onChange={() => console.log(this.state.answerValue)}
+							/>
+						</div>
+
 						<Button
 							variant='contained'
 							color='primary'
