@@ -8,8 +8,8 @@ import ReplyIcon from '@material-ui/icons/Reply';
 export class UpvoteComment extends React.PureComponent {
     render() {
         return (
-            <Button onClick={(event) => this.props.handleClick(event)} style={{ textTransform: 'none' }} startIcon={<ThumbUpIcon />}>
-                <Typography variant='caption'>Upvote</Typography>
+            <Button color={this.props.selected ? 'primary' : 'default'} onClick={(event) => this.props.handleClick(event)} style={{ textTransform: 'none' }} startIcon={<ThumbUpIcon />}>
+                <Typography variant='caption'>{this.props.selected ? 'Remove' : 'Upvote'}</Typography>
             </Button>
         )
     }
