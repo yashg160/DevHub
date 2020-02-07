@@ -49,7 +49,7 @@ export default class Answer extends React.Component {
 			question: null,
 			editAnswer: false,
 			answerId: null,
-			answerValue: ''
+			answerValue: null
 		};
 	}
 
@@ -185,7 +185,7 @@ export default class Answer extends React.Component {
 				}
 				this.setState({
 					question: res.data,
-					answerValue: answerValue === null ? JSON.stringify({}) : answerValue,
+					answerValue: answerValue === null ? {} : answerValue,
 					editAnswer: this.props.location.state.editAnswer,
 					answerId: this.props.location.state.answerId
 				});
