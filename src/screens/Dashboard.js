@@ -439,7 +439,7 @@ export default class Dashboard extends React.Component {
 
 					</div><div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 						<Avatar src={this.state.user.avatar_url} alt={this.state.user.name} />
-						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline onChange={event => this.setState({ comment: event.target.value })} />
+						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline onChange={event => this.setState({ comment: event.target.value })} value={this.state.comment} />
 					</div>
 					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
 						<Button variant='text' disabled={this.state.postingComment} style={{ textTransform: 'none', marginRight: '0.5rem' }} onClick={(event) => {
@@ -1143,7 +1143,7 @@ export default class Dashboard extends React.Component {
 													questionModal: false
 												})
 											}
-											style={{ marginRight: '0.2rem' }}>
+											style={{ marginRight: '0.2rem', textTransform: 'none' }}>
 											Cancel
 										</Button>
 										<Button
@@ -1155,7 +1155,7 @@ export default class Dashboard extends React.Component {
 													questionModal: false
 												})
 											}
-											style={{ marginLeft: '0.2rem' }}>
+											style={{ marginLeft: '0.2rem', textTransform: 'none', color: '#fff' }}>
 											Proceed
 										</Button>
 									</div>
@@ -1256,7 +1256,9 @@ export default class Dashboard extends React.Component {
 													genresModal: false
 												})
 											}
-											style={{ marginRight: '0.2rem' }}>
+											style={{
+												marginRight: '0.2rem', textTransform: 'none'
+											}}>
 											Cancel
 										</Button>
 										<Button
@@ -1265,7 +1267,7 @@ export default class Dashboard extends React.Component {
 											onClick={() =>
 												this.handleAddQuestion()
 											}
-											style={{ marginLeft: '0.2rem' }}>
+											style={{ marginLeft: '0.2rem', textTransform: 'none', color: '#fff' }}>
 											Add question
 										</Button>
 									</div>
