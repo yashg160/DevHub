@@ -64,7 +64,7 @@ export default class Dashboard extends React.Component {
 		this.genres = null;
 		this.editorRef = null;
 	}
-	createCommentList(comments, isChild, depth, i) {
+	createCommentList(comments, parentId = null, isChild, depth, i) {
 		let items = comments.map((comment, i) => {
 			return (
 				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
@@ -74,12 +74,13 @@ export default class Dashboard extends React.Component {
 						author={comment.author_name}
 						date={comment.created_at}
 						isChild
+						parentComment={parentId}
 						answerIndex={i}
 						depth={depth}
 						commentId={comment.id}
 					/>
-					{comment.child_comments &&
-						this.createCommentList(comment.child_comments, true, depth + 1)}
+					{comment.child_comments.length > 0 &&
+						this.createCommentList(comment.child_comments, comment.id, true, depth + 1)}
 				</div>
 			);
 		});
@@ -255,6 +256,7 @@ export default class Dashboard extends React.Component {
 	componentDidMount() {
 		var userName = Cookies.get('USER_NAME');
 		var token = Cookies.get('TOKEN');
+		let url = serverUrl + '/api/home';
 		console.log(userName);
 		console.log(token);
 		this.getGenres(token)
@@ -268,9 +270,26 @@ export default class Dashboard extends React.Component {
 
 		utils.getUser()
 			.then(user => {
-				this.fetchResult();
 				console.log(user);
 				this.setState({ user });
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ error: true, loading: false });
+			});
+
+		this.getResults(token, url)
+			.then((res) => {
+				console.log(res);
+				res.results.map(r => this.state.result.push(r));
+
+				//Check if "next" url exists in response. If it exists, then set hasMore in state to true.
+				//Also store the next url to make future requests for the infinite scrolling
+				if (res.next) this.setState({ hasMore: true, next: res.next });
+				else this.setState({ hasMore: false, next: null });
+
+				this.setState({ loading: false, error: false });
+				console.log(localStorage.getItem('UPVOTED_COMMENTS'));
 			})
 			.catch(error => {
 				console.error(error);
