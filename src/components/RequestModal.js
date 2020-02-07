@@ -8,7 +8,9 @@ import Backdrop from '@material-ui/core/Backdrop';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import utils from '../utils';
 import theme from '../theme';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, IconButton } from '@material-ui/core';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 
 export default class RequestModal extends React.Component {
@@ -18,7 +20,10 @@ export default class RequestModal extends React.Component {
             loading: true,
             error: false,
             people: [],
-            next: null
+            count: 0,
+            next: null,
+            hasMore: true,
+            selectedPeople: []
         }
     }
 
@@ -26,7 +31,9 @@ export default class RequestModal extends React.Component {
         utils.getAllUsers(this.state.next).then((res) => {
             for (let i = 0; i < res.results.length; i++) this.state.people.push(res.results[i]);
             console.log('Got all users');
-            this.setState({ loading: false, error: false, next: res.next });
+            console.log(res);
+            this.setState({ loading: false, error: false, count: res.count, next: res.next, hasMore: res.next === null ? false : true });
+            console.log(this.state);
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, error: false });
@@ -35,6 +42,7 @@ export default class RequestModal extends React.Component {
 
     componentDidMount() {
         this.getPeople();
+        console.log(this.state);
     }
 
     render() {
@@ -51,10 +59,11 @@ export default class RequestModal extends React.Component {
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}
                 BackdropComponent={Backdrop}
-                BackdropProps={{ timeout: 500 }}>
+                BackdropProps={{ timeout: 500 }}
+                onBackdropClick={event => this.props.backdropClick(event)}>
                 <Fade in={this.props.requestModal}>
                     <div
                         style={{
@@ -64,51 +73,118 @@ export default class RequestModal extends React.Component {
                         <div
                             style={{
                                 backgroundColor: '#e3e3e3',
-                                padding: '1rem'
+                                padding: '1rem',
                             }}>
                             <Typography variant='h6'>
                                 Request for an answer
                             </Typography>
                         </div>
 
-                        <Typography
-                            variant='h6'
-                            style={{
-                                fontWeight: 700,
-                                marginBottom: '0.5rem'
-                            }}>
-                            Ask people for answers
+                        <div style={{ padding: '1rem' }}>
+                            <Typography
+                                variant='h6'
+                                style={{
+                                    fontWeight: 700,
+                                    marginBottom: '0.5rem',
+                                }}>
+                                Ask people for answers
                         </Typography>
 
-                        <InfiniteScroll
-                            dataLength={this.state.people.length}
-                            next={() => this.getPeople()}
-                            hasMore={this.state.next !== null}
-                            loader={
-                                <div
-                                    style={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center'
-                                    }}>
-                                    <CircularProgress
-                                        color='secondary'
-                                        style={{ margin: '2rem' }}
-                                    />
-                                </div>
-                            }
-                            endMessage={
-                                <p style={{ textAlign: 'center' }}>
-                                    <b>Yay! You have seen it all</b>
-                                </p>
-                            }
-                        >
+                            <div style={{ height: '26rem', width: '100%', overflowY: 'scroll', }}>
+                                <InfiniteScroll
+                                    dataLength={this.state.count}
+                                    next={() => this.getPeople()}
+                                    hasMore={this.state.hasMore}
+                                    loader={
+                                        <div
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center'
+                                            }}>
+                                            <CircularProgress
+                                                color='secondary'
+                                                style={{ margin: '2rem' }}
+                                            />
+                                        </div>
+                                    }
+                                    endMessage={
+                                        <p style={{ textAlign: 'center' }}>
+                                            <b>Yay! You have seen it all</b>
+                                        </p>
+                                    }
+                                >
+                                    {
+                                        this.state.people.map((person, i) => {
+                                            return (
+                                                <RequestPeopleItem key={i} name={person.profile.full_name} bio={person.profile.bio} userName={person.username} addClick={userName => {
+                                                    let selectedPeople = this.state.selectedPeople;
+                                                    selectedPeople.push(userName);
+                                                    this.setState({ selectedPeople });
+                                                    console.log(this.state.selectedPeople);
+                                                }} removeClick={userName => {
+                                                    console.log(userName);
+                                                    let selectedPeople = this.state.selectedPeople;
+                                                    selectedPeople = utils.removeValueFromArray(selectedPeople, userName);
+                                                    this.setState({ selectedPeople });
+                                                    console.log(this.state.selectedPeople);
+                                                }} />
+                                            )
+                                        })
+                                    }
+                                </InfiniteScroll>
+                            </div>
+                        </div>
 
-                        </InfiniteScroll>
+
                     </div>
                 </Fade>
             </Modal>
+        )
+    }
+}
+
+export class RequestPeopleItem extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            selected: false,
+            name: this.props.name,
+            bio: this.props.bio,
+            userName: this.props.userName
+        }
+    }
+
+    render() {
+        return (
+            <div style={{
+                display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 2rem'
+            }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant='body1' style={{ fontWeight: 600 }}>{this.state.name}</Typography>
+                    <Typography variant='subtitle1' color='textSecondary' style={{ fontWeight: 600 }}>{this.state.bio}</Typography>
+                </div>
+
+                {
+                    this.state.selected ?
+                        <IconButton onClick={() => {
+                            this.props.removeClick(this.state.userName);
+                            this.setState({ selected: false })
+                        }}>
+                            <AddCircleIcon color='primary' />
+                        </IconButton>
+                        :
+                        <IconButton onClick={() => {
+                            this.props.addClick(this.state.userName);
+                            this.setState({ selected: true })
+                        }}>
+                            <AddCircleOutlineIcon color='primary' />
+                        </IconButton>
+
+                }
+
+            </div>
         )
     }
 }
