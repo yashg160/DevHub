@@ -175,6 +175,44 @@ async function postComment(comment, answerId, parentComment = null) {
 	if (res.status === 'success') return 'success';
 	else return 'failed';
 }
+
+async function updateComment(comment, upvote, removeUpvote, commentId) {
+	const token = Cookies.get('TOKEN');
+	console.log('Putting comment: ', token);
+	let body;
+
+	if (upvote) {
+		body = JSON.stringify({
+
+			comment: comment,
+			upvote: true
+		});
+	}
+	else {
+		body = JSON.stringify({
+
+			comment: comment,
+			removeUpvote: true
+		});
+	}
+
+	let rawResponse = await fetch(serverUrl + `/api/comments/${commentId}`, {
+		method: 'PUT',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: body
+	});
+
+
+	let res = await rawResponse.json();
+	console.log(res);
+
+	if (res.status === 'success') return 'success';
+	else return 'failed';
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
@@ -182,5 +220,6 @@ export default {
 	requestClick,
 	upvoteAnswerClick,
 	getUser,
-	postComment
+	postComment,
+	updateComment
 };
