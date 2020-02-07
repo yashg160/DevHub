@@ -37,6 +37,8 @@ import { ThemeProvider } from '@material-ui/core/styles/';
 import Cookies from 'js-cookie';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Editor from '@stfy/react-editor.js';
+
 
 
 export default class Dashboard extends React.Component {
@@ -62,30 +64,9 @@ export default class Dashboard extends React.Component {
 			comment: ''
 		};
 		this.genres = null;
-		this.editorRef = null;
+		this.currentAnswer = null;
 	}
-	createCommentList(comments, parentId = null, isChild, depth, i) {
-		let items = comments.map((comment, i) => {
-			return (
-				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
-					<Comment
-						key={comment.answer}
-						comment={comment.comment}
-						author={comment.author_name}
-						date={comment.created_at}
-						isChild
-						parentComment={parentId}
-						answerIndex={i}
-						depth={depth}
-						commentId={comment.id}
-					/>
-					{comment.child_comments.length > 0 &&
-						this.createCommentList(comment.child_comments, comment.id, true, depth + 1)}
-				</div>
-			);
-		});
-		return items;
-	}
+
 	async getGenres(token) {
 		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
 			method: 'GET',
@@ -313,6 +294,31 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
+	createCommentList(comments, parentId = null, isChild, depth, i) {
+		if (i !== this.currentAnswer && !isChild) depth = 0;
+		let items = comments.map((comment, i) => {
+			return (
+				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
+					<Comment
+						key={comment.answer}
+						comment={comment.comment}
+						author={comment.author_name}
+						date={comment.created_at}
+						isChild
+						parentComment={parentId}
+						answerIndex={i}
+						depth={depth}
+						commentId={comment.id}
+					/>
+					{
+						comment.child_comments.length > 0 ? this.createCommentList(comment.child_comments, comment.id, true, depth + 1) : null
+					}
+				</div>
+			);
+		});
+		return items;
+	}
+
 	topAnswer(answer, i) {
 		if (answer == null) {
 			return (
@@ -321,6 +327,19 @@ export default class Dashboard extends React.Component {
 				</div>
 			);
 		}
+		var finalAnswer = {
+			time: new Date().getTime(),
+			blocks: [
+				{
+					type: 'paragraph',
+					data: {
+						text: `${answer.answer}`,
+						level: 2
+					}
+				}
+			],
+			version: "2.12.4"
+		};
 		return (
 			<div
 				style={{
@@ -338,13 +357,12 @@ export default class Dashboard extends React.Component {
 						day: 'numeric'
 					})}
 				</Typography>
-				<Typography
-					variant='body1'
-					style={{
-						marginTop: '2rem'
-					}}>
-					{answer.answer}
-				</Typography>
+				<div style={{ pointerEvents: 'none', padding: 0 }}>
+					<Editor
+						data={finalAnswer}
+						excludeDefaultTools={['header', 'link', 'bold', 'italic']}
+					/>
+				</div>
 				<div
 					style={{
 						display: 'flex',
@@ -434,10 +452,7 @@ export default class Dashboard extends React.Component {
 							:
 							<Typography variant='body1'>No comments yet</Typography>
 					}
-
-					<div style={{ display: 'flex', flexDirection: 'column' }}>
-
-					</div><div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
 						<Avatar src={this.state.user.avatar_url} alt={this.state.user.name} />
 						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline onChange={event => this.setState({ comment: event.target.value })} value={this.state.comment} />
 					</div>
@@ -928,6 +943,7 @@ export default class Dashboard extends React.Component {
 													display: 'flex',
 													flexDirection: 'column'
 												}}>
+												{this.currentAnswer = i}
 												{this.topAnswer(res.answer, i)}
 											</div>
 										</ExpansionPanelDetails>
