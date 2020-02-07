@@ -1,13 +1,12 @@
 import React from 'react';
 import Cookies from 'js-cookie';
-
+import RequestModal from '../components/RequestModal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
@@ -29,7 +28,8 @@ export default class Question extends React.Component {
 			loading: true,
 			error: false,
 			menuVisible: null,
-			question: null
+			question: null,
+			requestModal: false
 		};
 	}
 
@@ -341,84 +341,24 @@ export default class Question extends React.Component {
 									</Button>
 								)}
 
-							{utils.checkUserInArray(
-								this.state.question.requested,
-								this.state.user.login
-							) ? (
-									<Button
-										variant='text'
-										color='primary'
-										startIcon={<EmojiPeopleIcon />}
-										onClick={event => {
-											utils
-												.requestClick(
-													event,
-													this.state.question.url,
-													this.state.question.requested,
-													this.state.user.login
-												)
-												.then(status => {
-													if (status === 'removed') {
-														this.state.question.requested = utils.removeValueFromArray(
-															this.state.question
-																.requested,
-															this.state.user.login
-														);
-														this.forceUpdate();
-													} else throw Error();
-												})
-												.catch(error =>
-													console.error(error)
-												);
-										}}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 500,
-												fontSize: 18,
-												textTransform: 'capitalize'
-											}}>
-											Request &#183;{' '}
-											{this.state.question.requested.length}
-										</Typography>
-									</Button>
-								) : (
-									<Button
-										variant='text'
-										style={{ color: '#919191' }}
-										startIcon={<EmojiPeopleIcon />}
-										onClick={event => {
-											utils
-												.requestClick(
-													event,
-													this.state.question.url,
-													this.state.question.requested,
-													this.state.user.login
-												)
-												.then(status => {
-													if (status === 'success') {
-														this.state.question.requested.push(
-															this.state.user.login
-														);
-														this.forceUpdate();
-													} else throw Error();
-												})
-												.catch(error =>
-													console.error(error)
-												);
-										}}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 500,
-												fontSize: 18,
-												textTransform: 'capitalize'
-											}}>
-											Request &#183;{' '}
-											{this.state.question.requested.length}
-										</Typography>
-									</Button>
-								)}
+							<Button
+								variant='text'
+								style={{ color: '#919191' }}
+								startIcon={<EmojiPeopleIcon />}
+								onClick={() => {
+									this.setState({ requestModal: true });
+								}}>
+								<Typography
+									variant='body2'
+									style={{
+										fontWeight: 500,
+										fontSize: 18,
+										textTransform: 'capitalize'
+									}}>
+									Request &#183;{' '}
+									{this.state.question.requested.length}
+								</Typography>
+							</Button>
 						</div>
 
 						<Typography
@@ -596,6 +536,8 @@ export default class Question extends React.Component {
 						Sign Out
 					</MenuItem>
 				</Menu>
+
+				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} />
 			</ThemeProvider>
 		);
 	}
