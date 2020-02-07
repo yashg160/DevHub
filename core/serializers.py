@@ -180,10 +180,10 @@ class CommentSerializer(serializers.ModelSerializer):
         upvote = validated_data.get('upvote', False)
         remove_upvote = validated_data.get('remove_upvote', False)
 
-        if upvote and (not instance.upvoters.get(username=current_user.username)):
+        if upvote and not instance.upvoters.filter(username=current_user.username).exists():
             instance.comment.upvoters.add(current_user)
 
-        if remove_upvote and instance.upvoters.get(username=current_user.username):
+        if remove_upvote and instance.upvoters.filter(username=current_user.username).exist():
             instance.comment.upvoters.remove(current_user)
 
         instance.updated_at = datetime.now()
