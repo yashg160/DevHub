@@ -1,40 +1,18 @@
 import React from 'react';
 import Cookies from 'js-cookie';
-
 import Backdrop from '@material-ui/core/Backdrop';
 import Container from '@material-ui/core/Container';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import GroupIcon from '@material-ui/icons/Group';
 import Typography from '@material-ui/core/Typography';
-
 import SendIcon from '@material-ui/icons/Send';
 import { Redirect } from 'react-router-dom';
-
-import TextField from '@material-ui/core/TextField';
-
 import Button from '@material-ui/core/Button';
-
-import Link from '@material-ui/core/Link';
-
 import serverUrl from '../config';
 import Navbar from '../components/Navbar';
-import Avatar from '@material-ui/core/Avatar';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import theme from '../theme';
 import { ThemeProvider } from '@material-ui/core/styles/';
 import utils from '../utils';
 import Editor from '@stfy/react-editor.js';
-import CodeTool from '@editorjs/code';
-import List from '@editorjs/list';
 import LinkTool from '@editorjs/link';
-import Header from '@editorjs/header';
 import InlineCode from '@editorjs/inline-code';
 
 export default class Answer extends React.Component {
