@@ -263,7 +263,7 @@ export default class Answer extends React.Component {
 						}}>
 							<Editor
 								autofocus
-								data={JSON.parse(this.state.answerValue)}
+								data={this.state.answerValue}
 								onData={(data) => this.setState({ answerValue: JSON.stringify(data) })}
 								onReady={() => console.log('Ready to type!!')}
 								onChange={() => console.log(this.state.answerValue)}
