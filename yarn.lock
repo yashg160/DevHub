@@ -886,6 +886,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@editorjs/code@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@editorjs/code/-/code-2.4.1.tgz#a1851c781c9ead9a84bd921f04df172a2383f550"
+  integrity sha512-R4UUApkm6FLuxrQoqISg6GL73t0WWOdoPdAmAa36xarmtmBRkxu4AfxIwzW2CtUD1CqG1T7Be6jnv4ZeUoMNYQ==
+
 "@editorjs/editorjs@^2.12.4":
   version "2.16.1"
   resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.16.1.tgz#41a2707fc126518dca513a09aa207aa8b6d9a65c"
@@ -898,6 +903,18 @@
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@editorjs/header/-/header-2.4.0.tgz#0ac14bf68e4a01305bbb20c8ffb754a75a3d374a"
   integrity sha512-gXq7LkMWWno0c6vYDIROn0vqGnbQ/sGENljdtTWSBefCUqzKlqbQaeN4x4IqqvxCvOiH3RtdjJvfv92/ziIxmg==
+
+"@editorjs/inline-code@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@editorjs/inline-code/-/inline-code-1.3.1.tgz#4890e30d00dcaeacafbcb30459309dfd740b0d4b"
+  integrity sha512-iY6DeRmJo2Jl6sB2S9QEA9OoSp+KCHBztoY2fjPeiBcKCOKX8we5H3JQJTLxT0L/N8uJqCUiiPKgG6xvqaCn+g==
+
+"@editorjs/link@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@editorjs/link/-/link-2.1.3.tgz#fd14f0a519aab75e234bba5f6e729ba5f0b94422"
+  integrity sha512-nLRnuco61scMPyvczhOVjCd2axk6PWPClpBYEtrtOxP4Cp6tHNRuwvVfSwSGewHBb4A4SJL/NMCShRdfbOm6DQ==
+  dependencies:
+    "@babel/runtime" "^7.3.1"
 
 "@editorjs/list@^1.4.0":
   version "1.4.0"
