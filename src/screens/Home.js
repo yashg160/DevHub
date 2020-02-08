@@ -81,14 +81,13 @@ export default class Home extends React.Component {
 					this.setState({ loading: false });
 				});
 		} else {
-			this.setState({ loading: false });
 
 			const token = Cookies.get('TOKEN');
 			const userName = Cookies.get('USER_NAME');
 
 			if (token !== null && userName !== null) {
 				this.loginUser(token, userName).then((res) => {
-					this.setState({ redirect: true, firstLogin: false });
+					this.setState({ loading: false, redirect: true, firstLogin: false });
 				}).catch((error) => {
 					this.setState({ loading: false, redirect: false })
 				});
