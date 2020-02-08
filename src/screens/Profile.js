@@ -93,7 +93,7 @@ export default class Profile extends React.Component {
 					user: res.profile_data,
 					questions: res.asked_questions,
 					answers: res.answered,
-					comments: res.comments,
+					comments: res.written_comments,
 					upvotedAnswers: res.upvoted_answers,
 					upvotedComments: res.upvoted_comments,
 					requests: res.requested_answers,
@@ -210,6 +210,7 @@ export default class Profile extends React.Component {
 	}
 
 	render() {
+		console.log('State:', this.state);
 		if (this.state.loading)
 			return <Backdrop open={this.state.loading} color='#fff' />;
 		else if (this.state.error) return <h1>There was an error</h1>;
