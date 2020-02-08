@@ -23,7 +23,7 @@ export default class RequestModal extends React.Component {
             count: 0,
             next: null,
             hasMore: true,
-            selectedPeople: []
+            selectedPeople: this.props.requested,
         }
     }
 
@@ -38,6 +38,39 @@ export default class RequestModal extends React.Component {
             console.error(error);
             this.setState({ loading: false, error: false });
         });
+    }
+
+    async sendRequests() {
+        const token = Cookies.get('TOKEN');
+
+        let rawResponse = await fetch(`${serverUrl}/api/questions/${this.props.questionUrl}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Token ${token}`,
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                requested: this.state.selectedPeople
+            })
+        });
+
+        let res = await rawResponse.json();
+        console.log(rawResponse);
+        console.log(res);
+
+        if (rawResponse.status === 200 && res.status === 'success') return res;
+        else throw Error('ERR_REQUEST');
+    }
+
+    handleRequest() {
+        this.sendRequests().then((res) => {
+            console.log('Sent requests successfully');
+            this.props.onSendComplete(false);
+        })
+            .catch((error) => {
+                console.error(error);
+            })
     }
 
     componentDidMount() {
@@ -81,7 +114,7 @@ export default class RequestModal extends React.Component {
                             <Typography variant='h6'>
                                 Request for an answer
                             </Typography>
-                            <Button variant='outlined' color='secondary' style={{ borderRadius: '2rem', textTransform: 'none' }}>
+                            <Button variant='outlined' color='secondary' style={{ borderRadius: '2rem', textTransform: 'none' }} onClick={event => this.handleRequest()}>
                                 Send Requests
                             </Button>
                         </div>
