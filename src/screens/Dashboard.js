@@ -16,11 +16,8 @@ import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-
+import CustomSnackbar from '../components/CustomSnackbar'
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
@@ -1395,43 +1392,8 @@ export default class Dashboard extends React.Component {
 							Sign Out
 						</MenuItem>
 					</Menu>
-					<Snackbar
-						anchorOrigin={{
-							vertical: 'bottom',
-							horizontal: 'left'
-						}}
-						open={this.state.snackbar}
-						autoHideDuration={5000}
-						onClose={() => this.setState({ snackbar: false })}
-						ContentProps={{
-							'aria-describedby': 'messsage-snackbar',
-							style: { backgroundColor: '#fff' }
-						}}
-						message={
-							<Typography
-								variant='body1'
-								style={{ color: '#000' }}>
-								{this.state.snackbarMess}
-							</Typography>
-						}
-						transitionDuration={{
-							enter: 300,
-							exit: 300
-						}}
-						style={{
-							backgroundColor: '#fff'
-						}}
-						action={[
-							<IconButton
-								key='close'
-								aria-label='close'
-								color='secondary'
-								onClick={() =>
-									this.setState({ snackbar: false })
-								}>
-								<CloseIcon />
-							</IconButton>
-						]}></Snackbar>
+
+					<CustomSnackbar message={this.state.snackbarMess} snackbar={this.state.snackbar} closeSnackbar={snackbar => this.setState({ snackbar })} />
 				</div>
 			</ThemeProvider>
 		);
