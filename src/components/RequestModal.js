@@ -82,19 +82,20 @@ export default class RequestModal extends React.Component {
 
                         <div style={{ padding: '1rem' }}>
                             <Typography
-                                variant='h6'
+                                variant='body1'
                                 style={{
-                                    fontWeight: 700,
+                                    fontWeight: 600,
                                     marginBottom: '0.5rem',
                                 }}>
-                                Ask people for answers
-                        </Typography>
+                                Ask people for answers {' '}&#183; {this.state.selectedPeople.length}
+                            </Typography>
 
-                            <div style={{ height: '26rem', width: '100%', overflowY: 'scroll', }}>
+                            <div style={{ height: '26rem', width: '100%', overflowY: 'scroll' }} id='scroll-div'>
                                 <InfiniteScroll
-                                    dataLength={this.state.count}
+                                    dataLength={this.state.people.length}
                                     next={() => this.getPeople()}
                                     hasMore={this.state.hasMore}
+                                    scrollableTarget='scroll-div'
                                     loader={
                                         <div
                                             style={{
@@ -159,11 +160,11 @@ export class RequestPeopleItem extends React.Component {
     render() {
         return (
             <div style={{
-                display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 2rem'
+                display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0.5rem 2rem'
             }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     <Typography variant='body1' style={{ fontWeight: 600 }}>{this.state.name}</Typography>
-                    <Typography variant='subtitle1' color='textSecondary' style={{ fontWeight: 600 }}>{this.state.bio}</Typography>
+                    <Typography variant='caption' color='textSecondary'>{this.state.bio}</Typography>
                 </div>
 
                 {
