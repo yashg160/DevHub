@@ -87,6 +87,7 @@ export default class UpvotedAnswers extends React.Component {
 
 						<Typography
 							variant='body2'
+							color='textSecondary'
 							style={{ marginTop: '0.5rem' }}>
 							You upvoted this
 						</Typography>
