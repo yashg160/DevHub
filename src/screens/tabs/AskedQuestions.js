@@ -110,7 +110,7 @@ export default class AskedQuestions extends React.Component {
 									onClick={event => {
 										event.stopPropagation();
 										this.props.history.push({
-											pathname: `questions/${res.url}/answer`,
+											pathname: `/questions/${res.url}/answer`,
 											state: {
 												question: res
 											}
