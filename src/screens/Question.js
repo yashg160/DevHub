@@ -537,7 +537,7 @@ export default class Question extends React.Component {
 					</MenuItem>
 				</Menu>
 
-				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} />
+				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} questionUrl={this.state.question.url} requested={this.state.question.requested} onSendComplete={requestModal => this.setState({ requestModal })} />
 			</ThemeProvider>
 		);
 	}
