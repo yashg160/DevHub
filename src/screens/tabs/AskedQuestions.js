@@ -8,12 +8,15 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import utils from '../../utils';
+import RequestModal from '../../components/RequestModal';
 
 export default class AskedQuestions extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			questions: props.questions
+			questions: props.questions,
+			requestModal: false,
+			currentQuestion: props.questions[0]
 		};
 		console.log(props);
 	}
@@ -21,6 +24,7 @@ export default class AskedQuestions extends React.Component {
 	componentDidMount() { }
 	render() {
 		var showProfileSnackbar = this.props.showProfileSnackbar;
+		var requestClick = this.props.requestClick;
 		return (
 			<div>
 				<InfiniteScroll
@@ -195,58 +199,25 @@ export default class AskedQuestions extends React.Component {
 											</Typography>
 										</Button>
 									)}
-								{utils.checkUserInArray(res.requested, this.props.userName) ? (
-									<Button
-										variant='text'
-										color='primary'
-										startIcon={<EmojiPeopleIcon />}
-										onClick={() => showProfileSnackbar('Answer already requested')}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 600,
-												textTransform: 'capitalize'
-											}}>
-											Request &#183;{' '}
-											{res.requested.length}
-										</Typography>
-									</Button>
-								) : (
-										<Button
-											variant='text'
-											style={{
-												color: '#919191'
-											}}
-											startIcon={<EmojiPeopleIcon />}
-											onClick={event =>
-												utils.requestClick(
-													event,
-													res.url,
-													res.requested,
-													this.props.userName
-												).then((status) => {
-													if (status === 'success') {
-														this.state.questions[i].requested.push(this.props.userName);
-														showProfileSnackbar('Request successfully posted');
-														this.forceUpdate();
-													}
-													else throw Error('ERR_REQUEST');
-												}).catch((error) => {
-													console.error(error);
-													showProfileSnackbar('Answer request could not be posted');
-												})
-											}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600,
-													textTransform: 'capitalize'
-												}}>
-												Request &#183;{' '}
-												{res.requested.length}
-											</Typography>
-										</Button>
-									)}
+
+								<Button
+									variant='text'
+									style={{ color: '#919191' }}
+									startIcon={<EmojiPeopleIcon />}
+									onClick={() => {
+										this.setState({ currentQuestion: res, requestModal: true });
+									}}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 600,
+											textTransform: 'capitalize'
+										}}>
+										Request &#183;{' '}
+										{res.requested.length}
+									</Typography>
+								</Button>
+
 							</div>
 							<Typography
 								variant='body1'
@@ -259,6 +230,7 @@ export default class AskedQuestions extends React.Component {
 						</div>
 					))}
 				</InfiniteScroll>
+				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} questionUrl={this.state.currentQuestion.url} requested={this.state.currentQuestion.requested} onSendComplete={requestModal => this.setState({ requestModal })} />
 			</div>
 		);
 	}
