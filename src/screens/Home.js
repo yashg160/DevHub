@@ -34,6 +34,22 @@ export default class Home extends React.Component {
 		return content;
 	}
 
+	async loginUser(token, userName) {
+		let rawResponse = await fetch(`${serverUrl}/user/${userName}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Token ${token}`,
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
+		});
+		console.log(rawResponse);
+		let res = await rawResponse.json();
+		console.log(res);
+		if (rawResponse.status === 200 && res.status === 'success') return res;
+		throw Error('ERR_LOGIN');
+	}
+
 	componentDidMount() {
 		try {
 			let upvotedComments = JSON.parse(localStorage.getItem('UPVOTED_COMMENTS'));
@@ -67,7 +83,16 @@ export default class Home extends React.Component {
 		} else {
 			this.setState({ loading: false });
 
-			// Later add logic to authorize user. If authorized, then automatically redirect to the dashboard
+			const token = Cookies.get('TOKEN');
+			const userName = Cookies.get('USER_NAME');
+
+			if (token !== null && userName !== null) {
+				this.loginUser(token, userName).then((res) => {
+					this.setState({ redirect: true, firstLogin: false });
+				}).catch((error) => {
+					this.setState({ loading: false, redirect: false })
+				});
+			}
 		}
 	}
 
