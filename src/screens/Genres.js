@@ -10,9 +10,7 @@ import Cookies from 'js-cookie';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import CloseIcon from '@material-ui/icons/Close';
+import CustomSnackbar from '../components/CustomSnackbar';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -310,26 +308,7 @@ export default class Genres extends React.Component {
 						<Typography variant='body1'>Sign Out</Typography>
 					</MenuItem>
 				</Menu>
-				<Snackbar
-					anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-					key={'profile-snackbar'}
-					open={this.state.snackbar}
-					autoHideDuration={5000}
-					onClose={() => this.setState({ snackbar: false })}>
-					<SnackbarContent
-						style={{ backgroundColor: '#41b578', color: '#fff' }}
-						message={this.state.snackbarMess}
-						action={
-							<IconButton
-								color='secondary'
-								onClick={() =>
-									this.setState({ snackbar: false })
-								}>
-								<CloseIcon />
-							</IconButton>
-						}
-					/>
-				</Snackbar>
+				<CustomSnackbar snackbar={this.state.snackbar} message={this.state.snackbarMess} closeSnackbar={snackbar => this.setState({ snackbar })} />
 			</ThemeProvider>
 		);
 	}
