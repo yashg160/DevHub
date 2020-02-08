@@ -8,7 +8,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import utils from '../utils';
 import theme from '../theme';
-import { CircularProgress, IconButton } from '@material-ui/core';
+import { CircularProgress, IconButton, Button } from '@material-ui/core';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
@@ -74,10 +74,16 @@ export default class RequestModal extends React.Component {
                             style={{
                                 backgroundColor: '#e3e3e3',
                                 padding: '1rem',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
                             }}>
                             <Typography variant='h6'>
                                 Request for an answer
                             </Typography>
+                            <Button variant='outlined' color='secondary' style={{ borderRadius: '2rem', textTransform: 'none' }}>
+                                Send Requests
+                            </Button>
                         </div>
 
                         <div style={{ padding: '1rem' }}>
@@ -119,18 +125,26 @@ export default class RequestModal extends React.Component {
                                     {
                                         this.state.people.map((person, i) => {
                                             return (
-                                                <RequestPeopleItem key={i} name={person.profile.full_name} bio={person.profile.bio} userName={person.username} addClick={userName => {
-                                                    let selectedPeople = this.state.selectedPeople;
-                                                    selectedPeople.push(userName);
-                                                    this.setState({ selectedPeople });
-                                                    console.log(this.state.selectedPeople);
-                                                }} removeClick={userName => {
-                                                    console.log(userName);
-                                                    let selectedPeople = this.state.selectedPeople;
-                                                    selectedPeople = utils.removeValueFromArray(selectedPeople, userName);
-                                                    this.setState({ selectedPeople });
-                                                    console.log(this.state.selectedPeople);
-                                                }} />
+                                                <RequestPeopleItem
+                                                    key={i}
+                                                    name={person.profile.full_name}
+                                                    bio={person.profile.bio}
+                                                    userName={person.username}
+                                                    addClick={userName => {
+                                                        let selectedPeople = this.state.selectedPeople;
+                                                        selectedPeople.push(userName);
+                                                        this.setState({ selectedPeople });
+                                                        console.log(this.state.selectedPeople);
+                                                    }}
+                                                    removeClick={userName => {
+                                                        console.log(userName);
+                                                        let selectedPeople = this.state.selectedPeople;
+                                                        selectedPeople = utils.removeValueFromArray(selectedPeople, userName);
+                                                        this.setState({ selectedPeople });
+                                                        console.log(this.state.selectedPeople);
+                                                    }}
+                                                    selectedPeople={this.state.selectedPeople}
+                                                />
                                             )
                                         })
                                     }
@@ -168,7 +182,7 @@ export class RequestPeopleItem extends React.Component {
                 </div>
 
                 {
-                    this.state.selected ?
+                    this.state.selected || utils.checkUserInArray(this.props.selectedPeople, this.state.userName) ?
                         <IconButton onClick={() => {
                             this.props.removeClick(this.state.userName);
                             this.setState({ selected: false })
@@ -176,13 +190,18 @@ export class RequestPeopleItem extends React.Component {
                             <AddCircleIcon color='primary' />
                         </IconButton>
                         :
+                        null
+                }
+                {
+                    !this.state.selected && !utils.checkUserInArray(this.props.selectedPeople, this.state.userName) ?
                         <IconButton onClick={() => {
                             this.props.addClick(this.state.userName);
                             this.setState({ selected: true })
                         }}>
                             <AddCircleOutlineIcon color='primary' />
                         </IconButton>
-
+                        :
+                        null
                 }
 
             </div>
