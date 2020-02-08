@@ -491,7 +491,7 @@ export default class Dashboard extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div>
-					<Navbar showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
+					<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
 					<Container
 						maxWidth='lg'
 						style={{
