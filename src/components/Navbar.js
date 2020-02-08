@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import PropTypes from 'prop-types';
 import '../screens/styles/dashboard.css';
 
@@ -18,7 +19,7 @@ export default class Navbar extends React.Component {
     }
 
     render() {
-        var { handleAvatarClick, handleAddQuestionClick, showAddQuestion } = this.props;
+        var { handleAvatarClick, handleAddQuestionClick, showAddQuestion, handleHomeClick } = this.props;
         return (
             <AppBar position='fixed'>
                 <Toolbar variant='regular' color='primary'>
@@ -31,11 +32,13 @@ export default class Navbar extends React.Component {
                                 alignItems: 'center',
                                 justifyContent: 'space-between'
                             }}>
-                            <Typography
+                            <Link
+                                href='#'
+                                onClick={() => handleHomeClick()}
                                 variant='h5'
                                 style={{ color: '#fff' }}>
                                 DevHub
-                            </Typography>
+                            </Link>
 
                             <div
                                 style={{
@@ -95,6 +98,7 @@ Navbar.propTypes = {
     showAddQuestion: PropTypes.bool.isRequired,
     handleAvatarClick: PropTypes.func,
     handleAddQuestionClick: PropTypes.func,
+    handleHomeClick: PropTypes.func,
     user: PropTypes.object
 }
 
