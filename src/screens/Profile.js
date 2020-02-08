@@ -217,7 +217,7 @@ export default class Profile extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-					<Navbar showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
+					<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
 					<Grid
 						container
 						direction='row'
