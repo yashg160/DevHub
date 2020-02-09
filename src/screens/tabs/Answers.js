@@ -4,8 +4,6 @@ import Link from '@material-ui/core/Link';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import serverUrl from '../../config';
-import utils from '../../utils';
 import theme from '../../theme';
 import { ThemeProvider } from '@material-ui/core/styles';
 
