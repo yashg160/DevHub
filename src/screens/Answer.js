@@ -14,6 +14,7 @@ import utils from '../utils';
 import Editor from '@stfy/react-editor.js';
 import LinkTool from '@editorjs/link';
 import InlineCode from '@editorjs/inline-code';
+import MainMenu from '../components/MainMenu';
 
 export default class Answer extends React.Component {
 	constructor(props) {
@@ -27,7 +28,8 @@ export default class Answer extends React.Component {
 			question: null,
 			editAnswer: false,
 			answerId: null,
-			answerValue: null
+			answerValue: null,
+			menuVisible: null
 		};
 	}
 
@@ -156,7 +158,9 @@ export default class Answer extends React.Component {
 							res.data.all_answers[i].id ===
 							this.props.location.state.answerId
 						) {
-							answerValue = JSON.parse(res.data.all_answers[i].answer);
+							answerValue = JSON.parse(
+								res.data.all_answers[i].answer
+							);
 							break;
 						}
 					}
@@ -173,11 +177,13 @@ export default class Answer extends React.Component {
 				this.setState({ error: true, loading: false });
 			});
 
-		utils.getUser().then((user) => {
-			console.log(user);
-			this.setState({ user, loading: false, error: false });
-		})
-			.catch((error) => console.error(error));
+		utils
+			.getUser()
+			.then(user => {
+				console.log(user);
+				this.setState({ user, loading: false, error: false });
+			})
+			.catch(error => console.error(error));
 	}
 
 	render() {
@@ -189,11 +195,23 @@ export default class Answer extends React.Component {
 					to={{ pathname: `/questions/${this.state.questionUrl}` }}
 				/>
 			);
-		else if (this.state.error) return <h1>There was an error</h1>
+		else if (this.state.error) return <h1>There was an error</h1>;
 		else
 			return (
 				<ThemeProvider theme={theme.theme}>
-					<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={false} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add question button pressed')} user={this.state.user} />
+					<Navbar
+						handleHomeClick={() =>
+							this.props.history.push('/dashboard')
+						}
+						showAddQuestion={false}
+						handleAvatarClick={event =>
+							this.setState({ menuVisible: event.currentTarget })
+						}
+						handleAddQuestionClick={() =>
+							console.log('Add question button pressed')
+						}
+						user={this.state.user}
+					/>
 
 					<Container
 						maxWidth='md'
@@ -235,21 +253,28 @@ export default class Answer extends React.Component {
 							style={{ fontWeight: 500, marginTop: '1rem' }}>
 							Write an answer
 						</Typography>
-						<div style={{
-							border: '1px solid #eeeeee',
-							borderRadius: '8px'
-						}}>
+						<div
+							style={{
+								border: '1px solid #eeeeee',
+								borderRadius: '8px'
+							}}>
 							<Editor
 								autofocus
 								data={this.state.answerValue}
-								onData={(data) => this.setState({ answerValue: JSON.stringify(data) })}
+								onData={data =>
+									this.setState({
+										answerValue: JSON.stringify(data)
+									})
+								}
 								onReady={() => console.log('Ready to type!!')}
-								onChange={() => console.log(this.state.answerValue)}
+								onChange={() =>
+									console.log(this.state.answerValue)
+								}
 								tools={{
 									inlineCode: {
 										class: InlineCode
 									},
-									link: LinkTool,
+									link: LinkTool
 								}}
 							/>
 						</div>
@@ -271,6 +296,12 @@ export default class Answer extends React.Component {
 							</Typography>
 						</Button>
 					</Container>
+					<MainMenu
+						menuVisible={this.state.menuVisible}
+						user={this.state.user}
+						history={this.props.history}
+						setState={menuVisible => this.setState({ menuVisible })}
+					/>
 				</ThemeProvider>
 			);
 	}
