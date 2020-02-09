@@ -21,6 +21,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import utils from '../utils';
 import Navbar from '../components/Navbar';
 import CustomSnackbar from '../components/CustomSnackbar';
+import MainMenu from '../components/MainMenu';
 
 export default class Profile extends React.Component {
 	constructor(props) {
@@ -217,7 +218,19 @@ export default class Profile extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div style={{ paddingLeft: '2rem', paddingRight: '2rem' }}>
-					<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
+					<Navbar
+						handleHomeClick={() =>
+							this.props.history.push('/dashboard')
+						}
+						showAddQuestion={true}
+						handleAvatarClick={event =>
+							this.setState({ menuVisible: event.currentTarget })
+						}
+						handleAddQuestionClick={() =>
+							this.setState({ questionModal: true })
+						}
+						user={this.state.user}
+					/>
 					<Grid
 						container
 						direction='row'
@@ -292,7 +305,12 @@ export default class Profile extends React.Component {
 									questions={this.state.questions}
 									history={this.props.history}
 									userName={this.state.user.login}
-									showProfileSnackbar={(snackbarMess) => this.setState({ snackbar: true, snackbarMess })}
+									showProfileSnackbar={snackbarMess =>
+										this.setState({
+											snackbar: true,
+											snackbarMess
+										})
+									}
 								/>
 								<div
 									label='Answers'
@@ -328,94 +346,12 @@ export default class Profile extends React.Component {
 						</Grid>
 					</Grid>
 				</div>
-				<Menu
-					id='main-menu'
-					anchorEl={this.state.menuVisible}
-					keepMounted
-					open={Boolean(this.state.menuVisible)}
-					onClose={() => this.setState({ menuVisible: null })}>
-					<MenuItem
-						style={{
-							paddingTop: '1rem',
-							paddingBottom: '1rem',
-							paddingLeft: '4rem',
-							paddingRight: '4rem',
-							display: 'flex',
-							flexDirection: 'column'
-						}}
-						onClick={() => {
-							this.setState({ menuVisible: null });
-							this.props.history.push(
-								`/users/${this.state.user.login}`
-							);
-						}}>
-						<Avatar
-							src={this.state.user.avatar_url}
-							alt={this.state.user.name}
-							style={{
-								height: '3rem',
-								width: '3rem',
-								marginBottom: '0.5rem'
-							}}
-						/>
-						<Typography variant='body2'>Logged in as</Typography>
-						<Typography variant='body1' style={{ fontWeight: 600 }}>
-							{this.state.user.name}
-						</Typography>
-					</MenuItem>
-					<MenuItem
-						style={{
-							paddingTop: '1rem',
-							paddingBottom: '1rem',
-							paddingLeft: '4rem',
-							paddingRight: '4rem'
-						}}
-						onClick={() => {
-							this.setState({ menuVisible: null });
-							this.props.history.push(`/dashboard`);
-						}}>
-						Dashboard
-					</MenuItem>
-
-					<MenuItem
-						style={{
-							paddingTop: '1rem',
-							paddingBottom: '1rem',
-							paddingLeft: '4rem',
-							paddingRight: '4rem'
-						}}
-						onClick={() => {
-							this.setState({ menuVisible: null });
-							this.props.history.push(`/genres`);
-						}}>
-						Genres
-					</MenuItem>
-					<MenuItem
-						style={{
-							paddingTop: '1rem',
-							paddingBottom: '1rem',
-							paddingLeft: '4rem',
-							paddingRight: '4rem'
-						}}
-						onClick={() => {
-							this.setState({ menuVisible: null });
-							this.props.history.push(
-								`/users/${this.state.user.login}`
-							);
-						}}>
-						Profile
-					</MenuItem>
-					<MenuItem
-						style={{
-							paddingTop: '1rem',
-							paddingBottom: '1rem',
-							paddingLeft: '4rem',
-							paddingRight: '4rem'
-						}}
-						onClick={() => this.setState({ menuVisible: null })}>
-						Sign Out
-					</MenuItem>
-				</Menu>
+				<MainMenu
+					menuVisible={this.state.menuVisible}
+					user={this.state.user}
+					history={this.props.history}
+					setState={menuVisible => this.setState({ menuVisible })}
+				/>
 				<Modal
 					aria-labelledby='modal-question'
 					aria-describedby='modal-ask-question'
@@ -681,7 +617,11 @@ export default class Profile extends React.Component {
 						</div>
 					</Fade>
 				</Modal>
-				<CustomSnackbar message={this.state.snackbarMess} snackbar={this.state.snackbar} closeSnackbar={snackbar => this.setState({ snackbar })} />
+				<CustomSnackbar
+					message={this.state.snackbarMess}
+					snackbar={this.state.snackbar}
+					closeSnackbar={snackbar => this.setState({ snackbar })}
+				/>
 			</ThemeProvider>
 		);
 	}
