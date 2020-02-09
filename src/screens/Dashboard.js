@@ -63,21 +63,6 @@ export default class Dashboard extends React.Component {
 		this.currentAnswer = null;
 	}
 
-	async getGenres(token) {
-		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Token ${token}`,
-				Accept: 'application/json'
-			}
-		});
-
-		let content = await rawResponse.json();
-		console.log(content);
-		if (content.status !== 'success') throw Error();
-		return content;
-	}
-
 	async getResults(token, url) {
 		let rawResponse = await fetch(url, {
 			method: 'GET',
@@ -235,12 +220,10 @@ export default class Dashboard extends React.Component {
 		let url = serverUrl + '/api/home';
 		console.log(userName);
 		console.log(token);
-		this.getGenres(token)
-			.then(content => {
-				let genreObject = content.data;
-				var genreArray = Object.keys(genreObject);
-				console.log(genreArray);
-				this.genres = genreArray;
+		utils
+			.getGenres()
+			.then(res => {
+				this.genres = Object.keys(res.data);
 			})
 			.catch(error => console.error(error));
 
