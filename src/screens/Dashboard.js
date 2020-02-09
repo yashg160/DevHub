@@ -14,10 +14,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
-
+import RequestModal from '../components/RequestModal';
 import Button from '@material-ui/core/Button';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import CustomSnackbar from '../components/CustomSnackbar'
+import CustomSnackbar from '../components/CustomSnackbar';
 import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
@@ -36,7 +36,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from '@material-ui/core';
 
-
 export default class Dashboard extends React.Component {
 	constructor(props) {
 		super(props);
@@ -50,6 +49,7 @@ export default class Dashboard extends React.Component {
 			next: null,
 			questionModal: false,
 			genresModal: false,
+			requestModal: false,
 			menuVisible: null,
 			newQuestion: '',
 			newQuestionError: false,
@@ -57,7 +57,8 @@ export default class Dashboard extends React.Component {
 			snackbarMess: 'Snackbar messsage',
 			selectedGenres: [],
 			postingComment: false,
-			comment: ''
+			comment: '',
+			currentQuestion: 0
 		};
 		this.genres = null;
 		this.currentAnswer = null;
@@ -126,7 +127,6 @@ export default class Dashboard extends React.Component {
 				console.error(error);
 			});
 	}
-
 
 	async checkQuestion() {
 		if (this.state.newQuestion.length < 1) {
@@ -245,7 +245,8 @@ export default class Dashboard extends React.Component {
 			})
 			.catch(error => console.error(error));
 
-		utils.getUser()
+		utils
+			.getUser()
 			.then(user => {
 				console.log(user);
 				this.setState({ user });
@@ -256,7 +257,7 @@ export default class Dashboard extends React.Component {
 			});
 
 		this.getResults(token, url)
-			.then((res) => {
+			.then(res => {
 				console.log(res);
 				res.results.map(r => this.state.result.push(r));
 
@@ -278,15 +279,34 @@ export default class Dashboard extends React.Component {
 		console.log(event, i);
 		event.stopPropagation();
 		this.setState({ postingComment: true });
-		utils.postComment(this.state.comment, this.state.result[i].answer.id, null).then((status) => {
-			if (status === 'success')
-				this.setState({ snackbarMess: 'Comment posted successfully', snackbar: true, postingComment: false, comment: '' });
-			else
-				this.setState({ snackbarMess: 'Failed to post comment', snackbar: true, postingComment: false });
-		})
-			.catch((error) => {
+		utils
+			.postComment(
+				this.state.comment,
+				this.state.result[i].answer.id,
+				null
+			)
+			.then(status => {
+				if (status === 'success')
+					this.setState({
+						snackbarMess: 'Comment posted successfully',
+						snackbar: true,
+						postingComment: false,
+						comment: ''
+					});
+				else
+					this.setState({
+						snackbarMess: 'Failed to post comment',
+						snackbar: true,
+						postingComment: false
+					});
+			})
+			.catch(error => {
 				console.error(error);
-				this.setState({ snackbarMess: 'Failed to post comment', snackbar: true, postingComment: false });
+				this.setState({
+					snackbarMess: 'Failed to post comment',
+					snackbar: true,
+					postingComment: false
+				});
 			});
 	}
 
@@ -294,7 +314,9 @@ export default class Dashboard extends React.Component {
 		if (i !== this.currentAnswer && !isChild) depth = 0;
 		let items = comments.map((comment, i) => {
 			return (
-				<div key={i} style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
+				<div
+					key={i}
+					style={{ marginLeft: isChild ? `${depth * 2}rem` : '0' }}>
 					<Comment
 						key={comment.answer}
 						comment={comment.comment}
@@ -306,9 +328,14 @@ export default class Dashboard extends React.Component {
 						depth={depth}
 						commentId={comment.id}
 					/>
-					{
-						comment.child_comments.length > 0 ? this.createCommentList(comment.child_comments, comment.id, true, depth + 1) : null
-					}
+					{comment.child_comments.length > 0
+						? this.createCommentList(
+								comment.child_comments,
+								comment.id,
+								true,
+								depth + 1
+						  )
+						: null}
 				</div>
 			);
 		});
@@ -334,7 +361,7 @@ export default class Dashboard extends React.Component {
 					}
 				}
 			],
-			version: "2.12.4"
+			version: '2.12.4'
 		};
 		return (
 			<div
@@ -354,18 +381,33 @@ export default class Dashboard extends React.Component {
 					})}
 				</Typography>
 				<div>
-					{
-						finalAnswer.blocks.length > 1 ?
-							<div style={{ marginTop: '0.5rem' }}>
-								<Typography variant='body1'>
-									{String(finalAnswer.blocks[0].data.text).substr(0, 200) + '...'}
-								</Typography>
-								<Link href='#' color='primary' variant='body1' onClick={() => this.props.history.push({ pathname: `/questions/${answer.question}` })}>Read More</Link>
-							</div>
-
-							:
-							<Typography variant='body1' style={{ marginTop: '0.5rem' }}>{String(finalAnswer.blocks[0].data.text)}</Typography>
-					}
+					{finalAnswer.blocks.length > 1 ? (
+						<div style={{ marginTop: '0.5rem' }}>
+							<Typography variant='body1'>
+								{String(finalAnswer.blocks[0].data.text).substr(
+									0,
+									200
+								) + '...'}
+							</Typography>
+							<Link
+								href='#'
+								color='primary'
+								variant='body1'
+								onClick={() =>
+									this.props.history.push({
+										pathname: `/questions/${answer.question}`
+									})
+								}>
+								Read More
+							</Link>
+						</div>
+					) : (
+						<Typography
+							variant='body1'
+							style={{ marginTop: '0.5rem' }}>
+							{String(finalAnswer.blocks[0].data.text)}
+						</Typography>
+					)}
 				</div>
 				<div
 					style={{
@@ -377,107 +419,153 @@ export default class Dashboard extends React.Component {
 						answer.upvoters,
 						this.state.user.login
 					) ? (
-							<Button
-								variant='outlined'
-								color='primary'
-								startIcon={<ThumbUpIcon />}
-								onClick={() => {
-									utils
-										.upvoteAnswerClick(
-											answer.id,
-											answer.upvoters,
-											this.state.user.login
-										)
-										.then(status => {
-											if (status === 'removed')
-												this.state.result[
-													i
-												].answer.upvoters = utils.removeValueFromArray(
-													this.state.result[i].answer
-														.upvoters,
-													this.state.user.login
-												);
+						<Button
+							variant='outlined'
+							color='primary'
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'removed')
+											this.state.result[
+												i
+											].answer.upvoters = utils.removeValueFromArray(
+												this.state.result[i].answer
+													.upvoters,
+												this.state.user.login
+											);
 
-											this.forceUpdate();
-										})
-										.catch(error => console.error(error));
-								}}>
-								<Typography
-									variant='body2'
-									style={{
-										fontWeight: 700,
-										textTransform: 'capitalize'
-									}}>
-									Remove &#183; {answer.upvoters.length}
-								</Typography>
-							</Button>
-						) : (
-							<Button
-								variant='outlined'
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
 								style={{
-									color: '#919191'
-								}}
-								startIcon={<ThumbUpIcon />}
-								onClick={() => {
-									utils
-										.upvoteAnswerClick(
-											answer.id,
-											answer.upvoters,
-											this.state.user.login
-										)
-										.then(status => {
-											if (status === 'upvoted')
-												this.state.result[
-													i
-												].answer.upvoters.push(
-													this.state.user.login
-												);
-											console.log(this.state.lt);
-											this.forceUpdate();
-										})
-										.catch(error => console.error(error));
+									fontWeight: 700,
+									textTransform: 'capitalize'
 								}}>
-								<Typography
-									variant='body2'
-									style={{
-										fontWeight: 700,
-										textTransform: 'capitalize'
-									}}>
-									Upvote &#183; {answer.upvoters.length}
-								</Typography>
-							</Button>
-						)}
+								Remove &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					) : (
+						<Button
+							variant='outlined'
+							style={{
+								color: '#919191'
+							}}
+							startIcon={<ThumbUpIcon />}
+							onClick={() => {
+								utils
+									.upvoteAnswerClick(
+										answer.id,
+										answer.upvoters,
+										this.state.user.login
+									)
+									.then(status => {
+										if (status === 'upvoted')
+											this.state.result[
+												i
+											].answer.upvoters.push(
+												this.state.user.login
+											);
+										console.log(this.state.lt);
+										this.forceUpdate();
+									})
+									.catch(error => console.error(error));
+							}}>
+							<Typography
+								variant='body2'
+								style={{
+									fontWeight: 700,
+									textTransform: 'capitalize'
+								}}>
+								Upvote &#183; {answer.upvoters.length}
+							</Typography>
+						</Button>
+					)}
 				</div>
 				<div style={{ marginTop: '2rem' }}>
-
-					{
-						answer.comment_thread.length > 0 ?
-							<Typography variant='h6' style={{ marginBottom: '0.2rem' }}>All comments</Typography>
-							:
-							<Typography variant='body1'>No comments yet</Typography>
-					}
-					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-						<Avatar src={this.state.user.avatar_url} alt={this.state.user.name} />
-						<TextField variant='standard' placeholder='Leave your thoughts here...' style={{ width: '90%' }} multiline onChange={event => this.setState({ comment: event.target.value })} value={this.state.comment} />
-					</div>
-					<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
-						<Button variant='text' disabled={this.state.postingComment} style={{ textTransform: 'none', marginRight: '0.5rem' }} onClick={(event) => {
-							event.stopPropagation();
-							this.setState({ comment: '' });
+					{answer.comment_thread.length > 0 ? (
+						<Typography
+							variant='h6'
+							style={{ marginBottom: '0.2rem' }}>
+							All comments
+						</Typography>
+					) : (
+						<Typography variant='body1'>No comments yet</Typography>
+					)}
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between'
 						}}>
+						<Avatar
+							src={this.state.user.avatar_url}
+							alt={this.state.user.name}
+						/>
+						<TextField
+							variant='standard'
+							placeholder='Leave your thoughts here...'
+							style={{ width: '90%' }}
+							multiline
+							onChange={event =>
+								this.setState({ comment: event.target.value })
+							}
+							value={this.state.comment}
+						/>
+					</div>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'flex-end'
+						}}>
+						<Button
+							variant='text'
+							disabled={this.state.postingComment}
+							style={{
+								textTransform: 'none',
+								marginRight: '0.5rem'
+							}}
+							onClick={event => {
+								event.stopPropagation();
+								this.setState({ comment: '' });
+							}}>
 							Cancel
 						</Button>
-						<Button variant='contained' disabled={this.state.postingComment} color='primary' style={{ color: '#fff', textTransform: 'none', marginLeft: '0.5rem' }} onClick={event => this.handleCommentClick(event, i)}>
+						<Button
+							variant='contained'
+							disabled={this.state.postingComment}
+							color='primary'
+							style={{
+								color: '#fff',
+								textTransform: 'none',
+								marginLeft: '0.5rem'
+							}}
+							onClick={event =>
+								this.handleCommentClick(event, i)
+							}>
 							Comment
 						</Button>
 					</div>
 
-					{answer.comment_thread.length > 0 ?
+					{answer.comment_thread.length > 0 ? (
 						<div>
-							{this.createCommentList(answer.comment_thread, false, 0, i)}
+							{this.createCommentList(
+								answer.comment_thread,
+								false,
+								0,
+								i
+							)}
 						</div>
-						:
-						null}
+					) : null}
 				</div>
 			</div>
 		);
@@ -491,7 +579,19 @@ export default class Dashboard extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div>
-					<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={true} handleAvatarClick={event => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => this.setState({ questionModal: true })} user={this.state.user} />
+					<Navbar
+						handleHomeClick={() =>
+							this.props.history.push('/dashboard')
+						}
+						showAddQuestion={true}
+						handleAvatarClick={event =>
+							this.setState({ menuVisible: event.currentTarget })
+						}
+						handleAddQuestionClick={() =>
+							this.setState({ questionModal: true })
+						}
+						user={this.state.user}
+					/>
 					<Container
 						maxWidth='lg'
 						style={{
@@ -692,252 +792,192 @@ export default class Dashboard extends React.Component {
 														res.followers_list,
 														this.state.user.login
 													) ? (
-															<Button
-																variant='text'
-																color='primary'
-																startIcon={
-																	<RssFeedIcon />
-																}
-																onClick={e =>
-																	utils
-																		.followClick(
-																			e,
-																			res.url,
-																			res.followers_list,
-																			this
-																				.state
-																				.user
-																				.login
-																		)
-																		.then(
-																			status => {
-																				console.log(
-																					status
+														<Button
+															variant='text'
+															color='primary'
+															startIcon={
+																<RssFeedIcon />
+															}
+															onClick={e =>
+																utils
+																	.followClick(
+																		e,
+																		res.url,
+																		res.followers_list,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'removed'
+																			) {
+																				this.state.result[
+																					i
+																				].followers_list = utils.removeValueFromArray(
+																					this
+																						.state
+																						.result[
+																						i
+																					]
+																						.followers_list,
+																					this
+																						.state
+																						.user
+																						.login
 																				);
-																				if (
-																					status ===
-																					'removed'
-																				) {
-																					this.state.result[
-																						i
-																					].followers_list = utils.removeValueFromArray(
-																						this
-																							.state
-																							.result[
-																							i
-																						]
-																							.followers_list,
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				} else {
-																					this.state.result[
-																						i
-																					].followers_list.push(
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				}
-																				this.forceUpdate();
-																			}
-																		)
-																		.catch(
-																			error => {
-																				console.error(
-																					error
+																			} else {
+																				this.state.result[
+																					i
+																				].followers_list.push(
+																					this
+																						.state
+																						.user
+																						.login
 																				);
 																			}
-																		)
-																}>
-																<Typography
-																	variant='body2'
-																	style={{
-																		fontWeight: 600,
-																		textTransform:
-																			'capitalize'
-																	}}>
-																	Unfollow &#183;{' '}
-																	{
-																		res
-																			.followers_list
-																			.length
-																	}
-																</Typography>
-															</Button>
-														) : (
-															<Button
-																variant='text'
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
 																style={{
-																	color: '#919191'
-																}}
-																startIcon={
-																	<RssFeedIcon />
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Unfollow &#183;{' '}
+																{
+																	res
+																		.followers_list
+																		.length
 																}
-																onClick={e =>
-																	utils
-																		.followClick(
-																			e,
-																			res.url,
-																			res.followers_list,
-																			this
-																				.state
-																				.user
-																				.login
-																		)
-																		.then(
-																			status => {
-																				console.log(
-																					status
-																				);
-																				if (
-																					status ===
-																					'removed'
-																				) {
-																					this.state.result[
+															</Typography>
+														</Button>
+													) : (
+														<Button
+															variant='text'
+															style={{
+																color: '#919191'
+															}}
+															startIcon={
+																<RssFeedIcon />
+															}
+															onClick={e =>
+																utils
+																	.followClick(
+																		e,
+																		res.url,
+																		res.followers_list,
+																		this
+																			.state
+																			.user
+																			.login
+																	)
+																	.then(
+																		status => {
+																			console.log(
+																				status
+																			);
+																			if (
+																				status ===
+																				'removed'
+																			) {
+																				this.state.result[
+																					i
+																				].followers_list = utils.removeValueFromArray(
+																					this
+																						.state
+																						.result[
 																						i
-																					].followers_list = utils.removeValueFromArray(
-																						this
-																							.state
-																							.result[
-																							i
-																						]
-																							.followers_list,
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				} else {
-																					this.state.result[
-																						i
-																					].followers_list.push(
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				}
-																				this.forceUpdate();
-																			}
-																		)
-																		.catch(
-																			error => {
-																				console.error(
-																					error
+																					]
+																						.followers_list,
+																					this
+																						.state
+																						.user
+																						.login
+																				);
+																			} else {
+																				this.state.result[
+																					i
+																				].followers_list.push(
+																					this
+																						.state
+																						.user
+																						.login
 																				);
 																			}
-																		)
-																}>
-																<Typography
-																	variant='body2'
-																	style={{
-																		fontWeight: 600,
-																		textTransform:
-																			'capitalize'
-																	}}>
-																	Follow &#183;{' '}
-																	{
-																		res
-																			.followers_list
-																			.length
-																	}
-																</Typography>
-															</Button>
-														)}
+																			this.forceUpdate();
+																		}
+																	)
+																	.catch(
+																		error => {
+																			console.error(
+																				error
+																			);
+																		}
+																	)
+															}>
+															<Typography
+																variant='body2'
+																style={{
+																	fontWeight: 600,
+																	textTransform:
+																		'capitalize'
+																}}>
+																Follow &#183;{' '}
+																{
+																	res
+																		.followers_list
+																		.length
+																}
+															</Typography>
+														</Button>
+													)}
 
-													{utils.checkUserInArray(
-														res.requested,
-														this.state.user.login
-													) ? (
-															<Button
-																variant='text'
-																color='primary'
-																startIcon={
-																	<EmojiPeopleIcon />
-																}
-																onClick={(e) => {
-																	e.stopPropagation();
-																	this.setState({ snackbar: true, snackbarMess: 'Already requested answer' });
-																}
-																}>
-																<Typography
-																	variant='body2'
-																	style={{
-																		fontWeight: 600,
-																		textTransform:
-																			'capitalize'
-																	}}>
-																	Request
-																&#183;{' '}
-																	{
-																		res
-																			.requested
-																			.length
-																	}
-																</Typography>
-															</Button>
-														) : (
-															<Button
-																variant='text'
-																style={{
-																	color: '#919191'
-																}}
-																startIcon={
-																	<EmojiPeopleIcon />
-																}
-																onClick={event =>
-																	utils
-																		.requestClick(
-																			event,
-																			res.url,
-																			res.requested,
-																			this.state.user.login
-																		)
-																		.then(
-																			status => {
-																				if (
-																					status ===
-																					'success'
-																				)
-																					this.state.result[
-																						i
-																					].requested.push(
-																						this
-																							.state
-																							.user
-																							.login
-																					);
-																				this.forceUpdate();
-																			}
-																		)
-																		.catch(
-																			error => {
-																				console.error(
-																					error
-																				);
-																			}
-																		)
-																}>
-																<Typography
-																	variant='body2'
-																	style={{
-																		fontWeight: 600,
-																		textTransform:
-																			'capitalize'
-																	}}>
-																	Request &#183;{' '}
-																	{
-																		res
-																			.requested
-																			.length
-																	}
-																</Typography>
-															</Button>
-														)}
+													<Button
+														variant='text'
+														style={{
+															color: '#919191'
+														}}
+														startIcon={
+															<EmojiPeopleIcon />
+														}
+														onClick={e => {
+															e.stopPropagation();
+															this.setState({
+																currentQuestion: i,
+																requestModal: true
+															});
+														}}>
+														<Typography
+															variant='body2'
+															style={{
+																fontWeight: 600,
+																textTransform:
+																	'capitalize'
+															}}>
+															Request &#183;{' '}
+															{
+																res.requested
+																	.length
+															}
+														</Typography>
+													</Button>
 												</div>
 											</div>
 										</ExpansionPanelSummary>
@@ -947,8 +987,9 @@ export default class Dashboard extends React.Component {
 													display: 'flex',
 													flexDirection: 'column'
 												}}>
-												<div style={{ display: 'none' }}>
-													{this.currentAnswer = i}
+												<div
+													style={{ display: 'none' }}>
+													{(this.currentAnswer = i)}
 												</div>
 
 												{this.topAnswer(res.answer, i)}
@@ -1166,7 +1207,10 @@ export default class Dashboard extends React.Component {
 													questionModal: false
 												})
 											}
-											style={{ marginRight: '0.2rem', textTransform: 'none' }}>
+											style={{
+												marginRight: '0.2rem',
+												textTransform: 'none'
+											}}>
 											Cancel
 										</Button>
 										<Button
@@ -1178,7 +1222,11 @@ export default class Dashboard extends React.Component {
 													questionModal: false
 												})
 											}
-											style={{ marginLeft: '0.2rem', textTransform: 'none', color: '#fff' }}>
+											style={{
+												marginLeft: '0.2rem',
+												textTransform: 'none',
+												color: '#fff'
+											}}>
 											Proceed
 										</Button>
 									</div>
@@ -1280,7 +1328,8 @@ export default class Dashboard extends React.Component {
 												})
 											}
 											style={{
-												marginRight: '0.2rem', textTransform: 'none'
+												marginRight: '0.2rem',
+												textTransform: 'none'
 											}}>
 											Cancel
 										</Button>
@@ -1290,7 +1339,11 @@ export default class Dashboard extends React.Component {
 											onClick={() =>
 												this.handleAddQuestion()
 											}
-											style={{ marginLeft: '0.2rem', textTransform: 'none', color: '#fff' }}>
+											style={{
+												marginLeft: '0.2rem',
+												textTransform: 'none',
+												color: '#fff'
+											}}>
 											Add question
 										</Button>
 									</div>
@@ -1393,7 +1446,27 @@ export default class Dashboard extends React.Component {
 						</MenuItem>
 					</Menu>
 
-					<CustomSnackbar message={this.state.snackbarMess} snackbar={this.state.snackbar} closeSnackbar={snackbar => this.setState({ snackbar })} />
+					<CustomSnackbar
+						message={this.state.snackbarMess}
+						snackbar={this.state.snackbar}
+						closeSnackbar={snackbar => this.setState({ snackbar })}
+					/>
+					<RequestModal
+						requestModal={this.state.requestModal}
+						backdropClick={event =>
+							this.setState({ requestModal: false })
+						}
+						questionUrl={
+							this.state.result[this.state.currentQuestion].url
+						}
+						requested={
+							this.state.result[this.state.currentQuestion]
+								.requested
+						}
+						onSendComplete={requestModal =>
+							this.setState({ requestModal })
+						}
+					/>
 				</div>
 			</ThemeProvider>
 		);
