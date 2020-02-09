@@ -36,8 +36,87 @@ export default class Question extends React.Component {
 			requestModal: false,
 			questionModal: false,
 			newQuestion: '',
-			newQuestionError: false
+			newQuestionError: false,
+			genresModal: false,
+			selectedGenres: []
 		};
+
+		this.genres = null;
+	}
+
+	handleAddQuestion() {
+		utils
+			.checkQuestion(this.state.newQuestion)
+			.then(() => {
+				utils.postQuestion(
+					this.state.selectedGenres,
+					this.genres,
+					this.state.newQuestion
+				);
+				this.setState({ loading: true });
+			})
+			.then(res => {
+				console.log('postQuestion returned');
+				this.setState({
+					loading: false,
+					snackbarMess: 'Question posted successfully',
+					snackbar: true,
+					questionModal: false,
+					genresModal: false,
+					selectedGenres: [],
+					newQuestion: '',
+					newQuestionError: false
+				});
+			})
+			.catch(error => {
+				console.error(error.message);
+				switch (error.message) {
+					case 'ERR_CHECK':
+						this.setState({
+							snackbarMess: 'Please check the question',
+							snackbar: true,
+							genresModal: false,
+							questionModal: true,
+							loading: false,
+							newQuestionError: true
+						});
+						break;
+					case 'ERR_POST':
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+					default:
+						this.setState({
+							snackbarMess: 'Question could not be posted',
+							snackbar: true,
+							loading: false
+						});
+						break;
+				}
+			});
+	}
+
+	genreClick(index) {
+		if (utils.checkUserInArray(this.state.selectedGenres, index)) {
+			this.setState({
+				selectedGenres: utils.removeValueFromArray(
+					this.state.selectedGenres,
+					index
+				)
+			});
+		} else if (this.state.selectedGenres.length < 5)
+			this.setState({
+				selectedGenres: [...this.state.selectedGenres, index]
+			});
+		else
+			this.setState({
+				snackbarMess: 'Select only 5 genres',
+				snackbar: true
+			});
+		console.log(this.state.selectedGenres);
 	}
 
 	editAnswerClick(i) {
@@ -106,6 +185,15 @@ export default class Question extends React.Component {
 					error: false,
 					question: res.data
 				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ loading: false, error: true });
+			});
+		utils
+			.getGenres()
+			.then(res => {
+				this.genres = Object.keys(res.data);
 			})
 			.catch(error => {
 				console.error(error);
@@ -422,6 +510,14 @@ export default class Question extends React.Component {
 					}
 				/>
 
+				<GenresModal
+					genresModal={this.state.genresModal}
+					genres={this.genres}
+					selectedGenres={this.state.selectedGenres}
+					genreClick={i => this.genreClick(i)}
+					cancelClick={() => this.setState({ genresModal: false })}
+					handleAddQuestion={() => this.handleAddQuestion()}
+				/>
 				<RequestModal
 					requestModal={this.state.requestModal}
 					backdropClick={event =>
