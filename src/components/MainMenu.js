@@ -10,7 +10,6 @@ export default class MainMenu extends React.Component {
 			<Menu
 				id='main-menu'
 				anchorEl={this.props.menuVisible}
-				keepMounted
 				open={Boolean(this.props.menuVisible)}
 				onClose={() => this.setState({ menuVisible: null })}>
 				<MenuItem
