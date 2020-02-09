@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-
+import utils from '../utils';
 import Backdrop from '@material-ui/core/Backdrop';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
@@ -50,28 +50,13 @@ export default class Genres extends React.Component {
 		return;
 	}
 
-	async getGenres(token) {
-		let rawResponse = await fetch(`${serverUrl}/api/genre`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Token ${token}`,
-				Accept: 'application/json'
-			}
-		});
-
-		let content = await rawResponse.json();
-		if (content.status !== 'success') throw Error();
-		console.log(content);
-		return content;
-	}
-
 	componentDidMount() {
 		const token = Cookies.get('TOKEN');
 		const userName = Cookies.get('USER_NAME');
 		console.log(token);
 
 		this.getUser(userName, token)
-			.then(() => this.getGenres(token))
+			.then(() => utils.getGenres())
 			.then(content => {
 				var result = Object.entries(content.data);
 				this.setState({ content: result, loading: false });
@@ -156,7 +141,19 @@ export default class Genres extends React.Component {
 			);
 		return (
 			<ThemeProvider theme={theme.theme}>
-				<Navbar handleHomeClick={() => this.props.history.push('/dashboard')} showAddQuestion={false} handleAvatarClick={(event) => this.setState({ menuVisible: event.currentTarget })} handleAddQuestionClick={() => console.log('Add Question Clicked')} user={this.state.user} />
+				<Navbar
+					handleHomeClick={() =>
+						this.props.history.push('/dashboard')
+					}
+					showAddQuestion={false}
+					handleAvatarClick={event =>
+						this.setState({ menuVisible: event.currentTarget })
+					}
+					handleAddQuestionClick={() =>
+						console.log('Add Question Clicked')
+					}
+					user={this.state.user}
+				/>
 				<Container maxWidth='md' style={{ marginTop: '6rem' }}>
 					<Typography variant='h4' align='center'>
 						Your Genres
@@ -308,7 +305,11 @@ export default class Genres extends React.Component {
 						<Typography variant='body1'>Sign Out</Typography>
 					</MenuItem>
 				</Menu>
-				<CustomSnackbar snackbar={this.state.snackbar} message={this.state.snackbarMess} closeSnackbar={snackbar => this.setState({ snackbar })} />
+				<CustomSnackbar
+					snackbar={this.state.snackbar}
+					message={this.state.snackbarMess}
+					closeSnackbar={snackbar => this.setState({ snackbar })}
+				/>
 			</ThemeProvider>
 		);
 	}

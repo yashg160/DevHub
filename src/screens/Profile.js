@@ -47,25 +47,7 @@ export default class Profile extends React.Component {
 			snackbarMess: 'There was some error'
 		};
 
-		this.genres = [
-			'Technology',
-			'Religion',
-			'Philosophy',
-			'Science',
-			'Politics',
-			'Enterpreneurship',
-			'Life',
-			'News',
-			'Startup',
-			'Culture',
-			'Business',
-			'Facts',
-			'Humor',
-			'Travel',
-			'Innovation',
-			'Sports',
-			'Health'
-		];
+		this.genres = null;
 	}
 	async getProfileData(userName, token) {
 		let rawResponse = await fetch(serverUrl + `/user/profile/${userName}`, {
@@ -101,6 +83,16 @@ export default class Profile extends React.Component {
 					loading: false,
 					error: false
 				});
+			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ loading: false, error: true });
+			});
+
+		utils
+			.getGenres()
+			.then(res => {
+				this.genres = Object.keys(res.data);
 			})
 			.catch(error => {
 				console.error(error);
