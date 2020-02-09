@@ -132,54 +132,44 @@ export default class Question extends React.Component {
 		});
 	}
 
-	async getQuestionData() {
-		const token = Cookies.get('TOKEN');
-		var questionUrl = this.props.match.params.questionUrl;
-		let rawResponse = await fetch(
-			serverUrl + `/api/questions/${questionUrl}`,
-			{
-				method: 'GET',
-				headers: {
-					Authorization: `Token ${token}`,
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				}
-			}
-		);
-
-		let res = await rawResponse.json();
-		console.log(res);
-		if (res.status !== 'success') throw Error('ERR_SERVER');
-		return res;
+	async setGenres(res) {
+		this.genres = Object.keys(res.data);
 	}
 
 	componentDidMount() {
 		utils
 			.getUser()
-			.then(user => this.setState({ user, loading: false, error: false }))
-			.catch(error => {
-				console.error(error);
-				this.setState({ loading: false, error: true });
-			});
-		utils
-			.getGenres()
-			.then(res => {
-				this.genres = Object.keys(res.data);
-			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ loading: false, error: true });
-			});
-		this.getQuestionData()
+			.then(user => this.setState({ user }))
+			.then(() => utils.getGenres())
+			.then(res => this.setGenres(res))
+			.then(() =>
+				utils.getQuestionData(this.props.match.params.questionUrl)
+			)
 			.then(res =>
 				this.setState({
-					question: res.data
+					question: res.data,
+					loading: false,
+					error: false
 				})
 			)
 			.catch(error => {
 				console.error(error);
 				this.setState({ loading: false, error: true });
 			});
+		/* utils
+			.getGenres()
+			
+			.catch(error => {
+				console.error(error);
+				this.setState({ loading: false, error: true });
+			});
+		utils
+			.getQuestionData()
+			
+			.catch(error => {
+				console.error(error);
+				this.setState({ loading: false, error: true });
+			}); */
 	}
 
 	render() {
