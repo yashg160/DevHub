@@ -10,9 +10,6 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-import Modal from '@material-ui/core/Modal';
-import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import RequestModal from '../components/RequestModal';
 import Button from '@material-ui/core/Button';
@@ -22,13 +19,12 @@ import CreateIcon from '@material-ui/icons/Create';
 import RssFeedIcon from '@material-ui/icons/RssFeed';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Chip from '@material-ui/core/Chip';
 import Navbar from '../components/Navbar';
 import Comment from '../components/Comment';
 import MainMenu from '../components/MainMenu';
 import QuestionModal from '../components/QuestionModal';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
+import GenresModal from '../components/GenresModal';
 import serverUrl from '../config';
 import utils from '../utils';
 import theme from '../theme';
@@ -1069,124 +1065,16 @@ export default class Dashboard extends React.Component {
 							})
 						}
 					/>
-					<Modal
-						aria-labelledby='modal-genres'
-						aria-describedby='modal-add-genres'
-						open={this.state.genresModal}
-						onClose={() => this.setState({ genresModal: false })}
-						closeAfterTransition
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							justifyContent: 'center',
-							alignItems: 'center'
-						}}
-						BackdropComponent={Backdrop}
-						BackdropProps={{ timeout: 500 }}>
-						<Fade in={this.state.genresModal}>
-							<div
-								style={{
-									backgroundColor: '#fff',
-									width: '50%'
-								}}>
-								<div
-									style={{
-										backgroundColor: '#e3e3e3',
-										padding: '1rem'
-									}}>
-									<Typography variant='h6'>
-										Add Question
-									</Typography>
-								</div>
-
-								<div style={{ padding: '1rem' }}>
-									<div>
-										<Typography
-											variant='h6'
-											style={{
-												fontWeight: 700,
-												marginBottom: '0.5rem'
-											}}>
-											Select genres to make you question
-											more discoverable
-										</Typography>
-									</div>
-
-									<div
-										style={{
-											display: 'flex',
-											flexWrap: 'wrap',
-											justifyContent: 'center',
-											alignItems: 'center',
-											marginBottom: '0.5rem'
-										}}>
-										{this.genres.map((genre, i) => (
-											<Chip
-												key={i}
-												label={genre}
-												onClick={() =>
-													this.genreClick(i)
-												}
-												color={
-													utils.checkUserInArray(
-														this.state
-															.selectedGenres,
-														i
-													)
-														? 'secondary'
-														: 'primary'
-												}
-												style={{
-													padding: '0.5rem',
-													color: '#fff',
-													margin: '0.5rem'
-												}}
-											/>
-										))}
-									</div>
-									<Typography align='center' variant='body1'>
-										Select upto 5 genres
-									</Typography>
-									<div
-										style={{
-											padding: '2rem',
-											display: 'flex',
-											flexDirection: 'row',
-											justifyContent: 'flex-end',
-											alignItems: 'center'
-										}}>
-										<Button
-											variant='text'
-											onClick={() =>
-												this.setState({
-													genresModal: false
-												})
-											}
-											style={{
-												marginRight: '0.2rem',
-												textTransform: 'none'
-											}}>
-											Cancel
-										</Button>
-										<Button
-											color='primary'
-											variant='contained'
-											onClick={() =>
-												this.handleAddQuestion()
-											}
-											style={{
-												marginLeft: '0.2rem',
-												textTransform: 'none',
-												color: '#fff'
-											}}>
-											Add question
-										</Button>
-									</div>
-								</div>
-							</div>
-						</Fade>
-					</Modal>
-
+					<GenresModal
+						genresModal={this.state.genresModal}
+						genres={this.genres}
+						selectedGenres={this.state.selectedGenres}
+						genreClick={i => this.genreClick(i)}
+						cancelClick={() =>
+							this.setState({ genresModal: false })
+						}
+						handleAddQuestion={() => this.handleAddQuestion()}
+					/>
 					<MainMenu
 						menuVisible={this.state.menuVisible}
 						user={this.state.user}
