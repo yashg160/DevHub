@@ -80,7 +80,6 @@ async function requestClick(event, url, requested, login) {
 	let res = await rawResponse.json();
 	if (res.status === 'success') return 'success';
 	else throw Error();
-
 }
 
 async function upvoteAnswerClick(answerId, upvoters, login) {
@@ -139,7 +138,6 @@ async function getUser() {
 	if (res.status !== 'success') throw Error('ERR_USER_FETCH');
 	console.log(res);
 	return res.data;
-
 }
 
 async function postComment(comment, answerId, parentComment = null) {
@@ -151,13 +149,12 @@ async function postComment(comment, answerId, parentComment = null) {
 			comment: comment,
 			answer: answerId,
 			parent_comment: parentComment
-		})
-	}
-	else {
+		});
+	} else {
 		body = JSON.stringify({
 			comment: comment,
 			answer: answerId
-		})
+		});
 	}
 	console.log('Comment request body: ', body);
 	let rawResponse = await fetch(serverUrl + '/api/comments', {
@@ -183,14 +180,11 @@ async function updateComment(comment, upvote, removeUpvote, commentId) {
 
 	if (upvote) {
 		body = JSON.stringify({
-
 			comment: comment,
 			upvote: true
 		});
-	}
-	else {
+	} else {
 		body = JSON.stringify({
-
 			comment: comment,
 			removeUpvote: true
 		});
@@ -205,7 +199,6 @@ async function updateComment(comment, upvote, removeUpvote, commentId) {
 		},
 		body: body
 	});
-
 
 	let res = await rawResponse.json();
 	console.log(res);
@@ -233,6 +226,22 @@ async function getAllUsers(next) {
 	if (rawResponse.status === 200) return res;
 	else throw Error('ERR_GET_USERS');
 }
+
+async function getGenres() {
+	const token = Cookies.get('TOKEN');
+	let rawResponse = await fetch(`${serverUrl}/api/genre`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json'
+		}
+	});
+
+	let content = await rawResponse.json();
+	console.log(content);
+	if (content.status !== 'success') throw Error('ERR_GENRES');
+	return content;
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
@@ -242,5 +251,6 @@ export default {
 	getUser,
 	postComment,
 	updateComment,
-	getAllUsers
+	getAllUsers,
+	getGenres
 };
