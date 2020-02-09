@@ -21,10 +21,8 @@ export default class AskedQuestions extends React.Component {
 		console.log(props);
 	}
 
-	componentDidMount() { }
+	componentDidMount() {}
 	render() {
-		var showProfileSnackbar = this.props.showProfileSnackbar;
-		var requestClick = this.props.requestClick;
 		return (
 			<div>
 				<InfiniteScroll
@@ -130,28 +128,44 @@ export default class AskedQuestions extends React.Component {
 									</Typography>
 								</Button>
 
-								{utils.checkUserInArray(res.followers_list, this.props.userName) ? (
+								{utils.checkUserInArray(
+									res.followers_list,
+									this.props.userName
+								) ? (
 									<Button
 										variant='text'
 										color='primary'
 										startIcon={<RssFeedIcon />}
 										onClick={e =>
-											utils.followClick(
-												e,
-												res.url,
-												res.followers_list,
-												this.props.userName
-											).then((status) => {
-												if (status === 'removed') {
-													var newFollowers = utils.removeValueFromArray(res.followers_list, this.props.userName);
-													this.state.questions[i].followers_list = newFollowers;
-													this.forceUpdate();
-												}
-												else {
-													this.state.questions[i].followers_list.push(this.props.userName);
-													this.forceUpdate();
-												}
-											}).catch((error) => console.error(error))
+											utils
+												.followClick(
+													e,
+													res.url,
+													res.followers_list,
+													this.props.userName
+												)
+												.then(status => {
+													if (status === 'removed') {
+														var newFollowers = utils.removeValueFromArray(
+															res.followers_list,
+															this.props.userName
+														);
+														this.state.questions[
+															i
+														].followers_list = newFollowers;
+														this.forceUpdate();
+													} else {
+														this.state.questions[
+															i
+														].followers_list.push(
+															this.props.userName
+														);
+														this.forceUpdate();
+													}
+												})
+												.catch(error =>
+													console.error(error)
+												)
 										}>
 										<Typography
 											variant='body2'
@@ -164,48 +178,64 @@ export default class AskedQuestions extends React.Component {
 										</Typography>
 									</Button>
 								) : (
-										<Button
-											variant='text'
-											style={{
-												color: '#919191'
-											}}
-											startIcon={<RssFeedIcon />}
-											onClick={e =>
-												utils.followClick(
+									<Button
+										variant='text'
+										style={{
+											color: '#919191'
+										}}
+										startIcon={<RssFeedIcon />}
+										onClick={e =>
+											utils
+												.followClick(
 													e,
 													res.url,
 													res.followers_list,
 													this.props.userName
-												).then((status) => {
+												)
+												.then(status => {
 													if (status === 'removed') {
-														var newFollowers = utils.removeValueFromArray(res.followers_list, this.props.userName);
-														this.state.questions[i].followers_list = newFollowers;
+														var newFollowers = utils.removeValueFromArray(
+															res.followers_list,
+															this.props.userName
+														);
+														this.state.questions[
+															i
+														].followers_list = newFollowers;
+														this.forceUpdate();
+													} else {
+														this.state.questions[
+															i
+														].followers_list.push(
+															this.props.userName
+														);
 														this.forceUpdate();
 													}
-													else {
-														this.state.questions[i].followers_list.push(this.props.userName);
-														this.forceUpdate();
-													}
-												}).catch((error) => console.error(error))
-											}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600,
-													textTransform: 'capitalize'
-												}}>
-												Follow &#183;{' '}
-												{res.followers_list.length}
-											</Typography>
-										</Button>
-									)}
+												})
+												.catch(error =>
+													console.error(error)
+												)
+										}>
+										<Typography
+											variant='body2'
+											style={{
+												fontWeight: 600,
+												textTransform: 'capitalize'
+											}}>
+											Follow &#183;{' '}
+											{res.followers_list.length}
+										</Typography>
+									</Button>
+								)}
 
 								<Button
 									variant='text'
 									style={{ color: '#919191' }}
 									startIcon={<EmojiPeopleIcon />}
 									onClick={() => {
-										this.setState({ currentQuestion: res, requestModal: true });
+										this.setState({
+											currentQuestion: res,
+											requestModal: true
+										});
 									}}>
 									<Typography
 										variant='body2'
@@ -213,11 +243,9 @@ export default class AskedQuestions extends React.Component {
 											fontWeight: 600,
 											textTransform: 'capitalize'
 										}}>
-										Request &#183;{' '}
-										{res.requested.length}
+										Request &#183; {res.requested.length}
 									</Typography>
 								</Button>
-
 							</div>
 							<Typography
 								variant='body1'
@@ -230,7 +258,17 @@ export default class AskedQuestions extends React.Component {
 						</div>
 					))}
 				</InfiniteScroll>
-				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} questionUrl={this.state.currentQuestion.url} requested={this.state.currentQuestion.requested} onSendComplete={requestModal => this.setState({ requestModal })} />
+				<RequestModal
+					requestModal={this.state.requestModal}
+					backdropClick={event =>
+						this.setState({ requestModal: false })
+					}
+					questionUrl={this.state.currentQuestion.url}
+					requested={this.state.currentQuestion.requested}
+					onSendComplete={requestModal =>
+						this.setState({ requestModal })
+					}
+				/>
 			</div>
 		);
 	}
