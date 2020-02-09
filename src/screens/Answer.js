@@ -33,24 +33,6 @@ export default class Answer extends React.Component {
 		};
 	}
 
-	async getQuestionData(token, questionUrl) {
-		let rawResponse = await fetch(
-			serverUrl + `/api/questions/${questionUrl}`,
-			{
-				method: 'GET',
-				headers: {
-					Authorization: `Token ${token}`,
-					Accept: 'application/json',
-					'Content-Type': 'application/json'
-				}
-			}
-		);
-
-		let res = await rawResponse.json();
-		if (res.status !== 'success') throw Error('ERR_SERVER');
-		return res;
-	}
-
 	async checkAnswer() {
 		if (this.state.answerValue.length === 0) throw Error('ERR_ANSWER');
 	}
@@ -145,9 +127,8 @@ export default class Answer extends React.Component {
 	}
 
 	componentDidMount() {
-		const token = Cookies.get('TOKEN');
-
-		this.getQuestionData(token, this.state.questionUrl)
+		utils
+			.getQuestionData(this.state.questionUrl)
 			.then(res => {
 				console.log(res);
 				let answerValue = null;
@@ -172,18 +153,15 @@ export default class Answer extends React.Component {
 					answerId: this.props.location.state.answerId
 				});
 			})
-			.catch(error => {
-				console.error(error);
-				this.setState({ error: true, loading: false });
-			});
-
-		utils
-			.getUser()
+			.then(() => utils.getUser())
 			.then(user => {
 				console.log(user);
 				this.setState({ user, loading: false, error: false });
 			})
-			.catch(error => console.error(error));
+			.catch(error => {
+				console.error(error);
+				this.setState({ error: true, loading: false });
+			});
 	}
 
 	render() {
