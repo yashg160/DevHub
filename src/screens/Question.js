@@ -132,7 +132,9 @@ export default class Question extends React.Component {
 		});
 	}
 
-	async getQuestionData(token, questionUrl) {
+	async getQuestionData() {
+		const token = Cookies.get('TOKEN');
+		var questionUrl = this.props.match.params.questionUrl;
 		let rawResponse = await fetch(
 			serverUrl + `/api/questions/${questionUrl}`,
 			{
@@ -151,41 +153,10 @@ export default class Question extends React.Component {
 		return res;
 	}
 
-	async getUser(userName, token) {
-		let rawResponse = await fetch(serverUrl + `/user/${userName}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Token ${token}`,
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			}
-		});
-
-		let res = await rawResponse.json();
-		console.log(res);
-		if (res.status !== 'success') throw Error('ERR_USER_FETCH');
-		this.setState({ user: res.data });
-		return;
-	}
-
 	componentDidMount() {
-		var token = Cookies.get('TOKEN');
-		var userName = Cookies.get('USER_NAME');
-		console.log(userName);
-		console.log(token);
-
-		var questionUrl = this.props.match.params.questionUrl;
-		console.log(questionUrl);
-
-		this.getUser(userName, token)
-			.then(() => this.getQuestionData(token, questionUrl))
-			.then(res => {
-				this.setState({
-					loading: false,
-					error: false,
-					question: res.data
-				});
-			})
+		utils
+			.getUser()
+			.then(user => this.setState({ user, loading: false, error: false }))
 			.catch(error => {
 				console.error(error);
 				this.setState({ loading: false, error: true });
@@ -195,6 +166,16 @@ export default class Question extends React.Component {
 			.then(res => {
 				this.genres = Object.keys(res.data);
 			})
+			.catch(error => {
+				console.error(error);
+				this.setState({ loading: false, error: true });
+			});
+		this.getQuestionData()
+			.then(res =>
+				this.setState({
+					question: res.data
+				})
+			)
 			.catch(error => {
 				console.error(error);
 				this.setState({ loading: false, error: true });
