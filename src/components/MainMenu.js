@@ -93,6 +93,16 @@ export default class MainMenu extends React.Component {
 					onClick={() => this.props.setState(null)}>
 					Sign Out
 				</MenuItem>
+				<MenuItem
+					style={{
+						paddingTop: '1rem',
+						paddingBottom: '1rem',
+						paddingLeft: '4rem',
+						paddingRight: '4rem'
+					}}
+					onClick={() => this.props.setState(null)}>
+					Close Menu
+				</MenuItem>
 			</Menu>
 		);
 	}
