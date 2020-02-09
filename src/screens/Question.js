@@ -18,6 +18,10 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import serverUrl from '../config';
 import theme from '../theme';
 import utils from '../utils';
+import Navbar from '../components/Navbar';
+import MainMenu from '../components/MainMenu';
+import QuestionModal from '../components/QuestionModal';
+import GenresModal from '../components/GenresModal';
 
 export default class Question extends React.Component {
 	constructor(props) {
@@ -113,76 +117,19 @@ export default class Question extends React.Component {
 		return (
 			<ThemeProvider theme={theme.theme}>
 				<div>
-					<AppBar position='fixed'>
-						<Toolbar variant='regular' color='primary'>
-							<Container maxWidth='lg'>
-								<div
-									style={{
-										display: 'flex',
-										flexGrow: 1,
-										flexDirection: 'row',
-										alignItems: 'center',
-										justifyContent: 'space-between'
-									}}>
-									<Typography
-										variant='h5'
-										style={{ color: '#fff' }}>
-										DevHub
-									</Typography>
-
-									<div
-										style={{
-											display: 'flex',
-											flexDirection: 'row',
-											alignItems: 'center'
-										}}>
-										<div
-											className={'link-div'}
-											style={{
-												marginRight: '1rem',
-												padding: '0.5rem'
-											}}
-											onClick={event =>
-												this.setState({
-													menuVisible:
-														event.currentTarget
-												})
-											}>
-											<Avatar
-												src={this.state.user.avatar_url}
-												style={{
-													height: '2.3rem',
-													width: '2.3rem'
-												}}>
-												{this.state.user.name}
-											</Avatar>
-										</div>
-
-										<Button
-											variant='contained'
-											color='secondary'
-											onClick={() =>
-												this.setState({
-													modalVisible: true
-												})
-											}
-											style={{
-												borderRadius: '2rem',
-												textTransform: 'none'
-											}}>
-											<Typography
-												variant='body2'
-												style={{
-													fontWeight: 600
-												}}>
-												Add Question
-											</Typography>
-										</Button>
-									</div>
-								</div>
-							</Container>
-						</Toolbar>
-					</AppBar>
+					<Navbar
+						handleHomeClick={() =>
+							this.props.history.push('/dashboard')
+						}
+						showAddQuestion={true}
+						handleAvatarClick={event =>
+							this.setState({ menuVisible: event.currentTarget })
+						}
+						handleAddQuestionClick={() =>
+							this.setState({ questionModal: true })
+						}
+						user={this.state.user}
+					/>
 					<Container
 						maxWidth='md'
 						style={{
@@ -256,90 +203,90 @@ export default class Question extends React.Component {
 								this.state.question.followers_list,
 								this.state.user.login
 							) ? (
-									<Button
-										variant='text'
-										color='primary'
-										startIcon={<RssFeedIcon />}
-										onClick={event =>
-											utils
-												.followClick(
-													event,
-													this.state.question.url,
-													this.state.question
-														.followers_list,
-													this.state.user.login
-												)
-												.then(status => {
-													if (status === 'removed')
-														this.state.question.followers_list = utils.removeValueFromArray(
-															this.state.question
-																.followers_list,
-															this.state.user.login
-														);
-													this.forceUpdate();
-												})
-												.catch(error =>
-													console.error(error)
-												)
-										}
-										style={{ marginRight: '1rem' }}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 500,
-												fontSize: 18,
-												textTransform: 'capitalize'
-											}}>
-											Unfollow &#183;{' '}
-											{
-												this.state.question.followers_list
-													.length
-											}
-										</Typography>
-									</Button>
-								) : (
-									<Button
-										variant='text'
+								<Button
+									variant='text'
+									color='primary'
+									startIcon={<RssFeedIcon />}
+									onClick={event =>
+										utils
+											.followClick(
+												event,
+												this.state.question.url,
+												this.state.question
+													.followers_list,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'removed')
+													this.state.question.followers_list = utils.removeValueFromArray(
+														this.state.question
+															.followers_list,
+														this.state.user.login
+													);
+												this.forceUpdate();
+											})
+											.catch(error =>
+												console.error(error)
+											)
+									}
+									style={{ marginRight: '1rem' }}>
+									<Typography
+										variant='body2'
 										style={{
-											color: '#919191',
-											marginRight: '1rem'
-										}}
-										startIcon={<RssFeedIcon />}
-										onClick={event =>
-											utils
-												.followClick(
-													event,
-													this.state.question.url,
-													this.state.question
-														.followers_list,
-													this.state.user.login
-												)
-												.then(status => {
-													if (status === 'followed')
-														this.state.question.followers_list.push(
-															this.state.user.login
-														);
-													this.forceUpdate();
-												})
-												.catch(error =>
-													console.error(error)
-												)
-										}>
-										<Typography
-											variant='body2'
-											style={{
-												fontWeight: 500,
-												fontSize: 18,
-												textTransform: 'capitalize'
-											}}>
-											Follow &#183;{' '}
-											{
-												this.state.question.followers_list
-													.length
-											}
-										</Typography>
-									</Button>
-								)}
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Unfollow &#183;{' '}
+										{
+											this.state.question.followers_list
+												.length
+										}
+									</Typography>
+								</Button>
+							) : (
+								<Button
+									variant='text'
+									style={{
+										color: '#919191',
+										marginRight: '1rem'
+									}}
+									startIcon={<RssFeedIcon />}
+									onClick={event =>
+										utils
+											.followClick(
+												event,
+												this.state.question.url,
+												this.state.question
+													.followers_list,
+												this.state.user.login
+											)
+											.then(status => {
+												if (status === 'followed')
+													this.state.question.followers_list.push(
+														this.state.user.login
+													);
+												this.forceUpdate();
+											})
+											.catch(error =>
+												console.error(error)
+											)
+									}>
+									<Typography
+										variant='body2'
+										style={{
+											fontWeight: 500,
+											fontSize: 18,
+											textTransform: 'capitalize'
+										}}>
+										Follow &#183;{' '}
+										{
+											this.state.question.followers_list
+												.length
+										}
+									</Typography>
+								</Button>
+							)}
 
 							<Button
 								variant='text'
@@ -537,7 +484,17 @@ export default class Question extends React.Component {
 					</MenuItem>
 				</Menu>
 
-				<RequestModal requestModal={this.state.requestModal} backdropClick={event => this.setState({ requestModal: false })} questionUrl={this.state.question.url} requested={this.state.question.requested} onSendComplete={requestModal => this.setState({ requestModal })} />
+				<RequestModal
+					requestModal={this.state.requestModal}
+					backdropClick={event =>
+						this.setState({ requestModal: false })
+					}
+					questionUrl={this.state.question.url}
+					requested={this.state.question.requested}
+					onSendComplete={requestModal =>
+						this.setState({ requestModal })
+					}
+				/>
 			</ThemeProvider>
 		);
 	}
