@@ -109,42 +109,15 @@ export default class Dashboard extends React.Component {
 			});
 	}
 
-	async checkQuestion() {
-		if (this.state.newQuestion.length < 1) {
-			throw Error('ERR_CHECK');
-		}
-	}
-
-	async postQuestion(token) {
-		// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
-		let genres = [];
-		this.state.selectedGenres.map(i => genres.push(this.genres[i]));
-		console.log(genres);
-
-		let rawResponse = await fetch(serverUrl + '/api/questions', {
-			method: 'POST',
-			headers: {
-				Authorization: `Token ${token}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				question: this.state.newQuestion,
-				genres: genres
-			})
-		});
-
-		let res = await rawResponse.json();
-		console.log(res);
-		/* if (res.status !== 'success') throw Error('ERR_POST'); */
-		return res;
-	}
-
 	handleAddQuestion() {
-		var token = Cookies.get('TOKEN');
-		console.log(token);
-		this.checkQuestion()
+		utils
+			.checkQuestion(this.state.newQuestion)
 			.then(() => {
-				this.postQuestion(token);
+				utils.postQuestion(
+					this.state.selectedGenres,
+					this.genres,
+					this.state.newQuestion
+				);
 				this.setState({ loading: true });
 			})
 			.then(res => {
