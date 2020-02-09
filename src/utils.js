@@ -242,6 +242,37 @@ async function getGenres() {
 	if (content.status !== 'success') throw Error('ERR_GENRES');
 	return content;
 }
+
+async function checkQuestion(newQuestion) {
+	if (newQuestion.length < 1) {
+		throw Error('ERR_CHECK');
+	}
+}
+
+async function postQuestion(selectedGenres, genresList, newQuestion) {
+	// In state, selected genres contain the indices for the genre tags. Use these to get the tags from the genre array.
+	let genres = [];
+	selectedGenres.map(i => genres.push(genresList[i]));
+	console.log(genres);
+
+	const token = Cookies.get('TOKEN');
+	let rawResponse = await fetch(serverUrl + '/api/questions', {
+		method: 'POST',
+		headers: {
+			Authorization: `Token ${token}`,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			question: newQuestion,
+			genres: genres
+		})
+	});
+
+	let res = await rawResponse.json();
+	console.log(res);
+	/* if (res.status !== 'success') throw Error('ERR_POST'); */
+	return res;
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
@@ -252,5 +283,7 @@ export default {
 	postComment,
 	updateComment,
 	getAllUsers,
-	getGenres
+	getGenres,
+	checkQuestion,
+	postQuestion
 };
