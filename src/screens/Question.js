@@ -33,7 +33,10 @@ export default class Question extends React.Component {
 			error: false,
 			menuVisible: null,
 			question: null,
-			requestModal: false
+			requestModal: false,
+			questionModal: false,
+			newQuestion: '',
+			newQuestionError: false
 		};
 	}
 
@@ -401,6 +404,22 @@ export default class Question extends React.Component {
 					user={this.state.user}
 					history={this.props.history}
 					setState={menuVisible => this.setState({ menuVisible })}
+				/>
+
+				<QuestionModal
+					questionModal={this.state.questionModal}
+					user={this.state.user}
+					onChange={event =>
+						this.setState({ newQuestion: event.target.value })
+					}
+					newQuestionError={this.state.newQuestionError}
+					cancelClick={() => this.setState({ questionModal: false })}
+					proceedClick={() =>
+						this.setState({
+							questionModal: false,
+							genresModal: true
+						})
+					}
 				/>
 
 				<RequestModal
