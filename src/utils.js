@@ -273,6 +273,23 @@ async function postQuestion(selectedGenres, genresList, newQuestion) {
 	/* if (res.status !== 'success') throw Error('ERR_POST'); */
 	return res;
 }
+
+async function getQuestionData(questionUrl) {
+	const token = Cookies.get('TOKEN');
+	let rawResponse = await fetch(serverUrl + `/api/questions/${questionUrl}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Token ${token}`,
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		}
+	});
+
+	let res = await rawResponse.json();
+	console.log(res);
+	if (res.status !== 'success') throw Error('ERR_SERVER');
+	return res;
+}
 export default {
 	checkUserInArray,
 	removeValueFromArray,
@@ -285,5 +302,6 @@ export default {
 	getAllUsers,
 	getGenres,
 	checkQuestion,
-	postQuestion
+	postQuestion,
+	getQuestionData
 };
