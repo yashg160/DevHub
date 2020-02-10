@@ -169,5 +169,5 @@ To change this behaviour, a simple 'Remember Me' checkbox can be added to contro
 ### 11. /user/profile/<user_name>
 > Get : Get the **COMPLETE** profile data of specified username
 
-#### 12. /requested/<question_url>
+### 12. /requested/<question_url>
 > GET : Get all the users you can request for an answer to a question
