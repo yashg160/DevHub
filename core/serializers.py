@@ -63,7 +63,7 @@ class QuestionSerializer(serializers.ModelSerializer):
                 user = CustomUser.objects.get(username=username)
                 if user != instance.asker and (
                     not instance.requested.filter(
-                        username=user1.username).exists()
+                        username=user.username).exists()
                 ):
                     instance.requested.add(user)
             for genre in genres:
