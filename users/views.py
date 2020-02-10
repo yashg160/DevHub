@@ -4,7 +4,9 @@ from core.utils.pagination import SmallResultSetPagination
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.authentication import TokenAuthentication
 from users.models import CustomUser
+from core.models import Question
 from core.serializers import (
     QuestionSerializer, AnswerSerializer, CommentSerializer, GenreSerializer,
     TopicSerializer, CustomUserSerializer
@@ -103,10 +105,26 @@ def get_user_home(request, username):
     })
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
-def AllUserView(request):
+@authentication_classes([TokenAuthentication])
+def AllUserView(request, question_url):
     paginator = SmallResultSetPagination()
-    all_users = get_user_model().objects.all()
-    result = CustomUserSerializer(all_users, many=True).data
+    try:
+        question = Question.objects.get(url = question_url)
+    except:
+        return Response({
+            'status' : 'error',
+            'message' : 'Question not found'
+        })
+    if request.user != question.asker :
+        return Response({
+            'status' : "error",
+            'message' : 'Not allowed to request people'
+        })
+
+    all_user = get_user_model().objects.all()
+    requested_users = question.requested.all()
+    users_to_request = [user for user in all_user if user not in requested_users]
+    result = CustomUserSerializer(users_to_request, many=True).data
+    
     result_page = paginator.paginate_queryset(result, request)
     return paginator.get_paginated_response(result_page)
