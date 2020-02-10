@@ -27,7 +27,7 @@ export default class RequestModal extends React.Component {
 
 	getPeople() {
 		utils
-			.getAllUsers(this.state.next)
+			.getAllUsers(this.state.next, this.props.questionUrl)
 			.then(res => {
 				for (let i = 0; i < res.results.length; i++)
 					this.state.people.push(res.results[i]);

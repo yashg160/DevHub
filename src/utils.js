@@ -207,11 +207,11 @@ async function updateComment(comment, upvote, removeUpvote, commentId) {
 	else return 'failed';
 }
 
-async function getAllUsers(next) {
+async function getAllUsers(next, questionUrl) {
 	const token = Cookies.get('TOKEN');
 	let url = null;
 	if (next) url = next;
-	else url = serverUrl + '/all_users';
+	else url = serverUrl + `/requested/${questionUrl}`;
 
 	let rawResponse = await fetch(url, {
 		method: 'GET',
