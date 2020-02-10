@@ -10,7 +10,7 @@ import core
 from core.utils.pagination import SmallResultSetPagination
 from core.utils.permissions import isSuperuserOrReadOnly
 from core.serializers import (GenreSerializer, QuestionSerializer, AnswerSerializer, HomePageSerializer,
-                              CommentSerializer)
+                              CommentSerializer, CustomUserSerializer)
 from core.models import Genre, Question, Answer, Comment
 # from django.contrib.auth import get_user_model
 

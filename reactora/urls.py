@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('users.urls')),
     path('api/', include('core.urls')),
-    path('all_users', AllUserView),
+    path('requested/<str:question_url>', AllUserView),
 ]
